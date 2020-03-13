@@ -9,7 +9,7 @@ Utility to transform an OAS operation into a HAR representation
 ## Installation
 
 ```sh
-npm install --save oas @readme/oas-to-har
+npm install --save @readme/oas-to-har
 ```
 
 ## Usage
