@@ -25,6 +25,7 @@ module.exports = function configureSecurity(oas, values, scheme) {
 
       return harValue('headers', {
         name: 'Authorization',
+        // eslint-disable-next-line sonarjs/no-nested-template-literals
         value: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`,
       });
     } else if (security.scheme === 'bearer') {
