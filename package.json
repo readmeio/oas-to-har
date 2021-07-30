@@ -22,8 +22,8 @@
     "version": "conventional-changelog -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@readme/oas-extensions": "^13.5.0",
-    "oas": "^13.0.4",
+    "@readme/oas-extensions": "^13.6.0",
+    "oas": "^14.0.0",
     "parse-data-url": "^4.0.1"
   },
   "devDependencies": {
