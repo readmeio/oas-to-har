@@ -2,8 +2,6 @@ const Oas = require('oas');
 
 const oasToHar = require('../../../src/index');
 
-const oas = new Oas();
-
 const emptyInput = '';
 const undefinedInput = undefined;
 const stringInput = 'blue';
@@ -15,6 +13,16 @@ const undefinedObjectInput = { R: undefined };
 const semicolon = ';'; // %3B when encoded, which we don't want
 const equals = '='; // %3D when encoded, which we don't want
 const comma = ','; // %2C when encoded, which we don't want
+
+function createOas(path, operation) {
+  return new Oas({
+    paths: {
+      [path]: {
+        get: operation,
+      },
+    },
+  });
+}
 
 /**
  * These tests ensure that each style matches the spec: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md#style-values
@@ -64,7 +72,7 @@ const comma = ','; // %2C when encoded, which we don't want
  */
 
 // This should work for matrix(empty, primitive, array, object)*(explode:t/f), label(empty, primitive, array, object)*(explode:t/f), simple(primitive, array, object)*(explode:t/f)
-describe('path values', () => {
+describe('path parameters', () => {
   describe('matrix path', () => {
     const paramNoExplode = {
       parameters: [
@@ -173,20 +181,12 @@ describe('path values', () => {
         { path: { color: objectInput } },
         `https://example.com/style-path/${semicolon}R${equals}100${semicolon}G${equals}200${semicolon}B${equals}150`,
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedUrl) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/style-path/{color}',
-          method: 'get',
-          ...operation,
-        },
-        values
-      );
-
+    ])('%s', async (_, operation = {}, formData = {}, expected) => {
+      const oas = createOas('/style-path/{color}', operation);
+      const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.url).toStrictEqual(expectedUrl);
+      expect(har.log.entries[0].request.url).toStrictEqual(expected);
     });
   });
 
@@ -262,20 +262,12 @@ describe('path values', () => {
         { path: { color: objectInput } },
         `https://example.com/style-path/.R${equals}100.G${equals}200.B${equals}150`,
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedUrl) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/style-path/{color}',
-          method: 'get',
-          ...operation,
-        },
-        values
-      );
-
+    ])('%s', async (_, operation = {}, formData = {}, expected) => {
+      const oas = createOas('/style-path/{color}', operation);
+      const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.url).toStrictEqual(expectedUrl);
+      expect(har.log.entries[0].request.url).toStrictEqual(expected);
     });
   });
 
@@ -351,26 +343,18 @@ describe('path values', () => {
         { path: { color: objectInput } },
         `https://example.com/style-path/R${equals}100${comma}G${equals}200${comma}B${equals}150`,
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedUrl) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/style-path/{color}',
-          method: 'get',
-          ...operation,
-        },
-        values
-      );
-
+    ])('%s', async (_, operation = {}, formData = {}, expected) => {
+      const oas = createOas('/style-path/{color}', operation);
+      const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.url).toStrictEqual(expectedUrl);
+      expect(har.log.entries[0].request.url).toStrictEqual(expected);
     });
   });
 });
 
 // this should test form(empty, primitive, array, object)*(explode:t/f), spaceDelimited(array, object)*(explode:f), pipeDelimited(array, object)*(explode:f), deepObject(object)*(explode:t)
-describe('query values', () => {
+describe('query parameters', () => {
   describe('form style', () => {
     const paramNoExplode = {
       parameters: [
@@ -451,17 +435,21 @@ describe('query values', () => {
           { name: 'B', value: '150' },
         ],
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedQueryString = []) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/query',
-          method: 'get',
-          ...operation,
-        },
-        values
-      );
-
+      [
+        'should not encode already encoded values for non-exploded form delimited styles',
+        paramNoExplode,
+        { query: { color: encodeURIComponent(arrayInput) } },
+        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
+      ],
+      [
+        'should not encode already encoded values for exploded form delimited styles',
+        paramExplode,
+        { query: { color: encodeURIComponent(arrayInput) } },
+        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
+      ],
+    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
+      const oas = createOas('/query', operation);
+      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
       expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
@@ -543,17 +531,21 @@ describe('query values', () => {
         { query: { color: objectInput } },
         [],
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedQueryString = []) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/query',
-          method: 'get',
-          ...operation,
-        },
-        values
-      );
-
+      [
+        'should not encode already encoded values for non-exploded spaceDelimited styles',
+        paramNoExplode,
+        { query: { color: encodeURIComponent(arrayInput) } },
+        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
+      ],
+      [
+        'should not encode already encoded values for exploded spaceDelimited styles',
+        paramExplode,
+        { query: { color: encodeURIComponent(arrayInput) } },
+        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
+      ],
+    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
+      const oas = createOas('/query', operation);
+      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
       expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
@@ -633,17 +625,21 @@ describe('query values', () => {
         { query: { color: objectInput } },
         [],
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedQueryString = []) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/query',
-          method: 'get',
-          ...operation,
-        },
-        values
-      );
-
+      [
+        'should not encode already encoded values for non-exploded pipeDelimited styles',
+        paramNoExplode,
+        { query: { color: encodeURIComponent(arrayInput) } },
+        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
+      ],
+      [
+        'should not encode already encoded values for exploded pipeDelimited styles',
+        paramExplode,
+        { query: { color: encodeURIComponent(arrayInput) } },
+        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
+      ],
+    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
+      const oas = createOas('/query', operation);
+      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
       expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
@@ -726,17 +722,21 @@ describe('query values', () => {
           { name: 'color[B]', value: '150' },
         ],
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedQueryString = []) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/query',
-          method: 'get',
-          ...operation,
-        },
-        values
-      );
-
+      [
+        'should not encode already encoded values for non-exploded deepObject styles',
+        paramNoExplode,
+        { query: { color: encodeURIComponent(objectInput) } },
+        [{ name: 'color', value: '%5Bobject%20Object%5D' }],
+      ],
+      [
+        'should not encode already encoded values for exploded deepObject styles',
+        paramExplode,
+        { query: { color: encodeURIComponent(objectInput) } },
+        [{ name: 'color', value: '%5Bobject%20Object%5D' }],
+      ],
+    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
+      const oas = createOas('/query', operation);
+      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
       expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
@@ -745,7 +745,7 @@ describe('query values', () => {
 });
 
 // This should work for form style, supporting empty, string array and object inputs, with both exploded and non-exploded output
-describe('cookie values', () => {
+describe('cookie parameters', () => {
   const paramNoExplode = {
     parameters: [
       {
@@ -834,17 +834,9 @@ describe('cookie values', () => {
         { name: 'B', value: '150' },
       ],
     ],
-  ])('%s', async (testCase, operation = {}, values = {}, expectedCookies = []) => {
-    const har = oasToHar(
-      oas,
-      {
-        path: '/',
-        method: 'get',
-        ...operation,
-      },
-      values
-    );
-
+  ])('%s', async (_, operation = {}, formData = {}, expectedCookies = []) => {
+    const oas = createOas('/cookies', operation);
+    const har = oasToHar(oas, oas.operation('/cookies', 'get'), formData);
     await expect(har).toBeAValidHAR();
 
     expect(har.log.entries[0].request.cookies).toStrictEqual(expectedCookies);
@@ -852,7 +844,7 @@ describe('cookie values', () => {
 });
 
 // This should work for simple styles on arrays and objects, each with and without exploding. Everything else should return undefined.
-describe('header values', () => {
+describe('header parameters', () => {
   const paramNoExplode = {
     parameters: [
       {
@@ -930,17 +922,9 @@ describe('header values', () => {
       //  I'm not sure why this is the case, since explosion should push these values up one level. I would think that we would end up with R, G and B headers. For some unclear reason we do not.
       [{ name: 'color', value: 'R=100,G=200,B=150' }],
     ],
-  ])('%s', async (testCase, operation = {}, values = {}, expectedHeaders = []) => {
-    const har = oasToHar(
-      oas,
-      {
-        path: '/header',
-        method: 'get',
-        ...operation,
-      },
-      values
-    );
-
+  ])('%s', async (_, operation = {}, formData = {}, expectedHeaders = []) => {
+    const oas = createOas('/header', operation);
+    const har = oasToHar(oas, oas.operation('/header', 'get'), formData);
     await expect(har).toBeAValidHAR();
 
     expect(har.log.entries[0].request.headers).toStrictEqual(expectedHeaders);
@@ -958,24 +942,21 @@ describe('header values', () => {
       ['`accept`', 'accept', 'application/json'],
       ['`content-type`', 'content-type', 'application/json'],
       ['`authorization`', 'authorization', 'scheme d9b23eb/0df'],
-    ])('%s', async (testCase, headerName, value) => {
-      const har = oasToHar(
-        oas,
-        {
-          path: '/header',
-          method: 'get',
-          parameters: [
-            {
-              name: headerName,
-              in: 'header',
-              style: 'simple',
-              explode: false,
-            },
-          ],
-        },
-        { header: { [headerName]: value } }
-      );
+    ])('%s', async (_, headerName, value) => {
+      const oas = createOas('/header', {
+        parameters: [
+          {
+            name: headerName,
+            in: 'header',
+            style: 'simple',
+            explode: false,
+          },
+        ],
+      });
 
+      const formData = { header: { [headerName]: value } };
+
+      const har = oasToHar(oas, oas.operation('/header', 'get'), formData);
       await expect(har).toBeAValidHAR();
 
       expect(har.log.entries[0].request.headers).toStrictEqual([{ name: headerName, value }]);
