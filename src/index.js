@@ -8,29 +8,42 @@ const configureSecurity = require('./lib/configure-security');
 const removeUndefinedObjects = require('./lib/remove-undefined-objects');
 const formatStyle = require('./lib/style-formatting');
 
+function isURIEncoded(str) {
+  return decodeURIComponent(str) !== str;
+}
+
 function formatter(values, param, type, onlyIfExists) {
   if (param.style) {
+    const value = values[type][param.name];
+    if (type === 'query' && typeof value === 'string' && isURIEncoded(value)) {
+      return value;
+    }
+
     // Note: Technically we could send everything through the format style and choose the proper default for each
     //  `in` type (e.g. query defaults to form).
-    return formatStyle(values[type][param.name], param);
+    return formatStyle(value, param);
   }
+
+  let value;
 
   if (typeof values[type][param.name] !== 'undefined') {
-    return values[type][param.name];
-  }
-
-  if (onlyIfExists && !param.required) {
-    return undefined;
-  }
-
-  if (param.required && param.schema && param.schema.default) {
-    return param.schema.default;
-  }
-
-  // If we don't have any values for the path parameter, just use the name of the parameter as the value so we don't
-  // try try to build a URL to something like `https://example.com/undefined`.
-  if (type === 'path') {
+    value = values[type][param.name];
+  } else if (onlyIfExists && !param.required) {
+    value = undefined;
+  } else if (param.required && param.schema && param.schema.default) {
+    value = param.schema.default;
+  } else if (type === 'path') {
+    // If we don't have any values for the path parameter, just use the name of the parameter as the value so we don't
+    // try try to build a URL to something like `https://example.com/undefined`.
     return param.name;
+  }
+
+  if (value !== undefined) {
+    if (type === 'query' && !isURIEncoded(value)) {
+      return encodeURIComponent(value);
+    }
+
+    return value;
   }
 
   return undefined;

@@ -3,6 +3,8 @@ const Oas = require('oas');
 const path = require('path');
 const datauri = require('datauri');
 
+const oasToSnippet = require('@readme/oas-to-snippet');
+
 const oasToHar = require('../src/index');
 const commonParameters = require('./__fixtures__/common-parameters.json');
 const multipartFormData = require('./__fixtures__/multipart-form-data.json');
@@ -11,7 +13,7 @@ const serverVariables = require('./__fixtures__/server-variables.json');
 
 const oas = new Oas();
 
-test('should output a har format', async () => {
+test('should output a har object', async () => {
   const har = oasToHar(oas);
 
   await expect(har).toBeAValidHAR();
@@ -131,7 +133,7 @@ describe('url', () => {
 });
 
 describe('parameters', () => {
-  describe('path values', () => {
+  describe('path', () => {
     it('should pass through unknown path params', () => {
       expect(oasToHar(oas, { path: '/param-path/{id}', method: '' }).log.entries[0].request.url).toBe(
         'https://example.com/param-path/id'
@@ -185,7 +187,7 @@ describe('parameters', () => {
         { path: { id: 0 } },
         'https://example.com/param-path/0',
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedUrl) => {
+    ])('%s', async (_, operation = {}, formData = {}, expectedUrl) => {
       const har = oasToHar(
         oas,
         {
@@ -193,7 +195,7 @@ describe('parameters', () => {
           method: 'get',
           ...operation,
         },
-        values
+        formData
       );
 
       await expect(har).toBeAValidHAR();
@@ -202,7 +204,7 @@ describe('parameters', () => {
     });
   });
 
-  describe('query values', () => {
+  describe('query', () => {
     it.each([
       [
         'should not add on empty unrequired values',
@@ -283,7 +285,7 @@ describe('parameters', () => {
           { name: 'id', value: 'null' },
         ],
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedQueryString = []) => {
+    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
       const har = oasToHar(
         oas,
         {
@@ -291,16 +293,104 @@ describe('parameters', () => {
           method: 'get',
           ...operation,
         },
-        values
+        formData
       );
 
       await expect(har).toBeAValidHAR();
-
       expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
+    });
+
+    describe('URI encoding', () => {
+      const spec = new Oas({
+        paths: {
+          '/query': {
+            get: {
+              parameters: [
+                { name: 'pound', in: 'query' },
+                { name: 'hash', in: 'query' },
+                { name: 'array', in: 'query' },
+                { name: 'weird', in: 'query' },
+              ],
+            },
+          },
+        },
+      });
+
+      it('should encode query parameters', async () => {
+        const formData = {
+          query: {
+            pound: 'somethign&nothing=true',
+            hash: 'hash#data',
+            array: 'where[4]=10',
+            weird: 'properties["$email"] == "testing"',
+          },
+        };
+
+        const operation = spec.operation('/query', 'get');
+
+        const har = oasToHar(spec, operation, formData);
+        await expect(har).toBeAValidHAR();
+
+        expect(har.log.entries[0].request.queryString).toStrictEqual([
+          { name: 'pound', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'hash', value: 'hash%23data' },
+          { name: 'array', value: 'where%5B4%5D%3D10' },
+          {
+            name: 'weird',
+            value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
+          },
+        ]);
+
+        // Run some integration tests with `@readme/oas-to-snippet` to ensure that URI encoding query params don't
+        // cause sideeffects there.
+        let { code: snippet } = oasToSnippet(null, null, null, null, 'curl', null, har);
+        expect(snippet).toContain('pound=somethign%26nothing%3Dtrue');
+        expect(snippet).toContain('hash=hash%23data');
+        expect(snippet).toContain('array=where%5B4%5D%3D10');
+        expect(snippet).toContain('weird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22');
+
+        ({ code: snippet } = oasToSnippet(null, null, null, null, 'node', null, har));
+        expect(snippet).toContain('pound=somethign%26nothing%3Dtrue');
+        expect(snippet).toContain('hash=hash%23data');
+        expect(snippet).toContain('array=where%5B4%5D%3D10');
+        expect(snippet).toContain('weird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22');
+
+        ({ code: snippet } = oasToSnippet(spec, operation, formData, null, 'node-simple', 'https://example.com', har));
+        expect(snippet).toContain("pound: 'somethign%26nothing%3Dtrue'");
+        expect(snippet).toContain("hash: 'hash%23data'");
+        expect(snippet).toContain("array: 'where%5B4%5D%3D10'");
+        expect(snippet).toContain("weird: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22'");
+      });
+
+      it('should not double encode query parameters that are already encoded', async () => {
+        const formData = {
+          query: {
+            pound: encodeURIComponent('somethign&nothing=true'),
+            hash: encodeURIComponent('hash#data'),
+            array: encodeURIComponent('where[4]=10'),
+            weird: encodeURIComponent('properties["$email"] == "testing"'),
+          },
+        };
+
+        const operation = spec.operation('/query', 'get');
+
+        const har = oasToHar(spec, operation, formData);
+        await expect(har).toBeAValidHAR();
+
+        expect(har.log.entries[0].request.queryString).toStrictEqual([
+          { name: 'pound', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'hash', value: 'hash%23data' },
+          { name: 'array', value: 'where%5B4%5D%3D10' },
+          {
+            name: 'weird',
+            value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
+          },
+        ]);
+      });
     });
   });
 
-  describe('cookie values', () => {
+  describe('cookie', () => {
     it.each([
       [
         'should not add on empty unrequired values',
@@ -338,7 +428,7 @@ describe('parameters', () => {
         { cookie: { id: 0 } },
         [{ name: 'id', value: '0' }],
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedCookies = []) => {
+    ])('%s', async (_, operation = {}, formData = {}, expectedCookies = []) => {
       const har = oasToHar(
         oas,
         {
@@ -346,7 +436,7 @@ describe('parameters', () => {
           method: 'get',
           ...operation,
         },
-        values
+        formData
       );
 
       await expect(har).toBeAValidHAR();
@@ -355,7 +445,7 @@ describe('parameters', () => {
     });
   });
 
-  describe('header values', () => {
+  describe('header', () => {
     it.each([
       [
         'should not add on empty unrequired values',
@@ -462,7 +552,7 @@ describe('parameters', () => {
         { header: { id: 0 } },
         [{ name: 'id', value: '0' }],
       ],
-    ])('%s', async (testCase, operation = {}, values = {}, expectedHeaders = []) => {
+    ])('%s', async (_, operation = {}, formData = {}, expectedHeaders = []) => {
       const har = oasToHar(
         oas,
         {
@@ -470,7 +560,7 @@ describe('parameters', () => {
           method: 'get',
           ...operation,
         },
-        values
+        formData
       );
 
       await expect(har).toBeAValidHAR();
