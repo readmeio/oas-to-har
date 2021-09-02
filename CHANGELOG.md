@@ -1,3 +1,13 @@
+## 13.7.0 (2021-09-02)
+
+* fix: always ensure that query parameters are properly encoded (#16) ([538065d](https://github.com/readmeio/oas-to-har/commit/538065d)), closes [#16](https://github.com/readmeio/oas-to-har/issues/16)
+* chore(deps-dev): bump jest from 27.0.6 to 27.1.0 (#13) ([a030bfa](https://github.com/readmeio/oas-to-har/commit/a030bfa)), closes [#13](https://github.com/readmeio/oas-to-har/issues/13)
+* chore(deps-dev): removing conventional-changelog-cli in favor of npx ([1fa775b](https://github.com/readmeio/oas-to-har/commit/1fa775b))
+* chore(deps): bump @readme/oas-extensions from 13.6.0 to 13.6.1 (#14) ([007c307](https://github.com/readmeio/oas-to-har/commit/007c307)), closes [#14](https://github.com/readmeio/oas-to-har/issues/14)
+* chore(deps): bump oas from 14.3.1 to 14.4.0 (#15) ([24d8c37](https://github.com/readmeio/oas-to-har/commit/24d8c37)), closes [#15](https://github.com/readmeio/oas-to-har/issues/15)
+
+
+
 ## <small>13.6.1 (2021-08-26)</small>
 
 * chore: running npm audit ([15581f7](https://github.com/readmeio/oas-to-har/commit/15581f7))
