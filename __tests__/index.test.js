@@ -316,7 +316,7 @@ describe('parameters', () => {
       it('should encode query parameters', async () => {
         const formData = {
           query: {
-            stringPound: 'somethign&nothing=true',
+            stringPound: 'something&nothing=true',
             stringHash: 'hash#data',
             stringArray: 'where[4]=10',
             stringWeird: 'properties["$email"] == "testing"',
@@ -334,7 +334,7 @@ describe('parameters', () => {
         await expect(har).toBeAValidHAR();
 
         expect(har.log.entries[0].request.queryString).toStrictEqual([
-          { name: 'stringPound', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'stringPound', value: 'something%26nothing%3Dtrue' },
           { name: 'stringHash', value: 'hash%23data' },
           { name: 'stringArray', value: 'where%5B4%5D%3D10' },
           {
@@ -359,7 +359,7 @@ describe('parameters', () => {
       it('should not double encode query parameters that are already encoded', async () => {
         const formData = {
           query: {
-            stringPound: encodeURIComponent('somethign&nothing=true'),
+            stringPound: encodeURIComponent('something&nothing=true'),
             stringHash: encodeURIComponent('hash#data'),
             stringArray: encodeURIComponent('where[4]=10'),
             stringWeird: encodeURIComponent('properties["$email"] == "testing"'),
@@ -377,7 +377,7 @@ describe('parameters', () => {
         await expect(har).toBeAValidHAR();
 
         expect(har.log.entries[0].request.queryString).toStrictEqual([
-          { name: 'stringPound', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'stringPound', value: 'something%26nothing%3Dtrue' },
           { name: 'stringHash', value: 'hash%23data' },
           { name: 'stringArray', value: 'where%5B4%5D%3D10' },
           {

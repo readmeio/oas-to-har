@@ -7,10 +7,10 @@ const undefinedInput = undefined;
 const stringInput = 'blue';
 const stringInputEncoded = encodeURIComponent('something&nothing=true');
 const arrayInput = ['blue', 'black', 'brown'];
-const arrayInputEncoded = ['somethign&nothing=true', 'hash#data'];
+const arrayInputEncoded = ['something&nothing=true', 'hash#data'];
 const undefinedArrayInput = [undefined];
 const objectInput = { R: 100, G: 200, B: 150 };
-const objectInputEncoded = { pound: 'somethign&nothing=true', hash: 'hash#data' };
+const objectInputEncoded = { pound: 'something&nothing=true', hash: 'hash#data' };
 const undefinedObjectInput = { R: undefined };
 
 const semicolon = ';'; // %3B when encoded, which we don't want
@@ -426,7 +426,7 @@ describe('query parameters', () => {
         'should support form delimited query styles for non exploded array input and NOT encode already encoded values',
         paramNoExplode,
         { query: { color: arrayInputEncoded } },
-        [{ name: 'color', value: 'somethign%26nothing%3Dtrue,hash%23data' }],
+        [{ name: 'color', value: 'something%26nothing%3Dtrue,hash%23data' }],
       ],
       [
         'should support form delimited query styles for exploded array input',
@@ -443,7 +443,7 @@ describe('query parameters', () => {
         paramExplode,
         { query: { color: arrayInputEncoded } },
         [
-          { name: 'color', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'color', value: 'something%26nothing%3Dtrue' },
           { name: 'color', value: 'hash%23data' },
         ],
       ],
@@ -457,7 +457,7 @@ describe('query parameters', () => {
         'should support form delimited query styles for non exploded object input and NOT encode already encoded values',
         paramNoExplode,
         { query: { color: objectInputEncoded } },
-        [{ name: 'color', value: 'pound,somethign%26nothing%3Dtrue,hash,hash%23data' }],
+        [{ name: 'color', value: 'pound,something%26nothing%3Dtrue,hash,hash%23data' }],
       ],
       [
         'should support form delimited query styles for exploded object input',
@@ -474,7 +474,7 @@ describe('query parameters', () => {
         paramExplode,
         { query: { color: objectInputEncoded } },
         [
-          { name: 'pound', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'pound', value: 'something%26nothing%3Dtrue' },
           { name: 'hash', value: 'hash%23data' },
         ],
       ],
@@ -545,7 +545,7 @@ describe('query parameters', () => {
         'should support space delimited query styles for non exploded array input and NOT encode already encoded values',
         paramNoExplode,
         { query: { color: arrayInputEncoded } },
-        [{ name: 'color', value: 'somethign%26nothing%3Dtrue hash%23data' }],
+        [{ name: 'color', value: 'something%26nothing%3Dtrue hash%23data' }],
       ],
       [
         'should NOT support space delimited query styles for exploded array input',
@@ -634,7 +634,7 @@ describe('query parameters', () => {
         'should support pipe delimited query styles for non exploded array input and NOT encode already encoded values',
         paramNoExplode,
         { query: { color: arrayInputEncoded } },
-        [{ name: 'color', value: 'somethign%26nothing%3Dtrue|hash%23data' }],
+        [{ name: 'color', value: 'something%26nothing%3Dtrue|hash%23data' }],
       ],
       [
         'should NOT support pipe delimited query styles for exploded array input',
@@ -745,7 +745,7 @@ describe('query parameters', () => {
         paramExplode,
         { query: { color: objectInputEncoded } },
         [
-          { name: 'color[pound]', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'color[pound]', value: 'something%26nothing%3Dtrue' },
           { name: 'color[hash]', value: 'hash%23data' },
         ],
       ],
