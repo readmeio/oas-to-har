@@ -66,6 +66,7 @@ function stylizeValue(value, parameter) {
   }
 
   return stylize({
+    location: parameter.in,
     value: finalValue,
     key: parameter.name,
     style: parameter.style,

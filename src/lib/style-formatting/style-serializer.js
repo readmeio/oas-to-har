@@ -1,10 +1,15 @@
-/* eslint-disable sonarjs/no-extra-arguments, no-use-before-define, sonarjs/prefer-immediate-return, no-param-reassign, sonarjs/no-identical-functions */
+/* eslint-disable sonarjs/no-extra-arguments */
+/* eslint-disable no-use-before-define */
+/* eslint-disable sonarjs/prefer-immediate-return */
+/* eslint-disable no-param-reassign */
+/* eslint-disable sonarjs/no-identical-functions */
 
 /**
- * This file has been extracted and modified from Swagger UI.
+ * This file has been extracted and modified from `swagger-client`.
  *
  * @license Apache 2.0
- * @link https://github.com/swagger-api/swagger-js/blob/e5d83c7c8395baf1e30a16e636aabe3bba21360e/src/execute/oas3/style-serializer.js
+ * @link https://npm.im/swagger-client
+ * @link https://github.com/swagger-api/swagger-js/blob/master/src/execute/oas3/style-serializer.js
  */
 
 const { Buffer } = require('buffer');
@@ -12,22 +17,37 @@ const { Buffer } = require('buffer');
 const isRfc3986Reserved = char => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
 const isRfc3986Unreserved = char => /^[a-z0-9\-._~]+$/i.test(char);
 
+function isURIEncoded(value) {
+  return decodeURIComponent(value) !== value;
+}
+
 module.exports = function stylize(config) {
   const { value } = config;
 
   if (Array.isArray(value)) {
     return encodeArray(config);
   }
-  if (typeof value === 'object') {
+  if (typeof value === 'object' && value !== null) {
     return encodeObject(config);
   }
   return encodePrimitive(config);
 };
 
-module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(str, { escape } = {}, parse) {
+module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
+  str,
+  { escape, returnIfEncoded = false } = {},
+  parse
+) {
   if (typeof str === 'number') {
     str = str.toString();
   }
+
+  if (returnIfEncoded) {
+    if (isURIEncoded(str)) {
+      return str;
+    }
+  }
+
   if (typeof str !== 'string' || !str.length) {
     return str;
   }
@@ -64,10 +84,11 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
     .join('');
 };
 
-function encodeArray({ key, value, style, explode, escape }) {
+function encodeArray({ location, key, value, style, explode, escape }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
+      returnIfEncoded: location === 'query',
     });
 
   if (style === 'simple') {
@@ -104,13 +125,19 @@ function encodeArray({ key, value, style, explode, escape }) {
     return value.map(val => valueEncoder(val)).join(`|${after}`);
   }
 
+  // If no style is present, query parameters should still **always** be encoded.
+  if (style === undefined && location === 'query') {
+    return value.map(val => valueEncoder(val));
+  }
+
   return undefined;
 }
 
-function encodeObject({ key, value, style, explode, escape }) {
+function encodeObject({ location, key, value, style, explode, escape }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
+      returnIfEncoded: location === 'query',
     });
 
   const valueKeys = Object.keys(value);
@@ -167,10 +194,11 @@ function encodeObject({ key, value, style, explode, escape }) {
   return undefined;
 }
 
-function encodePrimitive({ key, value, style, escape }) {
+function encodePrimitive({ location, key, value, style, escape }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
+      returnIfEncoded: location === 'query',
     });
 
   if (style === 'simple') {
@@ -196,6 +224,11 @@ function encodePrimitive({ key, value, style, escape }) {
 
   if (style === 'deepObject') {
     return valueEncoder(value, {}, true);
+  }
+
+  // If no style is present, query parameters should still **always** be encoded.
+  if (style === undefined && location === 'query') {
+    return valueEncoder(value);
   }
 
   return undefined;

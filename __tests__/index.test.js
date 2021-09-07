@@ -302,14 +302,17 @@ describe('parameters', () => {
 
     describe('URI encoding', () => {
       const spec = new Oas({
+        servers: [{ url: 'https://httpbin.org/' }],
         paths: {
-          '/query': {
+          '/anything': {
             get: {
               parameters: [
-                { name: 'pound', in: 'query' },
-                { name: 'hash', in: 'query' },
-                { name: 'array', in: 'query' },
-                { name: 'weird', in: 'query' },
+                { name: 'stringPound', in: 'query', schema: { type: 'string' } },
+                { name: 'stringPound2', in: 'query', schema: { type: 'string' } },
+                { name: 'stringHash', in: 'query', schema: { type: 'string' } },
+                { name: 'stringArray', in: 'query', schema: { type: 'string' } },
+                { name: 'stringWeird', in: 'query', schema: { type: 'string' } },
+                { name: 'array', in: 'query', schema: { type: 'array', items: { type: 'string' } } },
               ],
             },
           },
@@ -319,72 +322,79 @@ describe('parameters', () => {
       it('should encode query parameters', async () => {
         const formData = {
           query: {
-            pound: 'somethign&nothing=true',
-            hash: 'hash#data',
-            array: 'where[4]=10',
-            weird: 'properties["$email"] == "testing"',
+            stringPound: 'somethign&nothing=true',
+            stringHash: 'hash#data',
+            stringArray: 'where[4]=10',
+            stringWeird: 'properties["$email"] == "testing"',
+            array: [
+              encodeURI('something&nothing=true'), // This is already encoded so it shouldn't be double encoded.
+              'nothing&something=false',
+              'second item',
+            ],
           },
         };
 
-        const operation = spec.operation('/query', 'get');
+        const operation = spec.operation('/anything', 'get');
 
         const har = oasToHar(spec, operation, formData);
         await expect(har).toBeAValidHAR();
 
         expect(har.log.entries[0].request.queryString).toStrictEqual([
-          { name: 'pound', value: 'somethign%26nothing%3Dtrue' },
-          { name: 'hash', value: 'hash%23data' },
-          { name: 'array', value: 'where%5B4%5D%3D10' },
+          { name: 'stringPound', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'stringHash', value: 'hash%23data' },
+          { name: 'stringArray', value: 'where%5B4%5D%3D10' },
           {
-            name: 'weird',
+            name: 'stringWeird',
             value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
           },
+          { name: 'array', value: 'something%26nothing%3Dtrue' },
+          { name: 'array', value: 'nothing%26something%3Dfalse' },
+          { name: 'array', value: 'second%20item' },
         ]);
 
         // Run some integration tests with `@readme/oas-to-snippet` to ensure that URI encoding query params don't
         // cause sideeffects there.
         let { code: snippet } = oasToSnippet(null, null, null, null, 'curl', null, har);
-        expect(snippet).toContain('pound=somethign%26nothing%3Dtrue');
-        expect(snippet).toContain('hash=hash%23data');
-        expect(snippet).toContain('array=where%5B4%5D%3D10');
-        expect(snippet).toContain('weird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22');
+        expect(snippet).toMatchSnapshot();
 
         ({ code: snippet } = oasToSnippet(null, null, null, null, 'node', null, har));
-        expect(snippet).toContain('pound=somethign%26nothing%3Dtrue');
-        expect(snippet).toContain('hash=hash%23data');
-        expect(snippet).toContain('array=where%5B4%5D%3D10');
-        expect(snippet).toContain('weird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22');
+        expect(snippet).toMatchSnapshot();
 
         ({ code: snippet } = oasToSnippet(spec, operation, formData, null, 'node-simple', 'https://example.com', har));
-        expect(snippet).toContain("pound: 'somethign%26nothing%3Dtrue'");
-        expect(snippet).toContain("hash: 'hash%23data'");
-        expect(snippet).toContain("array: 'where%5B4%5D%3D10'");
-        expect(snippet).toContain("weird: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22'");
+        expect(snippet).toMatchSnapshot();
       });
 
       it('should not double encode query parameters that are already encoded', async () => {
         const formData = {
           query: {
-            pound: encodeURIComponent('somethign&nothing=true'),
-            hash: encodeURIComponent('hash#data'),
-            array: encodeURIComponent('where[4]=10'),
-            weird: encodeURIComponent('properties["$email"] == "testing"'),
+            stringPound: encodeURIComponent('somethign&nothing=true'),
+            stringHash: encodeURIComponent('hash#data'),
+            stringArray: encodeURIComponent('where[4]=10'),
+            stringWeird: encodeURIComponent('properties["$email"] == "testing"'),
+            array: [
+              'something&nothing=true', // Should still encode this one eventhrough the others are already encoded.
+              encodeURIComponent('nothing&something=false'),
+              encodeURIComponent('second item'),
+            ],
           },
         };
 
-        const operation = spec.operation('/query', 'get');
+        const operation = spec.operation('/anything', 'get');
 
         const har = oasToHar(spec, operation, formData);
         await expect(har).toBeAValidHAR();
 
         expect(har.log.entries[0].request.queryString).toStrictEqual([
-          { name: 'pound', value: 'somethign%26nothing%3Dtrue' },
-          { name: 'hash', value: 'hash%23data' },
-          { name: 'array', value: 'where%5B4%5D%3D10' },
+          { name: 'stringPound', value: 'somethign%26nothing%3Dtrue' },
+          { name: 'stringHash', value: 'hash%23data' },
+          { name: 'stringArray', value: 'where%5B4%5D%3D10' },
           {
-            name: 'weird',
+            name: 'stringWeird',
             value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
           },
+          { name: 'array', value: 'something%26nothing%3Dtrue' },
+          { name: 'array', value: 'nothing%26something%3Dfalse' },
+          { name: 'array', value: 'second%20item' },
         ]);
       });
     });
