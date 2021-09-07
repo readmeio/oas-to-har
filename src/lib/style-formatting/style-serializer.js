@@ -125,11 +125,6 @@ function encodeArray({ location, key, value, style, explode, escape }) {
     return value.map(val => valueEncoder(val)).join(`|${after}`);
   }
 
-  // If no style is present, query parameters should still **always** be encoded.
-  if (style === undefined && location === 'query') {
-    return value.map(val => valueEncoder(val));
-  }
-
   return undefined;
 }
 
@@ -224,11 +219,6 @@ function encodePrimitive({ location, key, value, style, escape }) {
 
   if (style === 'deepObject') {
     return valueEncoder(value, {}, true);
-  }
-
-  // If no style is present, query parameters should still **always** be encoded.
-  if (style === undefined && location === 'query') {
-    return valueEncoder(value);
   }
 
   return undefined;

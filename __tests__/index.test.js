@@ -248,10 +248,7 @@ describe('parameters', () => {
           parameters: [{ name: 'id', in: 'query' }],
         },
         { query: { id: [null, null] } },
-        [
-          { name: 'id', value: 'null' },
-          { name: 'id', value: 'null' },
-        ],
+        [{ name: 'id', value: '&id=' }],
       ],
       [
         'should handle null values',
@@ -280,10 +277,7 @@ describe('parameters', () => {
           ],
         },
         { query: {} },
-        [
-          { name: 'id', value: 'null' },
-          { name: 'id', value: 'null' },
-        ],
+        [{ name: 'id', value: '&id=' }],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
       const har = oasToHar(
@@ -347,9 +341,7 @@ describe('parameters', () => {
             name: 'stringWeird',
             value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
           },
-          { name: 'array', value: 'something%26nothing%3Dtrue' },
-          { name: 'array', value: 'nothing%26something%3Dfalse' },
-          { name: 'array', value: 'second%20item' },
+          { name: 'array', value: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=second%20item' },
         ]);
 
         // Run some integration tests with `@readme/oas-to-snippet` to ensure that URI encoding query params don't
@@ -392,9 +384,7 @@ describe('parameters', () => {
             name: 'stringWeird',
             value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
           },
-          { name: 'array', value: 'something%26nothing%3Dtrue' },
-          { name: 'array', value: 'nothing%26something%3Dfalse' },
-          { name: 'array', value: 'second%20item' },
+          { name: 'array', value: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=second%20item' },
         ]);
       });
     });
