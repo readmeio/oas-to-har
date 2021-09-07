@@ -321,7 +321,7 @@ describe('parameters', () => {
             stringArray: 'where[4]=10',
             stringWeird: 'properties["$email"] == "testing"',
             array: [
-              encodeURI('something&nothing=true'), // This is already encoded so it shouldn't be double encoded.
+              encodeURIComponent('something&nothing=true'), // This is already encoded so it shouldn't be double encoded.
               'nothing&something=false',
               'second item',
             ],
