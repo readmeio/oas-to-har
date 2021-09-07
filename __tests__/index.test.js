@@ -323,7 +323,7 @@ describe('parameters', () => {
             array: [
               encodeURIComponent('something&nothing=true'), // This is already encoded so it shouldn't be double encoded.
               'nothing&something=false',
-              'second item',
+              'another item',
             ],
           },
         };
@@ -341,7 +341,7 @@ describe('parameters', () => {
             name: 'stringWeird',
             value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
           },
-          { name: 'array', value: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=second%20item' },
+          { name: 'array', value: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=another%20item' },
         ]);
 
         // Run some integration tests with `@readme/oas-to-snippet` to ensure that URI encoding query params don't
@@ -366,7 +366,7 @@ describe('parameters', () => {
             array: [
               'something&nothing=true', // Should still encode this one eventhrough the others are already encoded.
               encodeURIComponent('nothing&something=false'),
-              encodeURIComponent('second item'),
+              encodeURIComponent('another item'),
             ],
           },
         };
@@ -384,7 +384,7 @@ describe('parameters', () => {
             name: 'stringWeird',
             value: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
           },
-          { name: 'array', value: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=second%20item' },
+          { name: 'array', value: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=another%20item' },
         ]);
       });
     });

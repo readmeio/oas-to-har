@@ -2,13 +2,13 @@
 
 exports[`parameters query URI encoding should encode query parameters 1`] = `
 "curl --request GET \\\\
-     --url 'https://httpbin.org/anything?stringPound=something%26nothing%3Dtrue&stringHash=hash%23data&stringArray=where%5B4%5D%3D10&stringWeird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22&array=something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=second%20item'"
+     --url 'https://httpbin.org/anything?stringPound=something%26nothing%3Dtrue&stringHash=hash%23data&stringArray=where%5B4%5D%3D10&stringWeird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22&array=something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=another%20item'"
 `;
 
 exports[`parameters query URI encoding should encode query parameters 2`] = `
 "const fetch = require('node-fetch');
 
-const url = 'https://httpbin.org/anything?stringPound=something%26nothing%3Dtrue&stringHash=hash%23data&stringArray=where%5B4%5D%3D10&stringWeird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22&array=something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=second%20item';
+const url = 'https://httpbin.org/anything?stringPound=something%26nothing%3Dtrue&stringHash=hash%23data&stringArray=where%5B4%5D%3D10&stringWeird=properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22&array=something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=another%20item';
 const options = {method: 'GET'};
 
 fetch(url, options)
@@ -25,7 +25,7 @@ sdk.get('/anything', {
   stringHash: 'hash%23data',
   stringArray: 'where%5B4%5D%3D10',
   stringWeird: 'properties%5B%22%24email%22%5D%20%3D%3D%20%22testing%22',
-  array: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=second%20item'
+  array: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=another%20item'
 })
   .then(res => console.log(res))
   .catch(err => console.error(err));"
