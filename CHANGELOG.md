@@ -1,3 +1,9 @@
+## <small>13.7.1 (2021-09-08)</small>
+
+* fix: quirks with un-styled query parameters not always being encoded (#17) ([7208473](https://github.com/readmeio/oas-to-har/commit/7208473)), closes [#17](https://github.com/readmeio/oas-to-har/issues/17)
+
+
+
 ## 13.7.0 (2021-09-02)
 
 * fix: always ensure that query parameters are properly encoded (#16) ([538065d](https://github.com/readmeio/oas-to-har/commit/538065d)), closes [#16](https://github.com/readmeio/oas-to-har/issues/16)
