@@ -18,7 +18,13 @@ const isRfc3986Reserved = char => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
 const isRfc3986Unreserved = char => /^[a-z0-9\-._~]+$/i.test(char);
 
 function isURIEncoded(value) {
-  return decodeURIComponent(value) !== value;
+  try {
+    return decodeURIComponent(value) !== value;
+  } catch (err) {
+    // `decodeURIComponent` will throw an exception if a string that has an un-encoded percent sign in it (like 20%),
+    // so if it's throwing we can just assume that the value hasn't been encoded.
+    return false;
+  }
 }
 
 module.exports = function stylize(config) {
