@@ -8,17 +8,9 @@ const configureSecurity = require('./lib/configure-security');
 const removeUndefinedObjects = require('./lib/remove-undefined-objects');
 const formatStyle = require('./lib/style-formatting');
 
-function isURIEncoded(str) {
-  return decodeURIComponent(str) !== str;
-}
-
 function formatter(values, param, type, onlyIfExists) {
   if (param.style) {
     const value = values[type][param.name];
-    if (type === 'query' && typeof value === 'string' && isURIEncoded(value)) {
-      return value;
-    }
-
     // Note: Technically we could send everything through the format style and choose the proper default for each
     //  `in` type (e.g. query defaults to form).
     return formatStyle(value, param);
@@ -39,8 +31,9 @@ function formatter(values, param, type, onlyIfExists) {
   }
 
   if (value !== undefined) {
-    if (type === 'query' && !isURIEncoded(value)) {
-      return encodeURIComponent(value);
+    // Query params should always be formatted, even if they don't have a `style` serialization configured.
+    if (type === 'query') {
+      return formatStyle(value, param);
     }
 
     return value;

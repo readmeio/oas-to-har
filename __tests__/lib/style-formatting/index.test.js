@@ -5,9 +5,12 @@ const oasToHar = require('../../../src/index');
 const emptyInput = '';
 const undefinedInput = undefined;
 const stringInput = 'blue';
+const stringInputEncoded = encodeURIComponent('something&nothing=true');
 const arrayInput = ['blue', 'black', 'brown'];
+const arrayInputEncoded = ['something&nothing=true', 'hash#data'];
 const undefinedArrayInput = [undefined];
 const objectInput = { R: 100, G: 200, B: 150 };
+const objectInputEncoded = { pound: 'something&nothing=true', hash: 'hash#data' };
 const undefinedObjectInput = { R: undefined };
 
 const semicolon = ';'; // %3B when encoded, which we don't want
@@ -71,7 +74,6 @@ function createOas(path, operation) {
  *  deepObject      true      n/a     n/a           n/a                                   color[R]=100&color[G]=200&color[B]=150  query
  */
 
-// This should work for matrix(empty, primitive, array, object)*(explode:t/f), label(empty, primitive, array, object)*(explode:t/f), simple(primitive, array, object)*(explode:t/f)
 describe('path parameters', () => {
   describe('matrix path', () => {
     const paramNoExplode = {
@@ -353,7 +355,6 @@ describe('path parameters', () => {
   });
 });
 
-// this should test form(empty, primitive, array, object)*(explode:t/f), spaceDelimited(array, object)*(explode:f), pipeDelimited(array, object)*(explode:f), deepObject(object)*(explode:t)
 describe('query parameters', () => {
   describe('form style', () => {
     const paramNoExplode = {
@@ -398,16 +399,34 @@ describe('query parameters', () => {
         [{ name: 'color', value: 'blue' }],
       ],
       [
+        'should support form delimited query styles for non exploded string input and NOT encode already encoded values',
+        paramNoExplode,
+        { query: { color: stringInputEncoded } },
+        [{ name: 'color', value: 'something%26nothing%3Dtrue' }],
+      ],
+      [
         'should support form delimited query styles for exploded string input',
         paramExplode,
         { query: { color: stringInput } },
         [{ name: 'color', value: 'blue' }],
       ],
       [
+        'should support form delimited query styles for exploded string input and NOT encode already encoded values',
+        paramExplode,
+        { query: { color: stringInputEncoded } },
+        [{ name: 'color', value: 'something%26nothing%3Dtrue' }],
+      ],
+      [
         'should support form delimited query styles for non exploded array input',
         paramNoExplode,
         { query: { color: arrayInput } },
         [{ name: 'color', value: 'blue,black,brown' }],
+      ],
+      [
+        'should support form delimited query styles for non exploded array input and NOT encode already encoded values',
+        paramNoExplode,
+        { query: { color: arrayInputEncoded } },
+        [{ name: 'color', value: 'something%26nothing%3Dtrue,hash%23data' }],
       ],
       [
         'should support form delimited query styles for exploded array input',
@@ -420,10 +439,25 @@ describe('query parameters', () => {
         ],
       ],
       [
+        'should support form delimited query styles for exploded array inpu and NOT encode already encoded values',
+        paramExplode,
+        { query: { color: arrayInputEncoded } },
+        [
+          { name: 'color', value: 'something%26nothing%3Dtrue' },
+          { name: 'color', value: 'hash%23data' },
+        ],
+      ],
+      [
         'should support form delimited query styles for non exploded object input',
         paramNoExplode,
         { query: { color: objectInput } },
         [{ name: 'color', value: 'R,100,G,200,B,150' }],
+      ],
+      [
+        'should support form delimited query styles for non exploded object input and NOT encode already encoded values',
+        paramNoExplode,
+        { query: { color: objectInputEncoded } },
+        [{ name: 'color', value: 'pound,something%26nothing%3Dtrue,hash,hash%23data' }],
       ],
       [
         'should support form delimited query styles for exploded object input',
@@ -436,16 +470,13 @@ describe('query parameters', () => {
         ],
       ],
       [
-        'should not encode already encoded values for non-exploded form delimited styles',
-        paramNoExplode,
-        { query: { color: encodeURIComponent(arrayInput) } },
-        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
-      ],
-      [
-        'should not encode already encoded values for exploded form delimited styles',
+        'should support form delimited query styles for exploded object input and NOT encode already encoded values',
         paramExplode,
-        { query: { color: encodeURIComponent(arrayInput) } },
-        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
+        { query: { color: objectInputEncoded } },
+        [
+          { name: 'pound', value: 'something%26nothing%3Dtrue' },
+          { name: 'hash', value: 'hash%23data' },
+        ],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
       const oas = createOas('/query', operation);
@@ -508,8 +539,13 @@ describe('query parameters', () => {
         'should support space delimited query styles for non exploded array input',
         paramNoExplode,
         { query: { color: arrayInput } },
-        // Note: this is space here, but %20 in the example above, because encoding happens far down the line
         [{ name: 'color', value: 'blue black brown' }],
+      ],
+      [
+        'should support space delimited query styles for non exploded array input and NOT encode already encoded values',
+        paramNoExplode,
+        { query: { color: arrayInputEncoded } },
+        [{ name: 'color', value: 'something%26nothing%3Dtrue hash%23data' }],
       ],
       [
         'should NOT support space delimited query styles for exploded array input',
@@ -530,18 +566,6 @@ describe('query parameters', () => {
         paramExplode,
         { query: { color: objectInput } },
         [],
-      ],
-      [
-        'should not encode already encoded values for non-exploded spaceDelimited styles',
-        paramNoExplode,
-        { query: { color: encodeURIComponent(arrayInput) } },
-        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
-      ],
-      [
-        'should not encode already encoded values for exploded spaceDelimited styles',
-        paramExplode,
-        { query: { color: encodeURIComponent(arrayInput) } },
-        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
       const oas = createOas('/query', operation);
@@ -607,6 +631,12 @@ describe('query parameters', () => {
         [{ name: 'color', value: 'blue|black|brown' }],
       ],
       [
+        'should support pipe delimited query styles for non exploded array input and NOT encode already encoded values',
+        paramNoExplode,
+        { query: { color: arrayInputEncoded } },
+        [{ name: 'color', value: 'something%26nothing%3Dtrue|hash%23data' }],
+      ],
+      [
         'should NOT support pipe delimited query styles for exploded array input',
         paramExplode,
         { query: { color: arrayInput } },
@@ -624,18 +654,6 @@ describe('query parameters', () => {
         paramExplode,
         { query: { color: objectInput } },
         [],
-      ],
-      [
-        'should not encode already encoded values for non-exploded pipeDelimited styles',
-        paramNoExplode,
-        { query: { color: encodeURIComponent(arrayInput) } },
-        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
-      ],
-      [
-        'should not encode already encoded values for exploded pipeDelimited styles',
-        paramExplode,
-        { query: { color: encodeURIComponent(arrayInput) } },
-        [{ name: 'color', value: 'blue%2Cblack%2Cbrown' }],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
       const oas = createOas('/query', operation);
@@ -723,16 +741,13 @@ describe('query parameters', () => {
         ],
       ],
       [
-        'should not encode already encoded values for non-exploded deepObject styles',
-        paramNoExplode,
-        { query: { color: encodeURIComponent(objectInput) } },
-        [{ name: 'color', value: '%5Bobject%20Object%5D' }],
-      ],
-      [
-        'should not encode already encoded values for exploded deepObject styles',
+        'should support deepObject delimited query styles for exploded object input and NOT encode already encoded values',
         paramExplode,
-        { query: { color: encodeURIComponent(objectInput) } },
-        [{ name: 'color', value: '%5Bobject%20Object%5D' }],
+        { query: { color: objectInputEncoded } },
+        [
+          { name: 'color[pound]', value: 'something%26nothing%3Dtrue' },
+          { name: 'color[hash]', value: 'hash%23data' },
+        ],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
       const oas = createOas('/query', operation);
@@ -744,7 +759,6 @@ describe('query parameters', () => {
   });
 });
 
-// This should work for form style, supporting empty, string array and object inputs, with both exploded and non-exploded output
 describe('cookie parameters', () => {
   const paramNoExplode = {
     parameters: [
@@ -843,7 +857,6 @@ describe('cookie parameters', () => {
   });
 });
 
-// This should work for simple styles on arrays and objects, each with and without exploding. Everything else should return undefined.
 describe('header parameters', () => {
   const paramNoExplode = {
     parameters: [

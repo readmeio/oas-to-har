@@ -65,11 +65,39 @@ function stylizeValue(value, parameter) {
     return value;
   }
 
+  // All parameter types have a default `style` format so if they don't have one prescribed we should still conform to
+  // what the spec defines.
+  //
+  // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#user-content-parameterstyle
+  // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#user-content-parameterstyle
+  let style = parameter.style;
+  if (!style) {
+    if (parameter.in === 'query') {
+      style = 'form';
+    } else if (parameter.in === 'path') {
+      style = 'simple';
+    } else if (parameter.in === 'header') {
+      style = 'simple';
+    } else if (parameter.in === 'cookie') {
+      style = 'form';
+    }
+  }
+
+  let explode = parameter.explode;
+  if (explode === undefined && style === 'form') {
+    // Per the spec if no `explode` is present but `style` is `form` then `explode` should default to `true`.
+    //
+    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#user-content-parameterexplode
+    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#user-content-parameterexplode
+    explode = true;
+  }
+
   return stylize({
+    location: parameter.in,
     value: finalValue,
     key: parameter.name,
-    style: parameter.style,
-    explode: parameter.explode,
+    style,
+    explode,
     /*
       TODO: this parameter is optional to stylize. It defaults to false, and can accept falsy, truthy, or "unsafe".
       I do not know if it is correct for query to use this. See style-serializer for more info
