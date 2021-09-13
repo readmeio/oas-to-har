@@ -1,3 +1,9 @@
+## <small>13.7.2 (2021-09-13)</small>
+
+* fix: bug where query parameters with percent signs would crash the library (#18) ([5ef5210](https://github.com/readmeio/oas-to-har/commit/5ef5210)), closes [#18](https://github.com/readmeio/oas-to-har/issues/18)
+
+
+
 ## <small>13.7.1 (2021-09-08)</small>
 
 * fix: quirks with un-styled query parameters not always being encoded (#17) ([7208473](https://github.com/readmeio/oas-to-har/commit/7208473)), closes [#17](https://github.com/readmeio/oas-to-har/issues/17)
