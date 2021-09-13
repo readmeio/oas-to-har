@@ -27,6 +27,31 @@ function createOas(path, operation) {
   });
 }
 
+test('should not crash on uri decoding errors', async () => {
+  const oas = createOas('/query', {
+    parameters: [
+      {
+        name: 'width',
+        in: 'query',
+      },
+    ],
+  });
+
+  // `decodeURIComponent('20%')` will throw an exception that we don't want to crash the library.
+  let formData = { query: { width: '20%' } };
+  let har = oasToHar(oas, oas.operation('/query', 'get'), formData);
+  await expect(har).toBeAValidHAR();
+
+  expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'width', value: '20%25' }]);
+
+  // However if `20%` has been encoded we should still be able to determine that because it'll decode properly.
+  formData = { query: { width: encodeURIComponent('20%') } };
+  har = oasToHar(oas, oas.operation('/query', 'get'), formData);
+  await expect(har).toBeAValidHAR();
+
+  expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'width', value: '20%25' }]);
+});
+
 /**
  * These tests ensure that each style matches the spec: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md#style-values
  *    and the examples https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md#style-examples.
