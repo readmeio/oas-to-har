@@ -3,8 +3,6 @@ const Oas = require('oas');
 const path = require('path');
 const datauri = require('datauri');
 
-const oasToSnippet = require('@readme/oas-to-snippet');
-
 const oasToHar = require('../src/index');
 const commonParameters = require('./__fixtures__/common-parameters.json');
 const multipartFormData = require('./__fixtures__/multipart-form-data.json');
@@ -343,17 +341,6 @@ describe('parameters', () => {
           },
           { name: 'array', value: 'something%26nothing%3Dtrue&array=nothing%26something%3Dfalse&array=another%20item' },
         ]);
-
-        // Run some integration tests with `@readme/oas-to-snippet` to ensure that URI encoding query params don't
-        // cause sideeffects there.
-        let { code: snippet } = oasToSnippet(null, null, null, null, 'curl', null, har);
-        expect(snippet).toMatchSnapshot();
-
-        ({ code: snippet } = oasToSnippet(null, null, null, null, 'node', null, har));
-        expect(snippet).toMatchSnapshot();
-
-        ({ code: snippet } = oasToSnippet(spec, operation, formData, null, 'node-simple', 'https://example.com', har));
-        expect(snippet).toMatchSnapshot();
       });
 
       it('should not double encode query parameters that are already encoded', async () => {
