@@ -1,3 +1,11 @@
+## <small>13.7.3 (2021-09-17)</small>
+
+* chore(deps): bumping deps ([4aa7ee7](https://github.com/readmeio/oas-to-har/commit/4aa7ee7))
+* ci: setting up codeql ([3a81a71](https://github.com/readmeio/oas-to-har/commit/3a81a71))
+* docs: adding a security policy ([c46da8f](https://github.com/readmeio/oas-to-har/commit/c46da8f))
+
+
+
 ## <small>13.7.2 (2021-09-13)</small>
 
 * fix: bug where query parameters with percent signs would crash the library (#18) ([5ef5210](https://github.com/readmeio/oas-to-har/commit/5ef5210)), closes [#18](https://github.com/readmeio/oas-to-har/issues/18)
