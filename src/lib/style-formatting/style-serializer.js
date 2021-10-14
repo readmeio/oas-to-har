@@ -12,8 +12,6 @@
  * @link https://github.com/swagger-api/swagger-js/blob/master/src/execute/oas3/style-serializer.js
  */
 
-const { Buffer } = require('buffer');
-
 const isRfc3986Reserved = char => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
 const isRfc3986Unreserved = char => /^[a-z0-9\-._~]+$/i.test(char);
 
@@ -80,7 +78,8 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
         return char;
       }
 
-      const encoded = (Buffer.from(char).toJSON().data || [])
+      const encoder = new TextEncoder();
+      const encoded = Array.from(encoder.encode(char))
         .map(byte => `0${byte.toString(16).toUpperCase()}`.slice(-2))
         .map(encodedByte => `%${encodedByte}`)
         .join('');
