@@ -1,3 +1,9 @@
+## <small>13.8.1 (2021-10-28)</small>
+
+* fix: upgrading `oas` to fix quirks in typescript iterators ([9b40501](https://github.com/readmeio/oas-to-har/commit/9b40501))
+
+
+
 ## 13.8.0 (2021-10-28)
 
 * chore(deps-dev): bump @commitlint/cli from 13.1.0 to 13.2.0 (#20) ([f964230](https://github.com/readmeio/oas-to-har/commit/f964230)), closes [#20](https://github.com/readmeio/oas-to-har/issues/20)
