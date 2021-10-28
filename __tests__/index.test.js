@@ -1867,7 +1867,7 @@ describe('content-type & accept header', () => {
 
     await expect(har).toBeAValidHAR();
     expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'Content-Type', value: 'text/xml' }]);
-    expect(har.log.entries[0].request.postData.mimeType).toStrictEqual('text/xml');
+    expect(har.log.entries[0].request.postData.mimeType).toBe('text/xml');
   });
 
   // Whether this is right or wrong, i'm not sure but this is what readme currently does
@@ -1947,7 +1947,7 @@ describe('content-type & accept header', () => {
     // we should default to that so as to we don't double up on Content-Type headers.
     expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'Content-Type', value: 'multipart/form-data' }]);
 
-    expect(har.log.entries[0].request.postData.mimeType).toStrictEqual('multipart/form-data');
+    expect(har.log.entries[0].request.postData.mimeType).toBe('multipart/form-data');
   });
 });
 
