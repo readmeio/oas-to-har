@@ -1,3 +1,17 @@
+## 13.8.0 (2021-10-28)
+
+* chore(deps-dev): bump @commitlint/cli from 13.1.0 to 13.2.0 (#20) ([f964230](https://github.com/readmeio/oas-to-har/commit/f964230)), closes [#20](https://github.com/readmeio/oas-to-har/issues/20)
+* chore(deps-dev): bump @commitlint/config-conventional (#23) ([201a2a1](https://github.com/readmeio/oas-to-har/commit/201a2a1)), closes [#23](https://github.com/readmeio/oas-to-har/issues/23)
+* chore(deps-dev): bump jest from 27.2.0 to 27.2.4 (#22) ([3ed4e71](https://github.com/readmeio/oas-to-har/commit/3ed4e71)), closes [#22](https://github.com/readmeio/oas-to-har/issues/22)
+* chore(deps-dev): bump jest-expect-har from 2.0.2 to 2.0.3 (#21) ([871291a](https://github.com/readmeio/oas-to-har/commit/871291a)), closes [#21](https://github.com/readmeio/oas-to-har/issues/21)
+* chore(deps-dev): upgrading dev deps ([8817ef0](https://github.com/readmeio/oas-to-har/commit/8817ef0))
+* chore(deps): bump actions/setup-node from 2.4.0 to 2.4.1 (#19) ([953bc4c](https://github.com/readmeio/oas-to-har/commit/953bc4c)), closes [#19](https://github.com/readmeio/oas-to-har/issues/19)
+* chore(deps): upgrading our oas deps to their latest releases ([58db84e](https://github.com/readmeio/oas-to-har/commit/58db84e))
+* feat: switch buffer to native Uint8Array (#24) ([1b15998](https://github.com/readmeio/oas-to-har/commit/1b15998)), closes [#24](https://github.com/readmeio/oas-to-har/issues/24)
+* docs: adding a code of conduct ([520c0f9](https://github.com/readmeio/oas-to-har/commit/520c0f9))
+
+
+
 ## <small>13.7.3 (2021-09-17)</small>
 
 * chore(deps): bumping deps ([4aa7ee7](https://github.com/readmeio/oas-to-har/commit/4aa7ee7))
