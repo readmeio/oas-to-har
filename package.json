@@ -22,8 +22,8 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@readme/oas-extensions": "^13.6.0",
-    "oas": "^14.6.1",
+    "@readme/oas-extensions": "^13.7.0",
+    "oas": "^16.0.2",
     "parse-data-url": "^4.0.1"
   },
   "devDependencies": {

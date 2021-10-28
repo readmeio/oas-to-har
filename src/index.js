@@ -1,12 +1,12 @@
 const extensions = require('@readme/oas-extensions');
-const { findSchemaDefinition, getSchema } = require('oas/src/utils');
-const { types: jsonSchemaTypes } = require('oas/src/operation/get-parameters-as-json-schema');
-const { Operation } = require('oas');
+const { Operation, utils } = require('oas');
 const parseDataUrl = require('parse-data-url');
 
 const configureSecurity = require('./lib/configure-security');
 const removeUndefinedObjects = require('./lib/remove-undefined-objects');
 const formatStyle = require('./lib/style-formatting');
+
+const { findSchemaDefinition, getSchema, jsonSchemaTypes } = utils;
 
 function formatter(values, param, type, onlyIfExists) {
   if (param.style) {
