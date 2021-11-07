@@ -3,13 +3,13 @@ function harValue(type, value) {
   return { type, value };
 }
 
-module.exports = function configureSecurity(oas, values, scheme) {
+module.exports = function configureSecurity(apiDefinition, values, scheme) {
   if (!scheme) return {};
 
   if (Object.keys(values || {}).length === 0) return undefined;
 
-  if (!oas.components.securitySchemes[scheme]) return undefined;
-  const security = oas.components.securitySchemes[scheme];
+  if (!apiDefinition.components.securitySchemes[scheme]) return undefined;
+  const security = apiDefinition.components.securitySchemes[scheme];
 
   if (security.type === 'http') {
     if (security.scheme === 'basic') {

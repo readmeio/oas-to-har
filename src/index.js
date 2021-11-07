@@ -103,6 +103,8 @@ module.exports = (
     operation = new Operation(oas, operationSchema.path, operationSchema.method, operationSchema);
   }
 
+  const apiDefinition = oas.getDefinition();
+
   const formData = {
     ...defaultFormDataTypes,
     server: {
@@ -140,7 +142,7 @@ module.exports = (
   const parameters = [];
   function addParameter(param) {
     if (param.$ref) {
-      parameters.push(findSchemaDefinition(param.$ref, oas));
+      parameters.push(findSchemaDefinition(param.$ref, apiDefinition));
     } else {
       parameters.push(param);
     }
@@ -149,8 +151,8 @@ module.exports = (
   operation.getParameters().forEach(addParameter);
 
   // Does this operation have any common parameters?
-  if (oas.paths && oas.paths[operation.path] && oas.paths[operation.path].parameters) {
-    oas.paths[operation.path].parameters.forEach(addParameter);
+  if (apiDefinition.paths && apiDefinition.paths[operation.path] && apiDefinition.paths[operation.path].parameters) {
+    apiDefinition.paths[operation.path].parameters.forEach(addParameter);
   }
 
   har.url = har.url.replace(/{([-_a-zA-Z0-9[\]]+)}/g, (full, key) => {
@@ -242,7 +244,7 @@ module.exports = (
     });
   }
 
-  let requestBody = getSchema(operation.schema, oas);
+  let requestBody = getSchema(operation.schema, apiDefinition);
   if (requestBody) {
     requestBody = requestBody.schema;
   } else {
@@ -396,7 +398,7 @@ module.exports = (
     // TODO pass these values through the formatter?
     securityRequirements.forEach(schemes => {
       Object.keys(schemes).forEach(security => {
-        const securityValue = configureSecurity(oas, auth, security);
+        const securityValue = configureSecurity(apiDefinition, auth, security);
         if (!securityValue) {
           return;
         }
