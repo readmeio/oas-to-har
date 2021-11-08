@@ -1,3 +1,13 @@
+## 14.0.0 (2021-11-08)
+
+* feat: upgrading oas to v17 (#29) ([c223f7a](https://github.com/readmeio/oas-to-har/commit/c223f7a)), closes [#29](https://github.com/readmeio/oas-to-har/issues/29)
+* chore(deps-dev): bump @commitlint/cli from 13.2.1 to 14.1.0 (#28) ([c901d3e](https://github.com/readmeio/oas-to-har/commit/c901d3e)), closes [#28](https://github.com/readmeio/oas-to-har/issues/28)
+* chore(deps-dev): bump @commitlint/config-conventional (#26) ([60fbaad](https://github.com/readmeio/oas-to-har/commit/60fbaad)), closes [#26](https://github.com/readmeio/oas-to-har/issues/26)
+* chore(deps): bump actions/checkout from 2.3.4 to 2.3.5 (#25) ([ee57a05](https://github.com/readmeio/oas-to-har/commit/ee57a05)), closes [#25](https://github.com/readmeio/oas-to-har/issues/25)
+* chore(deps): bump oas from 16.0.3 to 16.0.4 (#27) ([7680f30](https://github.com/readmeio/oas-to-har/commit/7680f30)), closes [#27](https://github.com/readmeio/oas-to-har/issues/27)
+
+
+
 ## <small>13.8.1 (2021-10-28)</small>
 
 * fix: upgrading `oas` to fix quirks in typescript iterators ([9b40501](https://github.com/readmeio/oas-to-har/commit/9b40501))
