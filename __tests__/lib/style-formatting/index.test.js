@@ -1,6 +1,8 @@
-const Oas = require('oas');
+const Oas = require('oas').default;
+const oasToHar = require('../../../src');
+const toBeAValidHAR = require('jest-expect-har').default;
 
-const oasToHar = require('../../../src/index');
+expect.extend({ toBeAValidHAR });
 
 const emptyInput = '';
 const undefinedInput = undefined;

@@ -1,15 +1,19 @@
 const extensions = require('@readme/oas-extensions');
-const Oas = require('oas');
+const Oas = require('oas').default;
 const path = require('path');
 const datauri = require('datauri');
+const oasToHar = require('../src');
+const toBeAValidHAR = require('jest-expect-har').default;
 
-const oasToHar = require('../src/index');
+const petstore = require('@readme/oas-examples/3.0/json/petstore.json');
 const commonParameters = require('./__fixtures__/common-parameters.json');
 const multipartFormData = require('./__fixtures__/multipart-form-data.json');
 const multipartFormDataArrayOfFiles = require('./__fixtures__/multipart-form-data/array-of-files.json');
 const serverVariables = require('./__fixtures__/server-variables.json');
 
-const oas = new Oas();
+expect.extend({ toBeAValidHAR });
+
+const oas = new Oas({});
 
 test('should output a har object', async () => {
   const har = oasToHar(oas);
@@ -28,6 +32,32 @@ test('should output a har object', async () => {
             method: '',
             queryString: [],
             url: 'https://example.com',
+          },
+        },
+      ],
+    },
+  });
+});
+
+test('should accept an Operation instance as the operation schema', async () => {
+  const spec = new Oas(petstore);
+  const operation = spec.operation('/pet', 'post');
+  const har = oasToHar(spec, operation);
+
+  await expect(har).toBeAValidHAR();
+  expect(har).toStrictEqual({
+    log: {
+      entries: [
+        {
+          request: {
+            cookies: [],
+            headers: [{ name: 'Content-Type', value: 'application/json' }],
+            headersSize: 0,
+            queryString: [],
+            bodySize: 0,
+            method: 'POST',
+            url: 'http://petstore.swagger.io/v2/pet',
+            httpVersion: 'HTTP/1.1',
           },
         },
       ],
