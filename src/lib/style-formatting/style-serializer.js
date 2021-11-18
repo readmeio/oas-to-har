@@ -1,8 +1,5 @@
-/* eslint-disable sonarjs/no-extra-arguments */
 /* eslint-disable no-use-before-define */
-/* eslint-disable sonarjs/prefer-immediate-return */
 /* eslint-disable no-param-reassign */
-/* eslint-disable sonarjs/no-identical-functions */
 
 /**
  * This file has been extracted and modified from `swagger-client`.
@@ -39,7 +36,7 @@ module.exports = function stylize(config) {
 
 module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
   str,
-  { escape, returnIfEncoded = false } = {},
+  { escape, returnIfEncoded = false } = {}, // eslint-disable-line default-param-last
   parse
 ) {
   if (typeof str === 'number') {

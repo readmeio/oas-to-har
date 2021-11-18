@@ -210,7 +210,7 @@ describe('path parameters', () => {
         { path: { color: objectInput } },
         `https://example.com/style-path/${semicolon}R${equals}100${semicolon}G${equals}200${semicolon}B${equals}150`,
       ],
-    ])('%s', async (_, operation = {}, formData = {}, expected) => {
+    ])('%s', async (_, operation, formData, expected) => {
       const oas = createOas('/style-path/{color}', operation);
       const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
       await expect(har).toBeAValidHAR();
@@ -291,7 +291,7 @@ describe('path parameters', () => {
         { path: { color: objectInput } },
         `https://example.com/style-path/.R${equals}100.G${equals}200.B${equals}150`,
       ],
-    ])('%s', async (_, operation = {}, formData = {}, expected) => {
+    ])('%s', async (_, operation, formData, expected) => {
       const oas = createOas('/style-path/{color}', operation);
       const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
       await expect(har).toBeAValidHAR();
@@ -372,7 +372,7 @@ describe('path parameters', () => {
         { path: { color: objectInput } },
         `https://example.com/style-path/R${equals}100${comma}G${equals}200${comma}B${equals}150`,
       ],
-    ])('%s', async (_, operation = {}, formData = {}, expected) => {
+    ])('%s', async (_, operation, formData, expected) => {
       const oas = createOas('/style-path/{color}', operation);
       const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
       await expect(har).toBeAValidHAR();

@@ -215,7 +215,7 @@ describe('parameters', () => {
         { path: { id: 0 } },
         'https://example.com/param-path/0',
       ],
-    ])('%s', async (_, operation = {}, formData = {}, expectedUrl) => {
+    ])('%s', async (_, operation, formData, expectedUrl) => {
       const har = oasToHar(
         oas,
         {

@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-nested-template-literals */
 const configureSecurity = require('../../src/lib/configure-security');
 
 describe('configure-security', () => {
