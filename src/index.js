@@ -65,6 +65,16 @@ function stringify(json) {
   return JSON.stringify(removeUndefinedObjects(typeof json.RAW_BODY !== 'undefined' ? json.RAW_BODY : json));
 }
 
+function stringifyParameter(param) {
+  if (param === null || isPrimitive(param)) {
+    return param;
+  } else if (Array.isArray(param) && param.every(isPrimitive)) {
+    return String(param);
+  }
+
+  return JSON.stringify(param);
+}
+
 function appendHarValue(harParam, name, value) {
   if (typeof value === 'undefined') return;
 
@@ -262,7 +272,7 @@ module.exports = (
           Object.keys(cleanFormData).forEach(name => {
             har.postData.params.push({
               name,
-              value: String(cleanFormData[name]),
+              value: stringifyParameter(cleanFormData[name]),
             });
           });
         }
