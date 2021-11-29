@@ -1,3 +1,10 @@
+## <small>14.0.1 (2021-11-29)</small>
+
+* fix: bug where nested object formData would be improperly converted as a string (#30) ([4f993a6](https://github.com/readmeio/oas-to-har/commit/4f993a6)), closes [#30](https://github.com/readmeio/oas-to-har/issues/30)
+* chore(deps-dev): upgrading eslint to v8 ([09f4b27](https://github.com/readmeio/oas-to-har/commit/09f4b27))
+
+
+
 ## 14.0.0 (2021-11-08)
 
 * feat: upgrading oas to v17 (#29) ([c223f7a](https://github.com/readmeio/oas-to-har/commit/c223f7a)), closes [#29](https://github.com/readmeio/oas-to-har/issues/29)
