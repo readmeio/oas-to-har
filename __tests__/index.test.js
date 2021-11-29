@@ -1571,6 +1571,24 @@ describe('requestBody', () => {
         { name: 'b', value: '1,2,3' },
       ]);
     });
+
+    it('should support nested objects', () => {
+      // eslint-disable-next-line global-require
+      const spec = new Oas(require('./__fixtures__/formData-nested-object.json'));
+      const operation = spec.operation('/anything', 'post');
+      const formData = {
+        id: 12345,
+        Request: {
+          MerchantId: 'buster',
+        },
+      };
+
+      const har = oasToHar(spec, operation, { formData });
+      expect(har.log.entries[0].request.postData.params).toStrictEqual([
+        { name: 'id', value: 12345 },
+        { name: 'Request', value: '{"MerchantId":"buster"}' },
+      ]);
+    });
   });
 });
 
