@@ -1,3 +1,17 @@
+## <small>14.0.2 (2021-12-01)</small>
+
+* chore(deps-dev): bump @commitlint/cli from 14.1.0 to 15.0.0 (#33) ([64cf308](https://github.com/readmeio/oas-to-har/commit/64cf308)), closes [#33](https://github.com/readmeio/oas-to-har/issues/33)
+* chore(deps-dev): bump @commitlint/config-conventional (#37) ([7e76ecd](https://github.com/readmeio/oas-to-har/commit/7e76ecd)), closes [#37](https://github.com/readmeio/oas-to-har/issues/37)
+* chore(deps-dev): bump eslint from 8.2.0 to 8.3.0 (#38) ([b6c0fa2](https://github.com/readmeio/oas-to-har/commit/b6c0fa2)), closes [#38](https://github.com/readmeio/oas-to-har/issues/38)
+* chore(deps-dev): bump jest from 27.3.1 to 27.4.3 (#35) ([f20606b](https://github.com/readmeio/oas-to-har/commit/f20606b)), closes [#35](https://github.com/readmeio/oas-to-har/issues/35)
+* chore(deps-dev): bump prettier from 2.4.1 to 2.5.0 (#39) ([8f63cc6](https://github.com/readmeio/oas-to-har/commit/8f63cc6)), closes [#39](https://github.com/readmeio/oas-to-har/issues/39)
+* chore(deps): bump @readme/oas-extensions from 14.0.0 to 14.0.1 (#34) ([d110b9e](https://github.com/readmeio/oas-to-har/commit/d110b9e)), closes [#34](https://github.com/readmeio/oas-to-har/issues/34)
+* chore(deps): bump actions/checkout from 2.3.5 to 2.4.0 (#32) ([0937308](https://github.com/readmeio/oas-to-har/commit/0937308)), closes [#32](https://github.com/readmeio/oas-to-har/issues/32)
+* chore(deps): bump actions/setup-node from 2.4.1 to 2.5.0 (#31) ([fae7aed](https://github.com/readmeio/oas-to-har/commit/fae7aed)), closes [#31](https://github.com/readmeio/oas-to-har/issues/31)
+* chore(deps): bump oas from 17.1.0 to 17.1.6 (#36) ([0d2f7ff](https://github.com/readmeio/oas-to-har/commit/0d2f7ff)), closes [#36](https://github.com/readmeio/oas-to-har/issues/36)
+
+
+
 ## <small>14.0.1 (2021-11-29)</small>
 
 * fix: bug where nested object formData would be improperly converted as a string (#30) ([4f993a6](https://github.com/readmeio/oas-to-har/commit/4f993a6)), closes [#30](https://github.com/readmeio/oas-to-har/issues/30)
