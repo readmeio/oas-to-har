@@ -230,7 +230,7 @@ module.exports = (
     });
   }
 
-  // Are there `x-static` static headers configured for this OAS?
+  // Are there `x-headers` static headers configured for this OAS?
   const userDefinedHeaders = extensions.getExtension(extensions.HEADERS, oas, operation);
   if (userDefinedHeaders) {
     userDefinedHeaders.forEach(header => {
@@ -364,6 +364,7 @@ module.exports = (
                     }
                   });
 
+                  // `RAW_BODY` is a ReadMe-specific thing where we'll interpret its contents as raw JSON.
                   if (typeof cleanBody.RAW_BODY !== 'undefined') {
                     cleanBody = cleanBody.RAW_BODY;
                   }
