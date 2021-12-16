@@ -1,3 +1,9 @@
+## <small>14.0.4 (2021-12-16)</small>
+
+* fix: issue where we'd try to stylize iterate over a nullilsh value (#42) ([5baa462](https://github.com/readmeio/oas-to-har/commit/5baa462)), closes [#42](https://github.com/readmeio/oas-to-har/issues/42)
+
+
+
 ## <small>14.0.3 (2021-12-16)</small>
 
 * fix: cleaning up engine requirements and updating dev deps (#40) ([c377906](https://github.com/readmeio/oas-to-har/commit/c377906)), closes [#40](https://github.com/readmeio/oas-to-har/issues/40)
