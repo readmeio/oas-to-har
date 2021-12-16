@@ -114,7 +114,7 @@ function handleExplode(value, parameter) {
     });
   }
 
-  if (typeof value === 'object') {
+  if (typeof value === 'object' && value !== null) {
     const newObj = {};
 
     Object.keys(value).forEach(key => {
