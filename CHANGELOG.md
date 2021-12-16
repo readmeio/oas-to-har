@@ -1,3 +1,10 @@
+## <small>14.0.3 (2021-12-16)</small>
+
+* fix: cleaning up engine requirements and updating dev deps (#40) ([c377906](https://github.com/readmeio/oas-to-har/commit/c377906)), closes [#40](https://github.com/readmeio/oas-to-har/issues/40)
+* test: overhauling the test suite to make it easier to maintain (#41) ([e04944d](https://github.com/readmeio/oas-to-har/commit/e04944d)), closes [#41](https://github.com/readmeio/oas-to-har/issues/41)
+
+
+
 ## <small>14.0.2 (2021-12-01)</small>
 
 * chore(deps-dev): bump @commitlint/cli from 14.1.0 to 15.0.0 (#33) ([64cf308](https://github.com/readmeio/oas-to-har/commit/64cf308)), closes [#33](https://github.com/readmeio/oas-to-har/issues/33)
