@@ -54,6 +54,27 @@ test('should not crash on uri decoding errors', async () => {
   expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'width', value: '20%25' }]);
 });
 
+test('should not crash for `explode: true` and `default: null` combinations', () => {
+  const oas = createOas('/query', {
+    parameters: [
+      {
+        in: 'query',
+        name: 'pet_id',
+        required: false,
+        explode: true,
+        schema: {
+          type: 'string',
+          default: null,
+        },
+      },
+    ],
+  });
+
+  expect(() => {
+    oasToHar(oas, oas.operation('/query', 'get'), { query: { pet_id: null } });
+  }).not.toThrow(TypeError);
+});
+
 /**
  * These tests ensure that each style matches the spec: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md#style-values
  *    and the examples https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md#style-examples.
