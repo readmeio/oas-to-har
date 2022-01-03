@@ -1,3 +1,15 @@
+## <small>14.0.5 (2022-01-03)</small>
+
+* chore(deps-dev): bump @commitlint/cli from 15.0.0 to 16.0.1 (#45) ([4ce0b94](https://github.com/readmeio/oas-to-har/commit/4ce0b94)), closes [#45](https://github.com/readmeio/oas-to-har/issues/45)
+* chore(deps-dev): bump @commitlint/config-conventional (#48) ([dc5195a](https://github.com/readmeio/oas-to-har/commit/dc5195a)), closes [#48](https://github.com/readmeio/oas-to-har/issues/48)
+* chore(deps-dev): bump @readme/eslint-config from 8.0.4 to 8.1.1 (#46) ([8788c1e](https://github.com/readmeio/oas-to-har/commit/8788c1e)), closes [#46](https://github.com/readmeio/oas-to-har/issues/46)
+* chore(deps-dev): bump eslint from 8.4.1 to 8.6.0 (#47) ([e211feb](https://github.com/readmeio/oas-to-har/commit/e211feb)), closes [#47](https://github.com/readmeio/oas-to-har/issues/47)
+* chore(deps): bump actions/setup-node from 2.5.0 to 2.5.1 (#43) ([a05def3](https://github.com/readmeio/oas-to-har/commit/a05def3)), closes [#43](https://github.com/readmeio/oas-to-har/issues/43)
+* chore(deps): bump oas from 17.3.2 to 17.4.0 (#44) ([8abb825](https://github.com/readmeio/oas-to-har/commit/8abb825)), closes [#44](https://github.com/readmeio/oas-to-har/issues/44)
+* chore(deps): upgrading oas and @readme/oas-extensions (#49) ([822cb6d](https://github.com/readmeio/oas-to-har/commit/822cb6d)), closes [#49](https://github.com/readmeio/oas-to-har/issues/49)
+
+
+
 ## <small>14.0.4 (2021-12-16)</small>
 
 * fix: issue where we'd try to stylize iterate over a nullilsh value (#42) ([5baa462](https://github.com/readmeio/oas-to-har/commit/5baa462)), closes [#42](https://github.com/readmeio/oas-to-har/issues/42)
