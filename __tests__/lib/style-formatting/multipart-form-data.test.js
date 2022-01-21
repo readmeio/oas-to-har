@@ -1,4 +1,3 @@
-/*
 const Oas = require('oas').default;
 const oasToHar = require('../../../src');
 const toBeAValidHAR = require('jest-expect-har').default;
@@ -17,194 +16,151 @@ function createOas(path, operation) {
   return new Oas({
     paths: {
       [path]: {
-        get: operation,
+        post: operation,
       },
     },
   });
 }
 
+function buildBody(style, explode) {
+  return {
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          schema: {
+            type: 'object',
+            properties: {
+              primitive: {
+                type: 'string',
+              },
+              array: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+              object: {
+                type: 'object',
+                properties: {
+                  foo: {
+                    type: 'string',
+                  },
+                  bar: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+          encoding: {
+            primitive: {
+              style,
+              explode,
+            },
+            array: {
+              style,
+              explode,
+            },
+            object: {
+              style,
+              explode,
+            },
+          },
+        },
+      },
+    },
+  };
+}
+
 describe('multipart/form-data parameters', () => {
   describe('form style', () => {
-    const bodyNoExplode = {
-      requestBody: {
-        content: {
-          'multipart/form-data': {
-            schema: {
-              type: 'object',
-              properties: {
-                primitive: {
-                  type: 'string',
-                },
-                array: {
-                  type: 'array',
-                  items: {
-                    type: 'string',
-                  },
-                },
-                object: {
-                  type: 'object',
-                  properties: {
-                    foo: {
-                      type: 'string',
-                    },
-                    bar: {
-                      type: 'string',
-                    },
-                  },
-                },
-              },
-            },
-            encoding: {
-              primitive: {
-                style: 'form',
-                explode: false,
-              },
-              array: {
-                style: 'form',
-                explode: false,
-              },
-              object: {
-                style: 'form',
-                explode: false,
-              },
-            },
-          },
-        },
-      },
-    };
-
-    const bodyExplode = {
-      requestBody: {
-        content: {
-          'multipart/form-data': {
-            schema: {
-              type: 'object',
-              properties: {
-                primitive: {
-                  type: 'string',
-                },
-                array: {
-                  type: 'array',
-                  items: {
-                    type: 'string',
-                  },
-                },
-                object: {
-                  type: 'object',
-                  properties: {
-                    foo: {
-                      type: 'string',
-                    },
-                    bar: {
-                      type: 'string',
-                    },
-                  },
-                },
-              },
-            },
-            encoding: {
-              primitive: {
-                style: 'form',
-                explode: true,
-              },
-              array: {
-                style: 'form',
-                explode: true,
-              },
-              object: {
-                style: 'form',
-                explode: true,
-              },
-            },
-          },
-        },
-      },
-    };
+    const bodyNoExplode = buildBody('form', false);
+    const bodyExplode = buildBody('form', true);
 
     it.each([
       [
         'should support form delimited multipart/form-data styles for non exploded empty input',
-        paramNoExplode,
-        { query: { color: emptyInput } },
-        [{ name: 'color', value: '' }],
+        bodyNoExplode,
+        { body: { primitive: emptyInput } },
+        [{ name: 'primitive', value: '' }],
       ],
       [
         'should support form delimited multipart/form-data styles for exploded empty input',
-        paramExplode,
-        { query: { color: emptyInput } },
-        [{ name: 'color', value: '' }],
+        bodyExplode,
+        { body: { primitive: emptyInput } },
+        [{ name: 'primitive', value: '' }],
       ],
       [
         'should support form delimited multipart/form-data styles for non exploded string input',
-        paramNoExplode,
-        { query: { color: stringInput } },
-        [{ name: 'color', value: 'blue' }],
+        bodyNoExplode,
+        { body: { primitive: stringInput } },
+        [{ name: 'primitive', value: 'blue' }],
       ],
       [
         'should support form delimited multipart/form-data styles for non exploded string input and NOT encode already encoded values',
-        paramNoExplode,
-        { query: { color: stringInputEncoded } },
-        [{ name: 'color', value: 'something%26nothing%3Dtrue' }],
+        bodyNoExplode,
+        { body: { primitive: stringInputEncoded } },
+        [{ name: 'primitive', value: 'something%26nothing%3Dtrue' }],
       ],
       [
         'should support form delimited multipart/form-data styles for exploded string input',
-        paramExplode,
-        { query: { color: stringInput } },
-        [{ name: 'color', value: 'blue' }],
+        bodyExplode,
+        { body: { primitive: stringInput } },
+        [{ name: 'primitive', value: 'blue' }],
       ],
       [
         'should support form delimited multipart/form-data styles for exploded string input and NOT encode already encoded values',
-        paramExplode,
-        { query: { color: stringInputEncoded } },
-        [{ name: 'color', value: 'something%26nothing%3Dtrue' }],
+        bodyExplode,
+        { body: { primitive: stringInputEncoded } },
+        [{ name: 'primitive', value: 'something%26nothing%3Dtrue' }],
       ],
       [
         'should support form delimited multipart/form-data styles for non exploded array input',
-        paramNoExplode,
-        { query: { color: arrayInput } },
-        [{ name: 'color', value: 'blue,black,brown' }],
+        bodyNoExplode,
+        { body: { array: arrayInput } },
+        [{ name: 'array', value: 'blue,black,brown' }],
       ],
       [
         'should support form delimited multipart/form-data styles for non exploded array input and NOT encode already encoded values',
-        paramNoExplode,
-        { query: { color: arrayInputEncoded } },
-        [{ name: 'color', value: 'something%26nothing%3Dtrue,hash%23data' }],
+        bodyNoExplode,
+        { body: { array: arrayInputEncoded } },
+        [{ name: 'array', value: 'something%26nothing%3Dtrue,hash%23data' }],
       ],
       [
         'should support form delimited multipart/form-data styles for exploded array input',
-        paramExplode,
-        { query: { color: arrayInput } },
+        bodyExplode,
+        { body: { array: arrayInput } },
         [
-          { name: 'color', value: 'blue' },
-          { name: 'color', value: 'black' },
-          { name: 'color', value: 'brown' },
+          { name: 'array', value: 'blue' },
+          { name: 'array', value: 'black' },
+          { name: 'array', value: 'brown' },
         ],
       ],
       [
         'should support form delimited multipart/form-data styles for exploded array inpu and NOT encode already encoded values',
-        paramExplode,
-        { query: { color: arrayInputEncoded } },
+        bodyExplode,
+        { body: { array: arrayInputEncoded } },
         [
-          { name: 'color', value: 'something%26nothing%3Dtrue' },
-          { name: 'color', value: 'hash%23data' },
+          { name: 'array', value: 'something%26nothing%3Dtrue' },
+          { name: 'array', value: 'hash%23data' },
         ],
       ],
       [
         'should support form delimited multipart/form-data styles for non exploded object input',
-        paramNoExplode,
-        { query: { color: objectInput } },
-        [{ name: 'color', value: 'R,100,G,200,B,150' }],
+        bodyNoExplode,
+        { body: { object: objectInput } },
+        [{ name: 'object', value: 'R,100,G,200,B,150' }],
       ],
       [
         'should support form delimited multipart/form-data styles for non exploded object input and NOT encode already encoded values',
-        paramNoExplode,
-        { query: { color: objectInputEncoded } },
-        [{ name: 'color', value: 'pound,something%26nothing%3Dtrue,hash,hash%23data' }],
+        bodyNoExplode,
+        { body: { object: objectInputEncoded } },
+        [{ name: 'object', value: 'pound,something%26nothing%3Dtrue,hash,hash%23data' }],
       ],
       [
         'should support form delimited multipart/form-data styles for exploded object input',
-        paramExplode,
-        { query: { color: objectInput } },
+        bodyExplode,
+        { body: { object: objectInput } },
         [
           { name: 'R', value: '100' },
           { name: 'G', value: '200' },
@@ -213,270 +169,231 @@ describe('multipart/form-data parameters', () => {
       ],
       [
         'should support form delimited multipart/form-data styles for exploded object input and NOT encode already encoded values',
-        paramExplode,
-        { query: { color: objectInputEncoded } },
+        bodyExplode,
+        { body: { object: objectInputEncoded } },
         [
           { name: 'pound', value: 'something%26nothing%3Dtrue' },
           { name: 'hash', value: 'hash%23data' },
         ],
       ],
-    ])('%s', async (_, operation = {}, formData = {}, requestBody = []) => {
-      const oas = createOas('/query', operation);
-      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
+    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = []) => {
+      const oas = createOas('/body', operation);
+      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      // index.js line 288 is the form-data parsing, it should go into params and auto fix it. check line 311 and 319 for the formatter
-      expect(har.log.entries[0].request.params).toStrictEqual(requestBody);
+      console.log('data', har.log.entries[0].request.postData);
+      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
     });
   });
 
   describe('spaceDelimited style', () => {
-    const paramNoExplode = {
-      parameters: [
-        {
-          name: 'color',
-          in: 'query',
-          style: 'spaceDelimited',
-          explode: false,
-        },
-      ],
-    };
-
-    const paramExplode = {
-      parameters: [
-        {
-          name: 'color',
-          in: 'query',
-          style: 'spaceDelimited',
-          explode: true,
-        },
-      ],
-    };
+    const bodyNoExplode = buildBody('spaceDelimited', false);
+    const bodyExplode = buildBody('spaceDelimited', true);
 
     it.each([
       [
         'should NOT support space delimited multipart/form-data styles for non exploded empty input',
-        paramNoExplode,
-        { query: { color: emptyInput } },
-        [],
+        bodyNoExplode,
+        { body: { primitive: emptyInput } },
+        undefined,
       ],
       [
         'should NOT support space delimited multipart/form-data styles for exploded empty input',
-        paramExplode,
-        { query: { color: emptyInput } },
-        [],
+        bodyExplode,
+        { body: { primitive: emptyInput } },
+        undefined,
       ],
       [
         'should NOT support space delimited multipart/form-data styles for non exploded string input',
-        paramNoExplode,
-        { query: { color: stringInput } },
-        [],
+        bodyNoExplode,
+        { body: { primitive: stringInput } },
+        undefined,
       ],
       [
         'should NOT support space delimited multipart/form-data styles for exploded string input',
-        paramExplode,
-        { query: { color: stringInput } },
-        [],
+        bodyExplode,
+        { body: { primitive: stringInput } },
+        undefined,
       ],
       [
         'should support space delimited multipart/form-data styles for non exploded array input',
-        paramNoExplode,
-        { query: { color: arrayInput } },
-        [{ name: 'color', value: 'blue black brown' }],
+        bodyNoExplode,
+        { body: { array: arrayInput } },
+        [{ name: 'array', value: 'blue black brown' }],
       ],
       [
         'should support space delimited multipart/form-data styles for non exploded array input and NOT encode already encoded values',
-        paramNoExplode,
-        { query: { color: arrayInputEncoded } },
-        [{ name: 'color', value: 'something%26nothing%3Dtrue hash%23data' }],
+        bodyNoExplode,
+        { body: { array: arrayInputEncoded } },
+        [{ name: 'array', value: 'something%26nothing%3Dtrue hash%23data' }],
       ],
       [
         'should NOT support space delimited multipart/form-data styles for exploded array input',
-        paramExplode,
-        { query: { color: arrayInput } },
-        [],
+        bodyExplode,
+        [{ body: { array: arrayInput } }],
+        undefined,
       ],
       // This is supposed to be supported, but the style-serializer library we use does not have support. Holding off for now.
       /* [
         'should support space delimited multipart/form-data styles for non exploded object input',
-        paramNoExplode,
-        { query: { color: objectInput } },
+        bodyNoExplode,
+        { body: { object: objectInput } },
         // Note: this is space here, but %20 in the example above, because encoding happens far down the line
-        [{ name: 'color', value: 'R 100 G 200 B 150' }],
+        { object: 'R 100 G 200 B 150' },
       ],
       [
         'should NOT support space delimited multipart/form-data styles for exploded object input',
-        paramExplode,
-        { query: { color: objectInput } },
+        bodyExplode,
+        { body: { object: objectInput } },
         [],
-      ],
-    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
-      const oas = createOas('/query', operation);
-      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
+      ], */
+    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
+      const oas = createOas('/body', operation);
+      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
+      // Note: not sure what the best path forward is here. research har spec more
+      // Basically some tests in this section, when the test is a "should NOT" test, give us an empty array, and some don't give us postData at all
+      // we need to standardize them
+      if (expectedRequestBody === undefined) {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(har.log.entries[0].request.postData).toBeUndefined();
+      } else {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
+      }
     });
   });
 
   describe('pipeDelimited style', () => {
-    const paramNoExplode = {
-      parameters: [
-        {
-          name: 'color',
-          in: 'query',
-          style: 'pipeDelimited',
-          explode: false,
-        },
-      ],
-    };
-
-    const paramExplode = {
-      parameters: [
-        {
-          name: 'color',
-          in: 'query',
-          style: 'pipeDelimited',
-          explode: true,
-        },
-      ],
-    };
+    const bodyNoExplode = buildBody('pipeDelimited', false);
+    const bodyExplode = buildBody('pipeDelimited', true);
 
     it.each([
       [
         'should NOT support pipe delimited multipart/form-data styles for non exploded empty input',
-        paramNoExplode,
-        { query: { color: emptyInput } },
-        [],
+        bodyNoExplode,
+        { body: { primitive: emptyInput } },
+        undefined,
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for exploded empty input',
-        paramExplode,
-        { query: { color: emptyInput } },
-        [],
+        bodyExplode,
+        { body: { primitive: emptyInput } },
+        undefined,
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for non exploded string input',
-        paramNoExplode,
-        { query: { color: stringInput } },
-        [],
+        bodyNoExplode,
+        { body: { primitive: stringInput } },
+        undefined,
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for exploded string input',
-        paramExplode,
-        { query: { color: stringInput } },
-        [],
+        bodyExplode,
+        { body: { primitive: stringInput } },
+        undefined,
       ],
       [
         'should support pipe delimited multipart/form-data styles for non exploded array input',
-        paramNoExplode,
-        { query: { color: arrayInput } },
-        [{ name: 'color', value: 'blue|black|brown' }],
+        bodyNoExplode,
+        { body: { array: arrayInput } },
+        [{ name: 'array', value: 'blue|black|brown' }],
       ],
       [
         'should support pipe delimited multipart/form-data styles for non exploded array input and NOT encode already encoded values',
-        paramNoExplode,
-        { query: { color: arrayInputEncoded } },
-        [{ name: 'color', value: 'something%26nothing%3Dtrue|hash%23data' }],
+        bodyNoExplode,
+        { body: { array: arrayInputEncoded } },
+        [{ name: 'array', value: 'something%26nothing%3Dtrue|hash%23data' }],
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for exploded array input',
-        paramExplode,
-        { query: { color: arrayInput } },
-        [],
+        bodyExplode,
+        { body: { array: arrayInput } },
+        undefined,
       ],
       // This is supposed to be supported, but the style-seralizer library we use does not have support. Holding off for now.
       /* [
         'should support pipe delimited multipart/form-data styles for non exploded object input',
-        paramNoExplode,
-        { query: { color: objectInput } },
-        [{ name: 'color', value: 'R|100|G|200|B|150' }],
+        bodyNoExplode,
+        { body: { color: objectInput } },
+        { color: 'R|100|G|200|B|150' },
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for exploded object input',
-        paramExplode,
-        { query: { color: objectInput } },
+        bodyExplode,
+        { body: { color: objectInput } },
         [],
-      ],
-    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
-      const oas = createOas('/query', operation);
-      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
+      ], */
+    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
+      const oas = createOas('/body', operation);
+      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
+      // Note: not sure what the best path forward is here. research har spec more
+      // Basically some tests in this section, when the test is a "should NOT" test, give us an empty array, and some don't give us postData at all
+      // we need to standardize them
+      if (expectedRequestBody === undefined) {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(har.log.entries[0].request.postData).toBeUndefined();
+      } else {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
+      }
     });
   });
 
   describe('deepObject style', () => {
-    const paramNoExplode = {
-      parameters: [
-        {
-          name: 'color',
-          in: 'query',
-          style: 'deepObject',
-          explode: false,
-        },
-      ],
-    };
-
-    const paramExplode = {
-      parameters: [
-        {
-          name: 'color',
-          in: 'query',
-          style: 'deepObject',
-          explode: true,
-        },
-      ],
-    };
+    const bodyNoExplode = buildBody('deepObject', false);
+    const bodyExplode = buildBody('deepObject', true);
 
     it.each([
       [
         'should NOT support deepObject delimited multipart/form-data styles for non exploded empty input',
-        paramNoExplode,
-        { query: { color: emptyInput } },
+        bodyNoExplode,
+        { body: { primitive: emptyInput } },
         [],
       ],
       [
         'should NOT support deepObject delimited multipart/form-data styles for exploded empty input',
-        paramExplode,
-        { query: { color: emptyInput } },
+        bodyExplode,
+        { body: { primitive: emptyInput } },
         [],
       ],
       [
         'should NOT support deepObject delimited multipart/form-data styles for non exploded string input',
-        paramNoExplode,
-        { query: { color: stringInput } },
+        bodyNoExplode,
+        { body: { primitive: stringInput } },
         [],
       ],
       [
         'should NOT support deepObject delimited multipart/form-data styles for exploded string input',
-        paramExplode,
-        { query: { color: stringInput } },
+        bodyExplode,
+        { body: { primitive: stringInput } },
         [],
       ],
       [
         'should NOT support deepObject delimited multipart/form-data styles for non exploded array input',
-        paramNoExplode,
-        { query: { color: arrayInput } },
+        bodyNoExplode,
+        { body: { array: arrayInput } },
         [],
       ],
       [
         'should NOT support deepObject delimited multipart/form-data styles for exploded array input',
-        paramExplode,
-        { query: { color: arrayInput } },
+        bodyExplode,
+        { body: { array: arrayInput } },
         [],
       ],
       [
         'should NOT support deepObject delimited multipart/form-data styles for non exploded object input',
-        paramNoExplode,
-        { query: { color: objectInput } },
+        bodyNoExplode,
+        { body: { object: objectInput } },
         [],
       ],
       [
         'should support deepObject delimited multipart/form-data styles for exploded object input',
-        paramExplode,
-        { query: { color: objectInput } },
+        bodyExplode,
+        { body: { object: objectInput } },
         [
           { name: 'color[R]', value: '100' },
           { name: 'color[G]', value: '200' },
@@ -485,20 +402,28 @@ describe('multipart/form-data parameters', () => {
       ],
       [
         'should support deepObject delimited multipart/form-data styles for exploded object input and NOT encode already encoded values',
-        paramExplode,
-        { query: { color: objectInputEncoded } },
+        bodyExplode,
+        { body: { object: objectInputEncoded } },
         [
           { name: 'color[pound]', value: 'something%26nothing%3Dtrue' },
           { name: 'color[hash]', value: 'hash%23data' },
         ],
       ],
-    ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {
-      const oas = createOas('/query', operation);
-      const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
+    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
+      const oas = createOas('/body', operation);
+      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.queryString).toStrictEqual(expectedQueryString);
+      // Note: not sure what the best path forward is here. research har spec more
+      // Basically some tests in this section, when the test is a "should NOT" test, give us an empty array, and some don't give us postData at all
+      // we need to standardize them
+      if (expectedRequestBody === undefined) {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(har.log.entries[0].request.postData).toBeUndefined();
+      } else {
+        // eslint-disable-next-line jest/no-conditional-expect
+        expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
+      }
     });
   });
 });
-*/
