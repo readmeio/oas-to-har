@@ -195,7 +195,7 @@ function encodePrimitive({ location, key, value, style, escape }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
-      returnIfEncoded: location === 'query',
+      returnIfEncoded: location === 'query' || location === 'body',
     });
 
   if (style === 'simple') {

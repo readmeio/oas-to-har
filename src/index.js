@@ -70,6 +70,7 @@ function multipartBodyToFormatterParams(multipartBody, oasMediaTypeObject) {
         explode: paramEncoding ? paramEncoding.explode : undefined,
         required: schema.required && schema.required.includes(key),
         schema: schema.properties[key],
+        in: 'body',
       };
     })
     .filter(Boolean);
@@ -406,6 +407,8 @@ module.exports = (
             }
           }
         } catch (e) {
+          // you should log this error if you're debugging why data is showing up in text, when it  should show up in params
+          // console.log('catching ', e);
           // If anything above fails for whatever reason, assume that whatever we had is invalid JSON and just treat it
           // as raw text.
           har.postData.text = stringify(formData.body);

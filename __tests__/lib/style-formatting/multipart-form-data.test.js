@@ -181,7 +181,6 @@ describe('multipart/form-data parameters', () => {
       const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      console.log('data', har.log.entries[0].request.postData);
       expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
     });
   });
@@ -195,25 +194,25 @@ describe('multipart/form-data parameters', () => {
         'should NOT support space delimited multipart/form-data styles for non exploded empty input',
         bodyNoExplode,
         { body: { primitive: emptyInput } },
-        undefined,
+        [],
       ],
       [
         'should NOT support space delimited multipart/form-data styles for exploded empty input',
         bodyExplode,
         { body: { primitive: emptyInput } },
-        undefined,
+        [],
       ],
       [
         'should NOT support space delimited multipart/form-data styles for non exploded string input',
         bodyNoExplode,
         { body: { primitive: stringInput } },
-        undefined,
+        [],
       ],
       [
         'should NOT support space delimited multipart/form-data styles for exploded string input',
         bodyExplode,
         { body: { primitive: stringInput } },
-        undefined,
+        [],
       ],
       [
         'should support space delimited multipart/form-data styles for non exploded array input',
@@ -230,8 +229,8 @@ describe('multipart/form-data parameters', () => {
       [
         'should NOT support space delimited multipart/form-data styles for exploded array input',
         bodyExplode,
-        [{ body: { array: arrayInput } }],
-        undefined,
+        { body: { array: arrayInput } },
+        [],
       ],
       // This is supposed to be supported, but the style-serializer library we use does not have support. Holding off for now.
       /* [
@@ -274,25 +273,25 @@ describe('multipart/form-data parameters', () => {
         'should NOT support pipe delimited multipart/form-data styles for non exploded empty input',
         bodyNoExplode,
         { body: { primitive: emptyInput } },
-        undefined,
+        [],
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for exploded empty input',
         bodyExplode,
         { body: { primitive: emptyInput } },
-        undefined,
+        [],
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for non exploded string input',
         bodyNoExplode,
         { body: { primitive: stringInput } },
-        undefined,
+        [],
       ],
       [
         'should NOT support pipe delimited multipart/form-data styles for exploded string input',
         bodyExplode,
         { body: { primitive: stringInput } },
-        undefined,
+        [],
       ],
       [
         'should support pipe delimited multipart/form-data styles for non exploded array input',
@@ -310,7 +309,7 @@ describe('multipart/form-data parameters', () => {
         'should NOT support pipe delimited multipart/form-data styles for exploded array input',
         bodyExplode,
         { body: { array: arrayInput } },
-        undefined,
+        [],
       ],
       // This is supposed to be supported, but the style-seralizer library we use does not have support. Holding off for now.
       /* [
@@ -395,9 +394,9 @@ describe('multipart/form-data parameters', () => {
         bodyExplode,
         { body: { object: objectInput } },
         [
-          { name: 'color[R]', value: '100' },
-          { name: 'color[G]', value: '200' },
-          { name: 'color[B]', value: '150' },
+          { name: 'object[R]', value: '100' },
+          { name: 'object[G]', value: '200' },
+          { name: 'object[B]', value: '150' },
         ],
       ],
       [
@@ -405,8 +404,8 @@ describe('multipart/form-data parameters', () => {
         bodyExplode,
         { body: { object: objectInputEncoded } },
         [
-          { name: 'color[pound]', value: 'something%26nothing%3Dtrue' },
-          { name: 'color[hash]', value: 'hash%23data' },
+          { name: 'object[pound]', value: 'something%26nothing%3Dtrue' },
+          { name: 'object[hash]', value: 'hash%23data' },
         ],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
