@@ -161,7 +161,12 @@ module.exports = (
   operation.getParameters().forEach(addParameter);
 
   // Does this operation have any common parameters?
-  if (apiDefinition.paths && apiDefinition.paths[operation.path] && apiDefinition.paths[operation.path].parameters) {
+  if (
+    apiDefinition &&
+    apiDefinition.paths &&
+    apiDefinition.paths[operation.path] &&
+    apiDefinition.paths[operation.path].parameters
+  ) {
     apiDefinition.paths[operation.path].parameters.forEach(addParameter);
   }
 
