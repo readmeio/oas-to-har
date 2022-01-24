@@ -54,7 +54,7 @@ function multipartBodyToFormatterParams(multipartBody, oasMediaTypeObject) {
 
   return Object.keys(multipartBody)
     .map(key => {
-      // If we have an incomming parameter, but it's not in the schema
+      // If we have an incoming parameter, but it's not in the schema
       //    ignore it
       if (!schema.properties[key]) {
         return false;
