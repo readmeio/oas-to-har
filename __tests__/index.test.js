@@ -58,6 +58,14 @@ test('should accept an Operation instance as the operation schema', async () => 
   });
 });
 
+test('should return a valid HAR without an apiDefintion', async () => {
+  const spec = new Oas({});
+  const operation = spec.operation('/pet', 'post');
+  const har = oasToHar(spec, operation);
+
+  await expect(har).toBeAValidHAR();
+});
+
 describe('url', () => {
   it('should be constructed from oas.url()', () => {
     const spec = new Oas(petstore);
