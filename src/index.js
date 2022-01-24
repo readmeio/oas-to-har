@@ -32,7 +32,7 @@ function formatter(values, param, type, onlyIfExists) {
   }
 
   // Handle file uploads. Specifically arrays of file uploads which need to be formatted very specifically.
-  if (param.schema && param.schema.type === 'array' && param.schema.items.format === 'binary') {
+  if (param.schema && param.schema.type === 'array' && param.schema.items && param.schema.items.format === 'binary') {
     return JSON.stringify(value);
   }
 
@@ -52,28 +52,33 @@ function multipartBodyToFormatterParams(multipartBody, oasMediaTypeObject) {
   const schema = oasMediaTypeObject.schema;
   const encoding = oasMediaTypeObject.encoding;
 
-  return Object.keys(multipartBody)
-    .map(key => {
-      // If we have an incoming parameter, but it's not in the schema
-      //    ignore it
-      if (!schema.properties[key]) {
-        return false;
-      }
+  if (typeof multipartBody === 'object' && multipartBody !== null) {
+    return Object.keys(multipartBody)
+      .map(key => {
+        // If we have an incoming parameter, but it's not in the schema
+        //    ignore it
+        if (!schema.properties[key]) {
+          return false;
+        }
 
-      const paramEncoding = encoding ? encoding[key] : undefined;
+        const paramEncoding = encoding ? encoding[key] : undefined;
 
-      return {
-        name: key,
-        // If the style isn't defined, use the default
-        style: paramEncoding ? paramEncoding.style : undefined,
-        // If explode isn't defined, use the default
-        explode: paramEncoding ? paramEncoding.explode : undefined,
-        required: schema.required && schema.required.includes(key),
-        schema: schema.properties[key],
-        in: 'body',
-      };
-    })
-    .filter(Boolean);
+        return {
+          name: key,
+          // If the style isn't defined, use the default
+          style: paramEncoding ? paramEncoding.style : undefined,
+          // If explode isn't defined, use the default
+          explode: paramEncoding ? paramEncoding.explode : undefined,
+          required: schema.required && schema.required.includes(key),
+          schema: schema.properties[key],
+          in: 'body',
+        };
+      })
+      .filter(Boolean);
+  }
+
+  // Pretty sure that we'll never have anything but an object for multipart bodies, so returning empty array if we get anything else.
+  return [];
 }
 
 const defaultFormDataTypes = Object.keys(jsonSchemaTypes).reduce((prev, curr) => {

@@ -73,6 +73,16 @@ function buildBody(style, explode) {
 }
 
 describe('multipart/form-data parameters', () => {
+  describe('addtl tests', () => {
+    it('should return an empty array when provided a privitive request body', async () => {
+      const oas = createOas('/body', buildBody('form', false));
+      const har = oasToHar(oas, oas.operation('/body', 'post'), { body: 'hello, primitive string body' });
+      await expect(har).toBeAValidHAR();
+
+      expect(har.log.entries[0].request.postData.params).toStrictEqual([]);
+    });
+  });
+
   describe('form style', () => {
     const bodyNoExplode = buildBody('form', false);
     const bodyExplode = buildBody('form', true);
@@ -251,16 +261,7 @@ describe('multipart/form-data parameters', () => {
       const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      // Note: not sure what the best path forward is here. research har spec more
-      // Basically some tests in this section, when the test is a "should NOT" test, give us an empty array, and some don't give us postData at all
-      // we need to standardize them
-      if (expectedRequestBody === undefined) {
-        // eslint-disable-next-line jest/no-conditional-expect
-        expect(har.log.entries[0].request.postData).toBeUndefined();
-      } else {
-        // eslint-disable-next-line jest/no-conditional-expect
-        expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
-      }
+      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
     });
   });
 
@@ -329,16 +330,7 @@ describe('multipart/form-data parameters', () => {
       const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      // Note: not sure what the best path forward is here. research har spec more
-      // Basically some tests in this section, when the test is a "should NOT" test, give us an empty array, and some don't give us postData at all
-      // we need to standardize them
-      if (expectedRequestBody === undefined) {
-        // eslint-disable-next-line jest/no-conditional-expect
-        expect(har.log.entries[0].request.postData).toBeUndefined();
-      } else {
-        // eslint-disable-next-line jest/no-conditional-expect
-        expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
-      }
+      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
     });
   });
 
@@ -413,16 +405,7 @@ describe('multipart/form-data parameters', () => {
       const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
 
-      // Note: not sure what the best path forward is here. research har spec more
-      // Basically some tests in this section, when the test is a "should NOT" test, give us an empty array, and some don't give us postData at all
-      // we need to standardize them
-      if (expectedRequestBody === undefined) {
-        // eslint-disable-next-line jest/no-conditional-expect
-        expect(har.log.entries[0].request.postData).toBeUndefined();
-      } else {
-        // eslint-disable-next-line jest/no-conditional-expect
-        expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
-      }
+      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
     });
   });
 });
