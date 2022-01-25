@@ -18,6 +18,7 @@ function formatter(values, param, type, onlyIfExists) {
 
   let value;
 
+  // Handle missing values
   if (typeof values[type][param.name] !== 'undefined') {
     value = values[type][param.name];
   } else if (onlyIfExists && !param.required) {
@@ -30,6 +31,11 @@ function formatter(values, param, type, onlyIfExists) {
     return param.name;
   }
 
+  // Handle file uploads. Specifically arrays of file uploads which need to be formatted very specifically.
+  if (param.schema && param.schema.type === 'array' && param.schema.items && param.schema.items.format === 'binary') {
+    return JSON.stringify(value);
+  }
+
   if (value !== undefined) {
     // Query params should always be formatted, even if they don't have a `style` serialization configured.
     if (type === 'query') {
@@ -40,6 +46,39 @@ function formatter(values, param, type, onlyIfExists) {
   }
 
   return undefined;
+}
+
+function multipartBodyToFormatterParams(multipartBody, oasMediaTypeObject) {
+  const schema = oasMediaTypeObject.schema;
+  const encoding = oasMediaTypeObject.encoding;
+
+  if (typeof multipartBody === 'object' && multipartBody !== null) {
+    return Object.keys(multipartBody)
+      .map(key => {
+        // If we have an incoming parameter, but it's not in the schema
+        //    ignore it
+        if (!schema.properties[key]) {
+          return false;
+        }
+
+        const paramEncoding = encoding ? encoding[key] : undefined;
+
+        return {
+          name: key,
+          // If the style isn't defined, use the default
+          style: paramEncoding ? paramEncoding.style : undefined,
+          // If explode isn't defined, use the default
+          explode: paramEncoding ? paramEncoding.explode : undefined,
+          required: schema.required && schema.required.includes(key),
+          schema: schema.properties[key],
+          in: 'body',
+        };
+      })
+      .filter(Boolean);
+  }
+
+  // Pretty sure that we'll never have anything but an object for multipart bodies, so returning empty array if we get anything else.
+  return [];
 }
 
 const defaultFormDataTypes = Object.keys(jsonSchemaTypes).reduce((prev, curr) => {
@@ -75,7 +114,7 @@ function stringifyParameter(param) {
   return JSON.stringify(param);
 }
 
-function appendHarValue(harParam, name, value) {
+function appendHarValue(harParam, name, value, addtlData = {}) {
   if (typeof value === 'undefined') return;
 
   if (Array.isArray(value)) {
@@ -91,6 +130,7 @@ function appendHarValue(harParam, name, value) {
   } else {
     // If the formatter gives us a non-array, non-object, we add it as is
     harParam.push({
+      ...addtlData,
       name,
       value: String(value),
     });
@@ -305,39 +345,32 @@ module.exports = (
             );
 
             if (cleanBody !== undefined) {
+              const multipartParams = multipartBodyToFormatterParams(
+                formData.body,
+                operation.schema.requestBody.content['multipart/form-data']
+              );
+
               Object.keys(cleanBody).forEach(name => {
-                // We neither have an easy way to transform `name` into `name[]` to signify that it's an array payload
-                // (and for all we know it might be an array of objects!), but also at the same time the HAR spec
-                // doesn't give any guidance for these kinds of cases so instead we're just falling back to
-                // stringifying the content instead of potentially including `fileName` properties.
-                if (Array.isArray(cleanBody[name])) {
-                  har.postData.params.push({
-                    name,
-                    value: JSON.stringify(cleanBody[name]),
-                  });
+                const param = multipartParams.find(multipartParam => multipartParam.name === name);
 
-                  return;
-                }
-
-                const data = {
-                  name,
-                  value: String(cleanBody[name]),
-                };
+                const value = formatter(formData, param, 'body', true);
 
                 // If we're dealing with a binary type, and the value is a valid data URL we should parse out any
                 // available filename and content type to send along with the parameter to interpreters like `fetch-har`
                 // can make sense of it and send a usable payload.
+                const addtlData = {};
+
                 if (binaryTypes.includes(name)) {
-                  const parsed = parseDataUrl(data.value);
+                  const parsed = parseDataUrl(value);
                   if (parsed) {
-                    data.fileName = 'name' in parsed ? parsed.name : 'unknown';
+                    addtlData.fileName = 'name' in parsed ? parsed.name : 'unknown';
                     if ('contentType' in parsed) {
-                      data.contentType = parsed.contentType;
+                      addtlData.contentType = parsed.contentType;
                     }
                   }
                 }
 
-                har.postData.params.push(data);
+                appendHarValue(har.postData.params, name, value, addtlData);
               });
             }
           } else {
@@ -384,6 +417,8 @@ module.exports = (
             }
           }
         } catch (e) {
+          // you should log this error if you're debugging why data is showing up in text, when it  should show up in params
+          // console.log('catching ', e);
           // If anything above fails for whatever reason, assume that whatever we had is invalid JSON and just treat it
           // as raw text.
           har.postData.text = stringify(formData.body);
