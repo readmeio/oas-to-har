@@ -1,3 +1,12 @@
+## 14.1.0 (2022-01-25)
+
+* chore(deps): bumping all out of date deps (#51) ([926763b](https://github.com/readmeio/oas-to-har/commit/926763b)), closes [#51](https://github.com/readmeio/oas-to-har/issues/51)
+* chore(deps): bumping node-fetch ([1405d30](https://github.com/readmeio/oas-to-har/commit/1405d30))
+* feat: add support for styles on multipart/form-data request bodies (#50) ([e7596bd](https://github.com/readmeio/oas-to-har/commit/e7596bd)), closes [#50](https://github.com/readmeio/oas-to-har/issues/50)
+* fix: check for orphaned apiDefinition-less pages (#52) ([04ed408](https://github.com/readmeio/oas-to-har/commit/04ed408)), closes [#52](https://github.com/readmeio/oas-to-har/issues/52)
+
+
+
 ## <small>14.0.5 (2022-01-03)</small>
 
 * chore(deps-dev): bump @commitlint/cli from 15.0.0 to 16.0.1 (#45) ([4ce0b94](https://github.com/readmeio/oas-to-har/commit/4ce0b94)), closes [#45](https://github.com/readmeio/oas-to-har/issues/45)
