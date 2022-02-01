@@ -34,6 +34,8 @@ test('should output a HAR object if no operation information is supplied', async
 
 test('should accept an Operation instance as the operation schema', async () => {
   const spec = new Oas(petstore);
+  await spec.dereference();
+
   const operation = spec.operation('/pet', 'post');
   const har = oasToHar(spec, operation);
 

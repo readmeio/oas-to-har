@@ -6,7 +6,7 @@ const configureSecurity = require('./lib/configure-security');
 const removeUndefinedObjects = require('./lib/remove-undefined-objects');
 const formatStyle = require('./lib/style-formatting');
 
-const { getSchema, jsonSchemaTypes } = utils;
+const { jsonSchemaTypes } = utils;
 
 function formatter(values, param, type, onlyIfExists) {
   if (param.style) {
@@ -279,14 +279,12 @@ module.exports = (
     });
   }
 
-  let requestBody = getSchema(operation.schema, apiDefinition);
-  if (requestBody) {
-    requestBody = requestBody.schema;
-  } else {
-    requestBody = { schema: {} };
+  let requestBody = false;
+  if (operation.hasRequestBody()) {
+    [, requestBody] = operation.getRequestBody();
   }
 
-  if (requestBody.schema && Object.keys(requestBody.schema).length) {
+  if (requestBody && requestBody.schema && Object.keys(requestBody.schema).length) {
     if (operation.isFormUrlEncoded()) {
       if (Object.keys(formData.formData).length) {
         const cleanFormData = removeUndefinedObjects(JSON.parse(JSON.stringify(formData.formData)));
@@ -416,7 +414,7 @@ module.exports = (
 
   // Add a `Content-Type` header if there are any body values setup above or if there is a schema defined, but only do
   // so if we don't already have a `Content-Type` present as it's impossible for a request to have multiple.
-  if ((har.postData.text || Object.keys(requestBody.schema).length) && !hasContentType) {
+  if ((har.postData.text || (requestBody && Object.keys(requestBody.schema).length)) && !hasContentType) {
     har.headers.push({
       name: 'Content-Type',
       value: contentType,
