@@ -6,34 +6,6 @@ const commonParameters = require('./__fixtures__/common-parameters.json');
 
 expect.extend({ toBeAValidHAR });
 
-test('should work for schemas that require a parameters lookup', () => {
-  const spec = new Oas({
-    paths: {
-      '/': {
-        get: {
-          parameters: [
-            {
-              $ref: '#/components/parameters/authorization',
-            },
-          ],
-        },
-      },
-    },
-    components: {
-      parameters: {
-        authorization: {
-          name: 'Authorization',
-          in: 'header',
-        },
-      },
-    },
-  });
-
-  const har = oasToHar(spec, spec.operation('/', 'get'), { header: { Authorization: 'test' } });
-
-  expect(har.log.entries[0].request.headers[0].value).toBe('test');
-});
-
 describe('path', () => {
   it('should pass through unknown path params', () => {
     const spec = new Oas({
@@ -466,6 +438,8 @@ describe('header', () => {
 describe('common parameters', () => {
   it('should work for common parameters', async () => {
     const spec = new Oas(commonParameters);
+    await spec.dereference();
+
     const har = oasToHar(spec, spec.operation('/anything/{id}', 'post'), {
       path: { id: 1234 },
       header: { 'x-extra-id': 'abcd' },

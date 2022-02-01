@@ -6,7 +6,7 @@ const configureSecurity = require('./lib/configure-security');
 const removeUndefinedObjects = require('./lib/remove-undefined-objects');
 const formatStyle = require('./lib/style-formatting');
 
-const { findSchemaDefinition, getSchema, jsonSchemaTypes } = utils;
+const { getSchema, jsonSchemaTypes } = utils;
 
 function formatter(values, param, type, onlyIfExists) {
   if (param.style) {
@@ -188,27 +188,7 @@ module.exports = (
     }
   }
 
-  // Does this operation have any parameters?
-  const parameters = [];
-  function addParameter(param) {
-    if (param.$ref) {
-      parameters.push(findSchemaDefinition(param.$ref, apiDefinition));
-    } else {
-      parameters.push(param);
-    }
-  }
-
-  operation.getParameters().forEach(addParameter);
-
-  // Does this operation have any common parameters?
-  if (
-    apiDefinition &&
-    apiDefinition.paths &&
-    apiDefinition.paths[operation.path] &&
-    apiDefinition.paths[operation.path].parameters
-  ) {
-    apiDefinition.paths[operation.path].parameters.forEach(addParameter);
-  }
+  const parameters = operation.getParameters();
 
   har.url = har.url.replace(/{([-_a-zA-Z0-9[\]]+)}/g, (full, key) => {
     if (!operation || !parameters) return key; // No path params at all
