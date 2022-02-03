@@ -1,3 +1,17 @@
+## 15.0.0 (2022-02-03)
+
+> **BREAKING RELEASE**
+>
+> `oas-to-har` now assumes that the OpenAPI definition you're supplying it has been fully dereferenced.
+
+* feat: upgrading oas and replacing some deprecated accessors (#58) ([ed97a5d](https://github.com/readmeio/oas-to-har/commit/ed97a5d)), closes [#58](https://github.com/readmeio/oas-to-har/issues/58)
+* chore(deps-dev): bump @readme/eslint-config from 8.1.2 to 8.2.0 (#54) ([f783873](https://github.com/readmeio/oas-to-har/commit/f783873)), closes [#54](https://github.com/readmeio/oas-to-har/issues/54)
+* chore(deps-dev): bump @readme/oas-examples from 4.3.3 to 4.4.0 (#53) ([fec1f82](https://github.com/readmeio/oas-to-har/commit/fec1f82)), closes [#53](https://github.com/readmeio/oas-to-har/issues/53)
+* chore(deps-dev): bump eslint from 8.7.0 to 8.8.0 (#56) ([0559975](https://github.com/readmeio/oas-to-har/commit/0559975)), closes [#56](https://github.com/readmeio/oas-to-har/issues/56)
+* chore(deps-dev): bump jest-expect-har from 3.0.1 to 3.0.2 (#57) ([cd2c19e](https://github.com/readmeio/oas-to-har/commit/cd2c19e)), closes [#57](https://github.com/readmeio/oas-to-har/issues/57)
+
+
+
 ## 14.1.0 (2022-01-25)
 
 * chore(deps): bumping all out of date deps (#51) ([926763b](https://github.com/readmeio/oas-to-har/commit/926763b)), closes [#51](https://github.com/readmeio/oas-to-har/issues/51)
