@@ -23,7 +23,8 @@
   "dependencies": {
     "@readme/oas-extensions": "^14.1.1",
     "oas": "^17.7.1",
-    "parse-data-url": "^4.0.1"
+    "parse-data-url": "^4.0.1",
+    "remove-undefined-objects": "^1.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
