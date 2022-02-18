@@ -601,14 +601,12 @@ describe('query parameters', () => {
         { query: { color: arrayInput } },
         [],
       ],
-      // This is supposed to be supported, but the style-serializer library we use does not have support. Holding off for now.
-      /* [
+      [
         'should support space delimited query styles for non exploded object input',
         paramNoExplode,
         { query: { color: objectInput } },
-        // Note: this is space here, but %20 in the example above, because encoding happens far down the line
         [{ name: 'color', value: 'R 100 G 200 B 150' }],
-      ], */
+      ],
       [
         'should NOT support space delimited query styles for exploded object input',
         paramExplode,
@@ -690,13 +688,12 @@ describe('query parameters', () => {
         { query: { color: arrayInput } },
         [],
       ],
-      // This is supposed to be supported, but the style-seralizer library we use does not have support. Holding off for now.
-      /* [
+      [
         'should support pipe delimited query styles for non exploded object input',
         paramNoExplode,
         { query: { color: objectInput } },
         [{ name: 'color', value: 'R|100|G|200|B|150' }],
-      ], */
+      ],
       [
         'should NOT support pipe delimited query styles for exploded object input',
         paramExplode,

@@ -188,6 +188,26 @@ function encodeObject({ location, key, value, style, explode, escape }) {
     }, '');
   }
 
+  // Supported in 3.1, added by Readme
+  if (style === 'spaceDelimited') {
+    return valueKeys.reduce((prev, curr) => {
+      const val = valueEncoder(value[curr]);
+      const prefix = prev ? `${prev} ` : '';
+
+      return `${prefix}${curr} ${val}`;
+    }, '');
+  }
+
+  // Supported in 3.1, added by Readme
+  if (style === 'pipeDelimited') {
+    return valueKeys.reduce((prev, curr) => {
+      const val = valueEncoder(value[curr]);
+      const prefix = prev ? `${prev}|` : '';
+
+      return `${prefix}${curr}|${val}`;
+    }, '');
+  }
+
   return undefined;
 }
 
