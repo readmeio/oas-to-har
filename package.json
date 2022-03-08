@@ -29,7 +29,7 @@
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
     "@commitlint/config-conventional": "^16.0.0",
-    "@readme/eslint-config": "^8.1.2",
+    "@readme/eslint-config": "^8.5.0",
     "@readme/oas-examples": "^4.3.3",
     "datauri": "^4.1.0",
     "eslint": "^8.7.0",
