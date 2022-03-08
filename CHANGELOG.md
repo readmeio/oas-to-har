@@ -1,3 +1,18 @@
+## 16.0.0 (2022-03-08)
+
+* chore(deps-dev): bump @commitlint/cli from 16.1.0 to 16.2.1 (#65) ([d1ce5b5](https://github.com/readmeio/oas-to-har/commit/d1ce5b5)), closes [#65](https://github.com/readmeio/oas-to-har/issues/65)
+* chore(deps-dev): bump @commitlint/config-conventional (#62) ([51ad7f3](https://github.com/readmeio/oas-to-har/commit/51ad7f3)), closes [#62](https://github.com/readmeio/oas-to-har/issues/62)
+* chore(deps-dev): bump @readme/eslint-config from 8.2.0 to 8.5.0 (#67) ([adae50c](https://github.com/readmeio/oas-to-har/commit/adae50c)), closes [#67](https://github.com/readmeio/oas-to-har/issues/67)
+* chore(deps-dev): bump eslint from 8.8.0 to 8.10.0 (#63) ([31c1aa3](https://github.com/readmeio/oas-to-har/commit/31c1aa3)), closes [#63](https://github.com/readmeio/oas-to-har/issues/63)
+* chore(deps-dev): bump jest from 27.4.7 to 27.5.1 (#64) ([d99e123](https://github.com/readmeio/oas-to-har/commit/d99e123)), closes [#64](https://github.com/readmeio/oas-to-har/issues/64)
+* chore(deps): bump actions/setup-node from 2.5.1 to 3 (#61) ([362859e](https://github.com/readmeio/oas-to-har/commit/362859e)), closes [#61](https://github.com/readmeio/oas-to-har/issues/61)
+* chore(deps): upgrading oas to v18 (#69) ([3a5a54d](https://github.com/readmeio/oas-to-har/commit/3a5a54d)), closes [#69](https://github.com/readmeio/oas-to-har/issues/69)
+* docs: incorporating alex into our documentation workflow (#68) ([6b20368](https://github.com/readmeio/oas-to-har/commit/6b20368)), closes [#68](https://github.com/readmeio/oas-to-har/issues/68)
+* feat: moving to our new remove-undefined-objects package (#59) ([d35a014](https://github.com/readmeio/oas-to-har/commit/d35a014)), closes [#59](https://github.com/readmeio/oas-to-har/issues/59)
+* feat(styles): add space and pipe delimited support for objects per 3.1 (#60) ([49e2d13](https://github.com/readmeio/oas-to-har/commit/49e2d13)), closes [#60](https://github.com/readmeio/oas-to-har/issues/60)
+
+
+
 ## 15.0.0 (2022-02-03)
 
 > **BREAKING RELEASE**
