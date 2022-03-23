@@ -23,22 +23,22 @@
   },
   "dependencies": {
     "@readme/oas-extensions": "^14.2.0",
-    "oas": "^18.0.0",
+    "oas": "^18.0.6",
     "parse-data-url": "^4.0.1",
     "remove-undefined-objects": "^1.1.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.1.0",
+    "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.0.0",
-    "@readme/eslint-config": "^8.5.0",
-    "@readme/oas-examples": "^4.3.3",
+    "@readme/eslint-config": "^8.5.1",
+    "@readme/oas-examples": "^4.5.0",
     "alex": "^10.0.0",
     "datauri": "^4.1.0",
-    "eslint": "^8.7.0",
+    "eslint": "^8.11.0",
     "husky": "^7.0.4",
     "jest": "^27.4.7",
     "jest-expect-har": "^3.0.1",
-    "prettier": "^2.5.1"
+    "prettier": "^2.6.0"
   },
   "prettier": "@readme/eslint-config/prettier",
   "commitlint": {
