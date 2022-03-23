@@ -69,6 +69,36 @@ describe('`body` data handling', () => {
     expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: 'test' }));
   });
 
+  it('should support a null-assigned property', () => {
+    const spec = new Oas({
+      paths: {
+        '/requestBody': {
+          post: {
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      foo: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { foo: null } });
+
+    expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ foo: null }));
+  });
+
   it('should return nothing for undefined body property', () => {
     const spec = new Oas({
       paths: {
