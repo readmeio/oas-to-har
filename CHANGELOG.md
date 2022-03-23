@@ -1,3 +1,11 @@
+## 16.1.0 (2022-03-23)
+
+* chore: removing some docs from the repo as they're in our .github/ repo now ([f3d81c3](https://github.com/readmeio/oas-to-har/commit/f3d81c3))
+* chore(deps): bumping out of date deps ([0d7add6](https://github.com/readmeio/oas-to-har/commit/0d7add6))
+* fix: issue where null-assigned object properties would be filtered out (#70) ([9d51794](https://github.com/readmeio/oas-to-har/commit/9d51794)), closes [#70](https://github.com/readmeio/oas-to-har/issues/70)
+
+
+
 ## 16.0.0 (2022-03-08)
 
 * chore(deps-dev): bump @commitlint/cli from 16.1.0 to 16.2.1 (#65) ([d1ce5b5](https://github.com/readmeio/oas-to-har/commit/d1ce5b5)), closes [#65](https://github.com/readmeio/oas-to-har/issues/65)
