@@ -86,7 +86,7 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
     .join('');
 };
 
-function encodeArray({ location, key, value, style, explode, escape, isAllowedReserved }) {
+function encodeArray({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
@@ -131,7 +131,7 @@ function encodeArray({ location, key, value, style, explode, escape, isAllowedRe
   return undefined;
 }
 
-function encodeObject({ location, key, value, style, explode, escape, isAllowedReserved }) {
+function encodeObject({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
