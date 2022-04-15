@@ -8,8 +8,8 @@ const formatStyle = require('./lib/style-formatting');
 
 const { jsonSchemaTypes } = utils;
 
-function formatter(values, param, type, onlyIfExists, serialize) {
-  if (param.style && serialize) {
+function formatter(values, param, type, onlyIfExists) {
+  if (param.style) {
     const value = values[type][param.name];
     // Note: Technically we could send everything through the format style and choose the proper default for each
     //  `in` type (e.g. query defaults to form).
@@ -38,7 +38,7 @@ function formatter(values, param, type, onlyIfExists, serialize) {
 
   if (value !== undefined) {
     // Query params should always be formatted, even if they don't have a `style` serialization configured.
-    if (type === 'query' && serialize) {
+    if (type === 'query') {
       return formatStyle(value, param);
     }
 
@@ -146,8 +146,6 @@ module.exports = (
     // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in order to funnel requests
     // through our CORS-friendly proxy.
     proxyUrl: false,
-    // If false, completely disable style serialization and bypass calling formatStyle()
-    serialize: true,
   }
 ) => {
   let operation = operationSchema;
@@ -200,16 +198,16 @@ module.exports = (
 
     // The library that handles our style processing already encodes uri elements. For everything else we need to handle it here.
     if (!parameter.style) {
-      return encodeURIComponent(formatter(formData, parameter, 'path', false, opts.serialize));
+      return encodeURIComponent(formatter(formData, parameter, 'path'));
     }
 
-    return formatter(formData, parameter, 'path', false, opts.serialize);
+    return formatter(formData, parameter, 'path');
   });
 
   const queryStrings = parameters && parameters.filter(param => param.in === 'query');
   if (queryStrings && queryStrings.length) {
     queryStrings.forEach(queryString => {
-      const value = formatter(formData, queryString, 'query', true, opts.serialize);
+      const value = formatter(formData, queryString, 'query', true);
       appendHarValue(har.queryString, queryString.name, value);
     });
   }
@@ -218,7 +216,7 @@ module.exports = (
   const cookies = parameters && parameters.filter(param => param.in === 'cookie');
   if (cookies && cookies.length) {
     cookies.forEach(cookie => {
-      const value = formatter(formData, cookie, 'cookie', true, opts.serialize);
+      const value = formatter(formData, cookie, 'cookie', true);
       appendHarValue(har.cookies, cookie.name, value);
     });
   }
@@ -246,7 +244,7 @@ module.exports = (
   const headers = parameters && parameters.filter(param => param.in === 'header');
   if (headers && headers.length) {
     headers.forEach(header => {
-      const value = formatter(formData, header, 'header', true, opts.serialize);
+      const value = formatter(formData, header, 'header', true);
       if (typeof value === 'undefined') return;
 
       if (header.name.toLowerCase() === 'content-type') {
@@ -333,7 +331,7 @@ module.exports = (
               Object.keys(cleanBody).forEach(name => {
                 const param = multipartParams.find(multipartParam => multipartParam.name === name);
 
-                const value = formatter(formData, param, 'body', true, opts.serialize);
+                const value = formatter(formData, param, 'body', true);
 
                 // If we're dealing with a binary type, and the value is a valid data URL we should parse out any
                 // available filename and content type to send along with the parameter to interpreters like `fetch-har`
