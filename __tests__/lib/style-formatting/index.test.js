@@ -416,6 +416,17 @@ describe('query parameters', () => {
       ],
     };
 
+    const paramReserved = {
+      parameters: [
+        {
+          name: 'color',
+          in: 'query',
+          style: 'form',
+          allowReserved: true,
+        },
+      ],
+    };
+
     const paramExplode = {
       parameters: [
         {
@@ -524,6 +535,15 @@ describe('query parameters', () => {
         [
           { name: 'pound', value: 'something%26nothing%3Dtrue' },
           { name: 'hash', value: 'hash%23data' },
+        ],
+      ],
+      [
+        'should support allowReserved for query parameters and not replace reserved characters',
+        paramReserved,
+        { query: { color: objectInputEncoded } },
+        [
+          { name: 'pound', value: 'something&nothing=true' },
+          { name: 'hash', value: 'hash#data' },
         ],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedQueryString = []) => {

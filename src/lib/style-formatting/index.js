@@ -103,6 +103,7 @@ function stylizeValue(value, parameter) {
       I do not know if it is correct for query to use this. See style-serializer for more info
     */
     escape: true,
+    ...(parameter.in === 'query' ? { isAllowedReserved: parameter.allowReserved || false } : {}),
   });
 }
 

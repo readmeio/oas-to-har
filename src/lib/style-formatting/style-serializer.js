@@ -36,7 +36,7 @@ module.exports = function stylize(config) {
 
 module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
   str,
-  { escape, returnIfEncoded = false } = {}, // eslint-disable-line default-param-last
+  { escape, returnIfEncoded = false, isAllowedReserved } = {}, // eslint-disable-line default-param-last
   parse
 ) {
   if (typeof str === 'number') {
@@ -71,7 +71,7 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
         return char;
       }
 
-      if (isRfc3986Reserved(char) && escape === 'unsafe') {
+      if (isRfc3986Reserved(char) && (escape === 'unsafe' || isAllowedReserved)) {
         return char;
       }
 
@@ -86,11 +86,12 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
     .join('');
 };
 
-function encodeArray({ location, key, value, style, explode, escape }) {
+function encodeArray({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query',
+      isAllowedReserved,
     });
 
   if (style === 'simple') {
@@ -130,11 +131,12 @@ function encodeArray({ location, key, value, style, explode, escape }) {
   return undefined;
 }
 
-function encodeObject({ location, key, value, style, explode, escape }) {
+function encodeObject({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query',
+      isAllowedReserved,
     });
 
   const valueKeys = Object.keys(value);
@@ -211,11 +213,12 @@ function encodeObject({ location, key, value, style, explode, escape }) {
   return undefined;
 }
 
-function encodePrimitive({ location, key, value, style, escape }) {
+function encodePrimitive({ location, key, value, style, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query' || location === 'body',
+      isAllowedReserved,
     });
 
   if (style === 'simple') {
