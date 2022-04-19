@@ -10,6 +10,7 @@ const stringInputEncoded = encodeURIComponent('something&nothing=true');
 const arrayInput = ['blue', 'black', 'brown'];
 const arrayInputEncoded = ['something&nothing=true', 'hash#data'];
 const objectInput = { R: 100, G: 200, B: 150 };
+const objectNestedObject = { id: 'someID', child: { name: 'childName', metadata: { name: 'meta' } } };
 const objectInputEncoded = { pound: 'something&nothing=true', hash: 'hash#data' };
 
 function createOas(path, operation) {
@@ -400,11 +401,20 @@ describe('multipart/form-data parameters', () => {
           { name: 'object[hash]', value: 'hash%23data' },
         ],
       ],
+      [
+        'should support deepObject styles for nested objects past 1 level depth',
+        bodyExplode,
+        { body: { object: objectNestedObject } },
+        [
+          { name: 'object[id]', value: 'someID' },
+          { name: 'object[child][name]', value: 'childName' },
+          { name: 'object[child][metadata][name]', value: 'meta' },
+        ],
+      ],
     ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
       const oas = createOas('/body', operation);
       const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
-
       expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
     });
   });

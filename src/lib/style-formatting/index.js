@@ -107,6 +107,46 @@ function stylizeValue(value, parameter) {
   });
 }
 
+function handleNestedObject(value, key, childKey, stylizedValue, parameter, template) {
+  const label = `${template}[${childKey}]`;
+  let obj = {};
+
+  if (typeof value[key][childKey] === 'object') {
+    Object.keys(value[key][childKey]).forEach(grandchildKey => {
+      obj = handleNestedObject(value[key], childKey, grandchildKey, stylizedValue, parameter, label);
+    });
+  } else {
+    /* eslint-disable-next-line no-param-reassign */
+    stylizedValue = stylizeValue(value[key][childKey], parameter);
+    obj = {
+      label,
+      value: stylizedValue,
+    };
+  }
+
+  return obj;
+}
+
+function handleDeepObject(value, key, stylizedValue, parameter) {
+  const template = `${parameter.name}[${key}]`;
+  const deepObjs = [];
+
+  if (typeof value[key] === 'object') {
+    const keys = Object.keys(value[key]);
+
+    keys.forEach(childKey => {
+      deepObjs.push(handleNestedObject(value, key, childKey, stylizedValue, parameter, template));
+    });
+  } else {
+    deepObjs.push({
+      label: template,
+      value: stylizedValue,
+    });
+  }
+
+  return deepObjs;
+}
+
 // Explode is handled on its own, because style-serializer doesn't return what we expect for proper HAR output
 function handleExplode(value, parameter) {
   if (Array.isArray(value)) {
@@ -120,9 +160,11 @@ function handleExplode(value, parameter) {
 
     Object.keys(value).forEach(key => {
       const stylizedValue = stylizeValue(value[key], parameter);
-
       if (parameter.style === 'deepObject') {
-        newObj[`${parameter.name}[${key}]`] = stylizedValue;
+        const deepObjs = handleDeepObject(value, key, stylizedValue, parameter);
+        deepObjs.forEach(obj => {
+          newObj[obj.label] = obj.value;
+        });
       } else {
         newObj[key] = stylizedValue;
       }
