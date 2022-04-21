@@ -1,3 +1,4 @@
+const qs = require('qs');
 const stylize = require('./style-serializer');
 
 // Certain styles don't support empty values, This function tracks that list
@@ -107,52 +108,36 @@ function stylizeValue(value, parameter) {
   });
 }
 
-function handleDeepObject(value, key, stylizedValue, parameter) {
-  let nestedObjectDepthTracker = 0;
-  function handleNestedObject(val, k, childKey, nestedTemplate) {
-    nestedObjectDepthTracker += 1;
+function handleDeepObject(value, parameter) {
+  return qs
+    .stringify(value, {
+      // eslint-disable-next-line consistent-return
+      encoder(str, defaultEncoder, charset, type) {
+        if (type === 'key') {
+          // `str` will be here as `dog[treats][0]` but because the `qs` library doesn't have any
+          // awareness of our OpenAPI parameters we need to rewrite it to slap the `parameter.name`
+          // to the top, like `${parameter.name}[dog][treats][0]`.
+          const prefixedKey = str
+            .split(/[[\]]/g)
+            .filter(Boolean)
+            .map(k => `[${k}]`)
+            .join('');
 
-    const label = `${nestedTemplate}[${childKey}]`;
-
-    if (typeof val[k][childKey] === 'object' && val[k][childKey] !== null) {
-      let obj = {};
-      Object.keys(val[k][childKey]).forEach(grandchildKey => {
-        // Prevent us from going a potentially never ending loop for ridiculious objects. If people
-        // are trying to put 20+ deep objects into a query string they have bigger problems that we
-        // can't help with.
-        if (nestedObjectDepthTracker >= 20) {
-          return;
+          return `${parameter.name}${prefixedKey}`;
+        } else if (type === 'value') {
+          return stylizeValue(str, parameter);
         }
-
-        obj = handleNestedObject(val[k], childKey, grandchildKey, label);
-      });
-
-      return obj;
-    }
-
-    return {
-      label,
-      value: stylizeValue(val[k][childKey], parameter),
-    };
-  }
-
-  const template = `${parameter.name}[${key}]`;
-  const deepObjs = [];
-
-  if (typeof value[key] === 'object' && value[key] !== null) {
-    Object.keys(value[key]).forEach(childKey => {
-      nestedObjectDepthTracker = 0;
-
-      deepObjs.push(handleNestedObject(value, key, childKey, template));
+      },
+    })
+    .split('&')
+    .map(item => {
+      const split = item.split('=');
+      return {
+        label: split[0],
+        // `qs` will coerce null values into being `undefined` string but we want to preserve them.
+        value: split[1] === 'undefined' ? null : split[1],
+      };
     });
-  } else {
-    deepObjs.push({
-      label: template,
-      value: stylizedValue,
-    });
-  }
-
-  return deepObjs;
 }
 
 // Explode is handled on its own, because style-serializer doesn't return what we expect for proper HAR output
@@ -169,7 +154,7 @@ function handleExplode(value, parameter) {
     Object.keys(value).forEach(key => {
       const stylizedValue = stylizeValue(value[key], parameter);
       if (parameter.style === 'deepObject') {
-        const deepObjs = handleDeepObject(value, key, stylizedValue, parameter);
+        const deepObjs = handleDeepObject(value, parameter);
         deepObjs.forEach(obj => {
           newObj[obj.label] = obj.value;
         });

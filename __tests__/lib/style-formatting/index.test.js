@@ -12,6 +12,7 @@ const {
   undefinedArrayInput,
   objectInput,
   objectNestedObject,
+  objectNestedObjectOfARidiculiousShape,
   objectInputEncoded,
   undefinedObjectInput,
 } = require('../../__fixtures__/style-data');
@@ -813,6 +814,22 @@ describe('query parameters', () => {
           { name: 'color[child][name]', value: 'childName' },
           { name: 'color[child][age]', value: 'null' },
           { name: 'color[child][metadata][name]', value: 'meta' },
+        ],
+      ],
+      [
+        'should support deepObject delimited query styles for exploded nested object (of a ridiculious shape) input',
+        paramExplode,
+        { query: { color: objectNestedObjectOfARidiculiousShape } },
+        [
+          { name: 'color[id]', value: 'someID' },
+          { name: 'color[petLicense]', value: 'null' },
+          { name: 'color[dog][name]', value: 'buster' },
+          { name: 'color[dog][age]', value: '18' },
+          { name: 'color[dog][treats][0]', value: 'peanut%20butter' },
+          { name: 'color[dog][treats][1]', value: 'apple' },
+          { name: 'color[pets][0][name]', value: 'buster' },
+          { name: 'color[pets][0][age]', value: 'null' },
+          { name: 'color[pets][0][metadata][isOld]', value: 'true' },
         ],
       ],
       [

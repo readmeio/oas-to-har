@@ -10,6 +10,7 @@ const {
   arrayInputEncoded,
   objectInput,
   objectNestedObject,
+  objectNestedObjectOfARidiculiousShape,
   objectInputEncoded,
 } = require('../../__fixtures__/style-data');
 
@@ -402,6 +403,22 @@ describe('multipart/form-data parameters', () => {
           { name: 'object[child][name]', value: 'childName' },
           { name: 'object[child][age]', value: 'null' },
           { name: 'object[child][metadata][name]', value: 'meta' },
+        ],
+      ],
+      [
+        'should support deepObject styles for nested objects past 1 level depth (and with a ridiculious shape)',
+        bodyExplode,
+        { body: { object: objectNestedObjectOfARidiculiousShape } },
+        [
+          { name: 'object[id]', value: 'someID' },
+          { name: 'object[petLicense]', value: 'null' },
+          { name: 'object[dog][name]', value: 'buster' },
+          { name: 'object[dog][age]', value: '18' },
+          { name: 'object[dog][treats][0]', value: 'peanut%20butter' },
+          { name: 'object[dog][treats][1]', value: 'apple' },
+          { name: 'object[pets][0][name]', value: 'buster' },
+          { name: 'object[pets][0][age]', value: 'null' },
+          { name: 'object[pets][0][metadata][isOld]', value: 'true' },
         ],
       ],
     ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
