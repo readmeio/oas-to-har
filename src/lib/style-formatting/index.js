@@ -109,29 +109,27 @@ function stylizeValue(value, parameter) {
 
 function handleNestedObject(value, key, childKey, stylizedValue, parameter, template) {
   const label = `${template}[${childKey}]`;
-  let obj = {};
 
-  if (typeof value[key][childKey] === 'object') {
+  if (typeof value[key][childKey] === 'object' && value[key][childKey] !== null) {
+    let obj = {};
     Object.keys(value[key][childKey]).forEach(grandchildKey => {
       obj = handleNestedObject(value[key], childKey, grandchildKey, stylizedValue, parameter, label);
     });
-  } else {
-    /* eslint-disable-next-line no-param-reassign */
-    stylizedValue = stylizeValue(value[key][childKey], parameter);
-    obj = {
-      label,
-      value: stylizedValue,
-    };
+
+    return obj;
   }
 
-  return obj;
+  return {
+    label,
+    value: stylizeValue(value[key][childKey], parameter),
+  };
 }
 
 function handleDeepObject(value, key, stylizedValue, parameter) {
   const template = `${parameter.name}[${key}]`;
   const deepObjs = [];
 
-  if (typeof value[key] === 'object') {
+  if (typeof value[key] === 'object' && value[key] !== null) {
     const keys = Object.keys(value[key]);
 
     keys.forEach(childKey => {

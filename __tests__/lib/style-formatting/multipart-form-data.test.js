@@ -1,27 +1,19 @@
-const Oas = require('oas').default;
 const oasToHar = require('../../../src');
 const toBeAValidHAR = require('jest-expect-har').default;
 
+const createOas = require('../../__fixtures__/create-oas')('post');
+const {
+  emptyInput,
+  stringInput,
+  stringInputEncoded,
+  arrayInput,
+  arrayInputEncoded,
+  objectInput,
+  objectNestedObject,
+  objectInputEncoded,
+} = require('../../__fixtures__/style-data');
+
 expect.extend({ toBeAValidHAR });
-
-const emptyInput = '';
-const stringInput = 'blue';
-const stringInputEncoded = encodeURIComponent('something&nothing=true');
-const arrayInput = ['blue', 'black', 'brown'];
-const arrayInputEncoded = ['something&nothing=true', 'hash#data'];
-const objectInput = { R: 100, G: 200, B: 150 };
-const objectNestedObject = { id: 'someID', child: { name: 'childName', metadata: { name: 'meta' } } };
-const objectInputEncoded = { pound: 'something&nothing=true', hash: 'hash#data' };
-
-function createOas(path, operation) {
-  return new Oas({
-    paths: {
-      [path]: {
-        post: operation,
-      },
-    },
-  });
-}
 
 function buildBody(style, explode) {
   return {
@@ -408,6 +400,7 @@ describe('multipart/form-data parameters', () => {
         [
           { name: 'object[id]', value: 'someID' },
           { name: 'object[child][name]', value: 'childName' },
+          { name: 'object[child][age]', value: 'null' },
           { name: 'object[child][metadata][name]', value: 'meta' },
         ],
       ],
