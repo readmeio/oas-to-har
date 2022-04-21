@@ -107,33 +107,43 @@ function stylizeValue(value, parameter) {
   });
 }
 
-function handleNestedObject(value, key, childKey, stylizedValue, parameter, template) {
-  const label = `${template}[${childKey}]`;
+function handleDeepObject(value, key, stylizedValue, parameter) {
+  let nestedObjectDepthTracker = 0;
+  function handleNestedObject(val, k, childKey, nestedTemplate) {
+    nestedObjectDepthTracker += 1;
 
-  if (typeof value[key][childKey] === 'object' && value[key][childKey] !== null) {
-    let obj = {};
-    Object.keys(value[key][childKey]).forEach(grandchildKey => {
-      obj = handleNestedObject(value[key], childKey, grandchildKey, stylizedValue, parameter, label);
-    });
+    const label = `${nestedTemplate}[${childKey}]`;
 
-    return obj;
+    if (typeof val[k][childKey] === 'object' && val[k][childKey] !== null) {
+      let obj = {};
+      Object.keys(val[k][childKey]).forEach(grandchildKey => {
+        // Prevent us from going a potentially never ending loop for ridiculious objects. If people
+        // are trying to put 20+ deep objects into a query string they have bigger problems that we
+        // can't help with.
+        if (nestedObjectDepthTracker >= 20) {
+          return;
+        }
+
+        obj = handleNestedObject(val[k], childKey, grandchildKey, label);
+      });
+
+      return obj;
+    }
+
+    return {
+      label,
+      value: stylizeValue(val[k][childKey], parameter),
+    };
   }
 
-  return {
-    label,
-    value: stylizeValue(value[key][childKey], parameter),
-  };
-}
-
-function handleDeepObject(value, key, stylizedValue, parameter) {
   const template = `${parameter.name}[${key}]`;
   const deepObjs = [];
 
   if (typeof value[key] === 'object' && value[key] !== null) {
-    const keys = Object.keys(value[key]);
+    Object.keys(value[key]).forEach(childKey => {
+      nestedObjectDepthTracker = 0;
 
-    keys.forEach(childKey => {
-      deepObjs.push(handleNestedObject(value, key, childKey, stylizedValue, parameter, template));
+      deepObjs.push(handleNestedObject(value, key, childKey, template));
     });
   } else {
     deepObjs.push({
