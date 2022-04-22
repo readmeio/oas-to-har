@@ -279,17 +279,14 @@ module.exports = (
   }
 
   // Do we have an `Accept` header set up in the form, but it hasn't been added yet?
-  if (
-    formData.header &&
-    Object.keys(formData.header).find(h => h.toLowerCase() === 'accept') &&
-    !har.headers.find(hdr => hdr.name.toLowerCase() === 'accept')
-  ) {
+  if (formData.header) {
     const acceptHeader = Object.keys(formData.header).find(h => h.toLowerCase() === 'accept');
-
-    har.headers.push({
-      name: 'Accept',
-      value: String(formData.header[acceptHeader]),
-    });
+    if (acceptHeader && !har.headers.find(hdr => hdr.name.toLowerCase() === 'accept')) {
+      har.headers.push({
+        name: 'Accept',
+        value: String(formData.header[acceptHeader]),
+      });
+    }
   }
 
   let requestBody = false;
