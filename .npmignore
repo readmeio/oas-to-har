@@ -1,5 +1,5 @@
-__tests__/
+.nyc_output/
 coverage/
-.alex*
+test/
 .eslint*
 .prettier*
