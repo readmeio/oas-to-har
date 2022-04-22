@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 14
@@ -17,7 +17,7 @@ jobs:
         run: |
           echo "::set-output name=dir::$(npm config get cache)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Node ${{ matrix.node }}
         uses: actions/setup-node@v3
@@ -57,7 +57,7 @@ jobs:
         run: |
           echo "::set-output name=dir::$(npm config get cache)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
@@ -89,7 +89,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Node
         uses: actions/setup-node@v3
@@ -101,7 +101,7 @@ jobs:
         run: |
           echo "::set-output name=dir::$(npm config get cache)"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: npm-cache
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
