@@ -1,3 +1,22 @@
+## 17.0.0 (2022-04-22)
+
+> **BREAKING RELEASE**
+>
+> Node 12 is no longer supported.
+
+* chore: adding some more exclusions into the npmignore list ([25b3121](https://github.com/readmeio/oas-to-har/commit/25b3121))
+* chore(deps-dev): bump @readme/oas-examples from 4.5.0 to 5.0.0 (#75) ([845535b](https://github.com/readmeio/oas-to-har/commit/845535b)), closes [#75](https://github.com/readmeio/oas-to-har/issues/75)
+* chore(deps-dev): bump eslint from 8.11.0 to 8.12.0 (#73) ([c26d37c](https://github.com/readmeio/oas-to-har/commit/c26d37c)), closes [#73](https://github.com/readmeio/oas-to-har/issues/73)
+* chore(deps-dev): bump prettier from 2.6.0 to 2.6.1 (#72) ([24613fc](https://github.com/readmeio/oas-to-har/commit/24613fc)), closes [#72](https://github.com/readmeio/oas-to-har/issues/72)
+* chore(deps): bump actions/checkout from 2.4.0 to 3 (#71) ([38c66a7](https://github.com/readmeio/oas-to-har/commit/38c66a7)), closes [#71](https://github.com/readmeio/oas-to-har/issues/71)
+* chore(deps): bump oas from 18.0.6 to 18.1.0 (#74) ([93c2bc4](https://github.com/readmeio/oas-to-har/commit/93c2bc4)), closes [#74](https://github.com/readmeio/oas-to-har/issues/74)
+* fix: code cleanup (#79) ([245dcbb](https://github.com/readmeio/oas-to-har/commit/245dcbb)), closes [#79](https://github.com/readmeio/oas-to-har/issues/79)
+* fix: support for allowReserved (#76) ([f609297](https://github.com/readmeio/oas-to-har/commit/f609297)), closes [#76](https://github.com/readmeio/oas-to-har/issues/76)
+* fix: support for multi-level deepObjects (#77) ([b287f68](https://github.com/readmeio/oas-to-har/commit/b287f68)), closes [#77](https://github.com/readmeio/oas-to-har/issues/77)
+* feat: browser testing! (#78) ([5ebe4d4](https://github.com/readmeio/oas-to-har/commit/5ebe4d4)), closes [#78](https://github.com/readmeio/oas-to-har/issues/78)
+
+
+
 ## 16.1.0 (2022-03-23)
 
 * chore: removing some docs from the repo as they're in our .github/ repo now ([f3d81c3](https://github.com/readmeio/oas-to-har/commit/f3d81c3))
