@@ -232,8 +232,9 @@ module.exports = (
     Object.keys(operation.schema.responses).some(response => {
       if (!operation.schema.responses[response].content) return false;
 
-      // if there is an Accept header specified in the form, we'll use that instead.
-      if (formData.header.Accept) return true;
+      // If there's no `Accept` header present we should add one so their eventual code snippet
+      // follows best practices.
+      if (Object.keys(formData.header).find(h => h.toLowerCase() === 'accept')) return true;
 
       har.headers.push({
         name: 'Accept',
@@ -278,11 +279,14 @@ module.exports = (
   }
 
   // Do we have an `Accept` header set up in the form, but it hasn't been added yet?
-  if (formData.header && formData.header.Accept && har.headers.find(hdr => hdr.name === 'Accept') === undefined) {
-    har.headers.push({
-      name: 'Accept',
-      value: String(formData.header.Accept),
-    });
+  if (formData.header) {
+    const acceptHeader = Object.keys(formData.header).find(h => h.toLowerCase() === 'accept');
+    if (acceptHeader && !har.headers.find(hdr => hdr.name.toLowerCase() === 'accept')) {
+      har.headers.push({
+        name: 'Accept',
+        value: String(formData.header[acceptHeader]),
+      });
+    }
   }
 
   let requestBody = false;

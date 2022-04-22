@@ -362,7 +362,7 @@ describe('parameter handling', function () {
         [{ name: 'a', value: 'test' }],
       ],
       [
-        'should pass accept header if endpoint expects a content back from response',
+        'should pass `Accept`  header if endpoint expects a content back from response',
         {
           parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
           responses: {
@@ -381,7 +381,7 @@ describe('parameter handling', function () {
         ],
       ],
       [
-        'should only add one accept header',
+        'should only add one `Accept` header when multiple responses are present',
         {
           responses: {
             200: {
@@ -400,9 +400,9 @@ describe('parameter handling', function () {
         [{ name: 'Accept', value: 'application/xml' }],
       ],
       [
-        'should only receive one accept header if specified in values',
+        'should only receive one `Accept` header if specified in values',
         {
-          parameters: [{ name: 'Accept', in: 'header' }],
+          parameters: [{ name: 'accept', in: 'header' }],
           responses: {
             200: {
               content: {
@@ -412,11 +412,11 @@ describe('parameter handling', function () {
             },
           },
         },
-        { header: { Accept: 'application/xml' } },
-        [{ name: 'Accept', value: 'application/xml' }],
+        { header: { accept: 'application/xml' } },
+        [{ name: 'accept', value: 'application/xml' }],
       ],
       [
-        'should add accept header if specified in formdata',
+        'should add `Accept` header if specified in formdata',
         {
           responses: {
             200: {
@@ -427,7 +427,7 @@ describe('parameter handling', function () {
             },
           },
         },
-        { header: { Accept: 'application/xml' } },
+        { header: { accept: 'application/xml' } },
         [{ name: 'Accept', value: 'application/xml' }],
       ],
       [
