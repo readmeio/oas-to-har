@@ -18,6 +18,9 @@
     "pretest": "npm run lint",
     "prettier": "prettier --list-different --write \"./**/**.{js}\"",
     "release": "npx conventional-changelog-cli -i CHANGELOG.md -s && git add CHANGELOG.md",
+    "test:browser": "karma start --single-run",
+    "test:browser:chrome": "karma start --browsers=Chrome --single-run=false",
+    "test:browser:debug": "karma start --single-run=false",
     "test": "nyc mocha"
   },
   "dependencies": {
@@ -30,10 +33,11 @@
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.0.0",
+    "@jsdevtools/host-environment": "^2.1.2",
+    "@jsdevtools/karma-config": "^3.1.7",
     "@readme/eslint-config": "^8.5.1",
     "@readme/oas-examples": "^5.0.0",
     "chai": "^4.3.6",
-    "datauri": "^4.1.0",
     "eslint": "^8.11.0",
     "har-validator": "^5.1.5",
     "husky": "^7.0.4",

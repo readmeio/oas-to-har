@@ -3,8 +3,6 @@ const { expect } = require('chai');
 
 const Oas = require('oas').default;
 const extensions = require('@readme/oas-extensions');
-const path = require('path');
-const datauri = require('datauri');
 const oasToHar = require('../src');
 
 const chaiPlugins = require('./helpers/chai-plugins');
@@ -12,6 +10,8 @@ const chaiPlugins = require('./helpers/chai-plugins');
 const multipartFormData = require('./__datasets__/multipart-form-data.json');
 const multipartFormDataArrayOfFiles = require('./__datasets__/multipart-form-data/array-of-files.json');
 const requestBodyRawBody = require('./__datasets__/requestBody-raw_body.json');
+
+const owlbertDataURL = require('./__datasets__/owlbert.dataurl.json');
 
 chai.use(chaiPlugins);
 
@@ -380,19 +380,10 @@ describe('request body handling', function () {
 
     describe('content types', function () {
       describe('multipart/form-data', function () {
-        let owlbert;
-
-        beforeEach(async function () {
-          owlbert = await datauri(path.join(__dirname, '__datasets__', 'owlbert.png'));
-
-          // Doing this manually for now until when/if https://github.com/data-uri/datauri/pull/29 is accepted.
-          owlbert = owlbert.replace(';base64', `;name=${encodeURIComponent('owlbert.png')};base64`);
-        });
-
         it('should handle multipart/form-data request bodies', function () {
           const fixture = new Oas(multipartFormData);
           const har = oasToHar(fixture, fixture.operation('/anything', 'post'), {
-            body: { orderId: 12345, userId: 67890, documentFile: owlbert },
+            body: { orderId: 12345, userId: 67890, documentFile: owlbertDataURL },
           });
 
           expect(har.log.entries[0].request.headers).to.deep.equal([
@@ -408,7 +399,7 @@ describe('request body handling', function () {
                 contentType: 'image/png',
                 fileName: 'owlbert.png',
                 name: 'documentFile',
-                value: owlbert,
+                value: owlbertDataURL,
               },
             ],
           });
@@ -416,7 +407,7 @@ describe('request body handling', function () {
 
         it('should handle multipart/form-data request bodies where the filename contains parentheses', function () {
           // Doing this manually for now until when/if https://github.com/data-uri/datauri/pull/29 is accepted.
-          const specialcharacters = owlbert.replace(
+          const specialcharacters = owlbertDataURL.replace(
             'name=owlbert.png;',
             `name=${encodeURIComponent('owlbert (1).png')};`
           );
@@ -449,7 +440,7 @@ describe('request body handling', function () {
           const fixture = new Oas(multipartFormDataArrayOfFiles);
           const har = oasToHar(fixture, fixture.operation('/anything', 'post'), {
             body: {
-              documentFiles: [owlbert, owlbert],
+              documentFiles: [owlbertDataURL, owlbertDataURL],
             },
           });
 
@@ -458,7 +449,7 @@ describe('request body handling', function () {
             params: [
               {
                 name: 'documentFiles',
-                value: JSON.stringify([owlbert, owlbert]),
+                value: JSON.stringify([owlbertDataURL, owlbertDataURL]),
               },
             ],
           });
@@ -467,11 +458,6 @@ describe('request body handling', function () {
 
       describe('image/png', function () {
         it('should handle a image/png request body', async function () {
-          let owlbert = await datauri(path.join(__dirname, '__datasets__', 'owlbert.png'));
-
-          // Doing this manually for now until when/if https://github.com/data-uri/datauri/pull/29 is accepted.
-          owlbert = owlbert.replace(';base64', `;name=${encodeURIComponent('owlbert.png')};base64`);
-
           const spec = new Oas({
             paths: {
               '/image': {
@@ -491,7 +477,7 @@ describe('request body handling', function () {
             },
           });
 
-          const har = oasToHar(spec, spec.operation('/image', 'post'), { body: owlbert });
+          const har = oasToHar(spec, spec.operation('/image', 'post'), { body: owlbertDataURL });
           await expect(har).to.be.a.har;
 
           /**
@@ -511,7 +497,7 @@ describe('request body handling', function () {
            * extremely ugly, but there isn't anything we can do about it.
            */
           expect(har.log.entries[0].request.postData.mimeType).to.equal('image/png');
-          expect(har.log.entries[0].request.postData.text).to.equal(`${owlbert}`);
+          expect(har.log.entries[0].request.postData.text).to.equal(`${owlbertDataURL}`);
         });
       });
     });
