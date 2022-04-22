@@ -63,8 +63,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install npm@latest
-        run: npm install -g npm@latest
+      - name: Install npm@8
+        run: npm install -g npm@8
 
       - name: Install dependencies
         run: npm ci
@@ -107,8 +107,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install npm@latest
-        run: npm install -g npm@latest
+      - name: Install npm@8
+        run: npm install -g npm@8
 
       - name: Install dependencies
         run: npm ci
