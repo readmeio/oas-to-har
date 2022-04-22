@@ -210,6 +210,13 @@ function encodeObject({ location, key, value, style, explode, escape, isAllowedR
     }, '');
   }
 
+  if (style === 'deepObject') {
+    return valueKeys.reduce(curr => {
+      const val = valueEncoder(value[curr], {}, true);
+      return `${val}`;
+    }, '');
+  }
+
   return undefined;
 }
 

@@ -25,6 +25,7 @@
     "@readme/oas-extensions": "^14.2.0",
     "oas": "^18.0.6",
     "parse-data-url": "^4.0.1",
+    "qs": "^6.10.3",
     "remove-undefined-objects": "^1.1.0"
   },
   "devDependencies": {
@@ -41,6 +42,12 @@
     "prettier": "^2.6.0"
   },
   "prettier": "@readme/eslint-config/prettier",
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/__tests__/__fixtures__/",
+      "/__tests__/(.*)/__fixtures__/"
+    ]
+  },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"

@@ -1,3 +1,4 @@
+const qs = require('qs');
 const stylize = require('./style-serializer');
 
 // Certain styles don't support empty values, This function tracks that list
@@ -107,6 +108,38 @@ function stylizeValue(value, parameter) {
   });
 }
 
+function handleDeepObject(value, parameter) {
+  return qs
+    .stringify(value, {
+      // eslint-disable-next-line consistent-return
+      encoder(str, defaultEncoder, charset, type) {
+        if (type === 'key') {
+          // `str` will be here as `dog[treats][0]` but because the `qs` library doesn't have any
+          // awareness of our OpenAPI parameters we need to rewrite it to slap the `parameter.name`
+          // to the top, like `pets[dog][treats][0]`.
+          const prefixedKey = str
+            .split(/[[\]]/g)
+            .filter(Boolean)
+            .map(k => `[${k}]`)
+            .join('');
+
+          return `${parameter.name}${prefixedKey}`;
+        } else if (type === 'value') {
+          return stylizeValue(str, parameter);
+        }
+      },
+    })
+    .split('&')
+    .map(item => {
+      const split = item.split('=');
+      return {
+        label: split[0],
+        // `qs` will coerce null values into being `undefined` string but we want to preserve them.
+        value: split[1] === 'undefined' ? null : split[1],
+      };
+    });
+}
+
 // Explode is handled on its own, because style-serializer doesn't return what we expect for proper HAR output
 function handleExplode(value, parameter) {
   if (Array.isArray(value)) {
@@ -119,12 +152,13 @@ function handleExplode(value, parameter) {
     const newObj = {};
 
     Object.keys(value).forEach(key => {
-      const stylizedValue = stylizeValue(value[key], parameter);
-
       if (parameter.style === 'deepObject') {
-        newObj[`${parameter.name}[${key}]`] = stylizedValue;
+        const deepObjs = handleDeepObject(value, parameter);
+        deepObjs.forEach(obj => {
+          newObj[obj.label] = obj.value;
+        });
       } else {
-        newObj[key] = stylizedValue;
+        newObj[key] = stylizeValue(value[key], parameter);
       }
     });
 

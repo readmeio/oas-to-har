@@ -1,33 +1,27 @@
-const Oas = require('oas').default;
 const oasToHar = require('../../../src');
 const toBeAValidHAR = require('jest-expect-har').default;
 
-expect.extend({ toBeAValidHAR });
+const createOas = require('../../__fixtures__/create-oas')('get');
+const {
+  emptyInput,
+  undefinedInput,
+  stringInput,
+  stringInputEncoded,
+  arrayInput,
+  arrayInputEncoded,
+  undefinedArrayInput,
+  objectInput,
+  objectNestedObject,
+  objectNestedObjectOfARidiculiousShape,
+  objectInputEncoded,
+  undefinedObjectInput,
+} = require('../../__fixtures__/style-data');
 
-const emptyInput = '';
-const undefinedInput = undefined;
-const stringInput = 'blue';
-const stringInputEncoded = encodeURIComponent('something&nothing=true');
-const arrayInput = ['blue', 'black', 'brown'];
-const arrayInputEncoded = ['something&nothing=true', 'hash#data'];
-const undefinedArrayInput = [undefined];
-const objectInput = { R: 100, G: 200, B: 150 };
-const objectInputEncoded = { pound: 'something&nothing=true', hash: 'hash#data' };
-const undefinedObjectInput = { R: undefined };
+expect.extend({ toBeAValidHAR });
 
 const semicolon = ';'; // %3B when encoded, which we don't want
 const equals = '='; // %3D when encoded, which we don't want
 const comma = ','; // %2C when encoded, which we don't want
-
-function createOas(path, operation) {
-  return new Oas({
-    paths: {
-      [path]: {
-        get: operation,
-      },
-    },
-  });
-}
 
 test('should not crash on uri decoding errors', async () => {
   const oas = createOas('/query', {
@@ -803,6 +797,39 @@ describe('query parameters', () => {
           { name: 'color[R]', value: '100' },
           { name: 'color[G]', value: '200' },
           { name: 'color[B]', value: '150' },
+        ],
+      ],
+      [
+        'should NOT support deepObject delimited query styles for non exploded nested object input',
+        paramNoExplode,
+        { query: { color: objectNestedObject } },
+        [],
+      ],
+      [
+        'should support deepObject delimited query styles for exploded nested object input',
+        paramExplode,
+        { query: { color: objectNestedObject } },
+        [
+          { name: 'color[id]', value: 'someID' },
+          { name: 'color[child][name]', value: 'childName' },
+          { name: 'color[child][age]', value: 'null' },
+          { name: 'color[child][metadata][name]', value: 'meta' },
+        ],
+      ],
+      [
+        'should support deepObject delimited query styles for exploded nested object (of a ridiculious shape) input',
+        paramExplode,
+        { query: { color: objectNestedObjectOfARidiculiousShape } },
+        [
+          { name: 'color[id]', value: 'someID' },
+          { name: 'color[petLicense]', value: 'null' },
+          { name: 'color[dog][name]', value: 'buster' },
+          { name: 'color[dog][age]', value: '18' },
+          { name: 'color[dog][treats][0]', value: 'peanut%20butter' },
+          { name: 'color[dog][treats][1]', value: 'apple' },
+          { name: 'color[pets][0][name]', value: 'buster' },
+          { name: 'color[pets][0][age]', value: 'null' },
+          { name: 'color[pets][0][metadata][isOld]', value: 'true' },
         ],
       ],
       [

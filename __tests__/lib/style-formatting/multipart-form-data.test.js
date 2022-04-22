@@ -1,26 +1,20 @@
-const Oas = require('oas').default;
 const oasToHar = require('../../../src');
 const toBeAValidHAR = require('jest-expect-har').default;
 
+const createOas = require('../../__fixtures__/create-oas')('post');
+const {
+  emptyInput,
+  stringInput,
+  stringInputEncoded,
+  arrayInput,
+  arrayInputEncoded,
+  objectInput,
+  objectNestedObject,
+  objectNestedObjectOfARidiculiousShape,
+  objectInputEncoded,
+} = require('../../__fixtures__/style-data');
+
 expect.extend({ toBeAValidHAR });
-
-const emptyInput = '';
-const stringInput = 'blue';
-const stringInputEncoded = encodeURIComponent('something&nothing=true');
-const arrayInput = ['blue', 'black', 'brown'];
-const arrayInputEncoded = ['something&nothing=true', 'hash#data'];
-const objectInput = { R: 100, G: 200, B: 150 };
-const objectInputEncoded = { pound: 'something&nothing=true', hash: 'hash#data' };
-
-function createOas(path, operation) {
-  return new Oas({
-    paths: {
-      [path]: {
-        post: operation,
-      },
-    },
-  });
-}
 
 function buildBody(style, explode) {
   return {
@@ -400,11 +394,37 @@ describe('multipart/form-data parameters', () => {
           { name: 'object[hash]', value: 'hash%23data' },
         ],
       ],
+      [
+        'should support deepObject styles for nested objects past 1 level depth',
+        bodyExplode,
+        { body: { object: objectNestedObject } },
+        [
+          { name: 'object[id]', value: 'someID' },
+          { name: 'object[child][name]', value: 'childName' },
+          { name: 'object[child][age]', value: 'null' },
+          { name: 'object[child][metadata][name]', value: 'meta' },
+        ],
+      ],
+      [
+        'should support deepObject styles for nested objects past 1 level depth (and with a ridiculious shape)',
+        bodyExplode,
+        { body: { object: objectNestedObjectOfARidiculiousShape } },
+        [
+          { name: 'object[id]', value: 'someID' },
+          { name: 'object[petLicense]', value: 'null' },
+          { name: 'object[dog][name]', value: 'buster' },
+          { name: 'object[dog][age]', value: '18' },
+          { name: 'object[dog][treats][0]', value: 'peanut%20butter' },
+          { name: 'object[dog][treats][1]', value: 'apple' },
+          { name: 'object[pets][0][name]', value: 'buster' },
+          { name: 'object[pets][0][age]', value: 'null' },
+          { name: 'object[pets][0][metadata][isOld]', value: 'true' },
+        ],
+      ],
     ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
       const oas = createOas('/body', operation);
       const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
       await expect(har).toBeAValidHAR();
-
       expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
     });
   });
