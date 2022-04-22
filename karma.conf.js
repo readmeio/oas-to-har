@@ -11,18 +11,4 @@ module.exports = karmaConfig({
     edge: false,
     ie: false,
   },
-  // config: {
-  //   exclude: [
-  //     // Exclude these tests because some of the APIs are HUGE and cause timeouts.
-  //     // We still test them in Node though.
-  //     // "test/specs/real-world/*",
-  //     'test/node-quirks.test.js',
-  //   ],
-  //   client: {
-  //     mocha: {
-  //       // Windows CI sometimes takes longer than 2s to run some tests.
-  //       timeout: 15000,
-  //     },
-  //   },
-  // },
 });
