@@ -1,5 +1,10 @@
+/* eslint-disable mocha/no-setup-in-describe */
+const chai = require('chai');
+const { expect } = require('chai');
+
 const oasToHar = require('../../../src');
-const toBeAValidHAR = require('jest-expect-har').default;
+
+const chaiPlugins = require('../../helpers/chai-plugins');
 
 const createOas = require('../../__fixtures__/create-oas')('post');
 const {
@@ -14,7 +19,7 @@ const {
   objectInputEncoded,
 } = require('../../__fixtures__/style-data');
 
-expect.extend({ toBeAValidHAR });
+chai.use(chaiPlugins);
 
 function buildBody(style, explode) {
   return {
@@ -66,22 +71,22 @@ function buildBody(style, explode) {
   };
 }
 
-describe('multipart/form-data parameters', () => {
-  describe('addtl tests', () => {
-    it('should return an empty array when provided a privitive request body', async () => {
+describe('multipart/form-data parameters', function () {
+  describe('addtl tests', function () {
+    it('should return an empty array when provided a privitive request body', async function () {
       const oas = createOas('/body', buildBody('form', false));
       const har = oasToHar(oas, oas.operation('/body', 'post'), { body: 'hello, primitive string body' });
-      await expect(har).toBeAValidHAR();
+      await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.postData.params).toStrictEqual([]);
+      expect(har.log.entries[0].request.postData.params).to.be.empty;
     });
   });
 
-  describe('form style', () => {
+  describe('form style', function () {
     const bodyNoExplode = buildBody('form', false);
     const bodyExplode = buildBody('form', true);
 
-    it.each([
+    [
       [
         'should support form delimited multipart/form-data styles for non exploded empty input',
         bodyNoExplode,
@@ -180,20 +185,22 @@ describe('multipart/form-data parameters', () => {
           { name: 'hash', value: 'hash%23data' },
         ],
       ],
-    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = []) => {
-      const oas = createOas('/body', operation);
-      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-      await expect(har).toBeAValidHAR();
+    ].forEach(([test, operation, formData = {}, expectedRequestBody = []]) => {
+      it(test, async function () {
+        const oas = createOas('/body', operation);
+        const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
+        await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
+        expect(har.log.entries[0].request.postData.params).to.deep.equal(expectedRequestBody);
+      });
     });
   });
 
-  describe('spaceDelimited style', () => {
+  describe('spaceDelimited style', function () {
     const bodyNoExplode = buildBody('spaceDelimited', false);
     const bodyExplode = buildBody('spaceDelimited', true);
 
-    it.each([
+    [
       [
         'should NOT support space delimited multipart/form-data styles for non exploded empty input',
         bodyNoExplode,
@@ -250,20 +257,22 @@ describe('multipart/form-data parameters', () => {
         { body: { object: objectInput } },
         [],
       ], */
-    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
-      const oas = createOas('/body', operation);
-      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-      await expect(har).toBeAValidHAR();
+    ].forEach(([test, operation = {}, formData = {}, expectedRequestBody = undefined]) => {
+      it(test, async function () {
+        const oas = createOas('/body', operation);
+        const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
+        await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
+        expect(har.log.entries[0].request.postData.params).to.deep.equal(expectedRequestBody);
+      });
     });
   });
 
-  describe('pipeDelimited style', () => {
+  describe('pipeDelimited style', function () {
     const bodyNoExplode = buildBody('pipeDelimited', false);
     const bodyExplode = buildBody('pipeDelimited', true);
 
-    it.each([
+    [
       [
         'should NOT support pipe delimited multipart/form-data styles for non exploded empty input',
         bodyNoExplode,
@@ -319,20 +328,22 @@ describe('multipart/form-data parameters', () => {
         { body: { color: objectInput } },
         [],
       ], */
-    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
-      const oas = createOas('/body', operation);
-      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-      await expect(har).toBeAValidHAR();
+    ].forEach(([test, operation = {}, formData = {}, expectedRequestBody = undefined]) => {
+      it(test, async function () {
+        const oas = createOas('/body', operation);
+        const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
+        await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
+        expect(har.log.entries[0].request.postData.params).to.deep.equal(expectedRequestBody);
+      });
     });
   });
 
-  describe('deepObject style', () => {
+  describe('deepObject style', function () {
     const bodyNoExplode = buildBody('deepObject', false);
     const bodyExplode = buildBody('deepObject', true);
 
-    it.each([
+    [
       [
         'should NOT support deepObject delimited multipart/form-data styles for non exploded empty input',
         bodyNoExplode,
@@ -421,11 +432,14 @@ describe('multipart/form-data parameters', () => {
           { name: 'object[pets][0][metadata][isOld]', value: 'true' },
         ],
       ],
-    ])('%s', async (_, operation = {}, formData = {}, expectedRequestBody = undefined) => {
-      const oas = createOas('/body', operation);
-      const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-      await expect(har).toBeAValidHAR();
-      expect(har.log.entries[0].request.postData.params).toStrictEqual(expectedRequestBody);
+    ].forEach(([test, operation = {}, formData = {}, expectedRequestBody = undefined]) => {
+      it(test, async function () {
+        const oas = createOas('/body', operation);
+        const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
+        await expect(har).to.be.a.har;
+
+        expect(har.log.entries[0].request.postData.params).to.deep.equal(expectedRequestBody);
+      });
     });
   });
 });

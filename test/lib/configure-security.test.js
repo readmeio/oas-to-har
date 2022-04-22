@@ -1,11 +1,12 @@
+const { expect } = require('chai');
 const configureSecurity = require('../../src/lib/configure-security');
 
-describe('configure-security', () => {
-  it('should return an empty object if there is no security keys', () => {
-    expect(configureSecurity({}, {}, '')).toStrictEqual({});
+describe('configure-security', function () {
+  it('should return an empty object if there is no security keys', function () {
+    expect(configureSecurity({}, {}, '')).to.deep.equal({});
   });
 
-  it('should return undefined if no values', () => {
+  it('should return undefined if no values', function () {
     const security = { type: 'apiKey', in: 'header', name: 'key' };
 
     expect(
@@ -16,10 +17,10 @@ describe('configure-security', () => {
         {},
         'schemeName'
       )
-    ).toBeUndefined();
+    ).to.be.undefined;
   });
 
-  it('should not return non-existent values', () => {
+  it('should not return non-existent values', function () {
     const security = { type: 'apiKey', in: 'header', name: 'key' };
 
     expect(
@@ -30,12 +31,12 @@ describe('configure-security', () => {
         {},
         'schemeName'
       )
-    ).toBeUndefined();
+    ).to.be.undefined;
   });
 
-  describe('http auth support', () => {
-    describe('type=basic', () => {
-      it('should work for basic type', () => {
+  describe('http auth support', function () {
+    describe('type=basic', function () {
+      it('should work for basic type', function () {
         const user = 'user';
         const pass = 'pass';
 
@@ -47,7 +48,7 @@ describe('configure-security', () => {
             { schemeName: { user, pass } },
             'schemeName'
           )
-        ).toStrictEqual({
+        ).to.deep.equal({
           type: 'headers',
           value: {
             name: 'Authorization',
@@ -56,7 +57,7 @@ describe('configure-security', () => {
         });
       });
 
-      it('should work if the password is empty or null', () => {
+      it('should work if the password is empty or null', function () {
         const user = 'user';
         const pass = null;
 
@@ -68,7 +69,7 @@ describe('configure-security', () => {
             { schemeName: { user, pass } },
             'schemeName'
           )
-        ).toStrictEqual({
+        ).to.deep.equal({
           type: 'headers',
           value: {
             name: 'Authorization',
@@ -77,7 +78,7 @@ describe('configure-security', () => {
         });
       });
 
-      it('should return with no header if wanted scheme is missing', () => {
+      it('should return with no header if wanted scheme is missing', function () {
         expect(
           configureSecurity(
             {
@@ -86,10 +87,10 @@ describe('configure-security', () => {
             { anotherSchemeName: { user: '', pass: '' } },
             'schemeName'
           )
-        ).toBe(false);
+        ).to.be.false;
       });
 
-      it('should return with no header if user and password are blank', () => {
+      it('should return with no header if user and password are blank', function () {
         expect(
           configureSecurity(
             {
@@ -98,10 +99,10 @@ describe('configure-security', () => {
             { schemeName: { user: '', pass: '' } },
             'schemeName'
           )
-        ).toBe(false);
+        ).to.be.false;
       });
 
-      it('should return with a header if user or password are not blank', () => {
+      it('should return with a header if user or password are not blank', function () {
         const user = 'user';
 
         expect(
@@ -112,7 +113,7 @@ describe('configure-security', () => {
             { schemeName: { user, pass: '' } },
             'schemeName'
           )
-        ).toStrictEqual({
+        ).to.deep.equal({
           type: 'headers',
           value: {
             name: 'Authorization',
@@ -122,8 +123,8 @@ describe('configure-security', () => {
       });
     });
 
-    describe('scheme `bearer`', () => {
-      it('should work for bearer', () => {
+    describe('scheme `bearer`', function () {
+      it('should work for bearer', function () {
         const apiKey = '123456';
 
         expect(
@@ -134,7 +135,7 @@ describe('configure-security', () => {
             { schemeName: apiKey },
             'schemeName'
           )
-        ).toStrictEqual({
+        ).to.deep.equal({
           type: 'headers',
           value: {
             name: 'Authorization',
@@ -143,7 +144,7 @@ describe('configure-security', () => {
         });
       });
 
-      it('should return with no header if apiKey is blank', () => {
+      it('should return with no header if apiKey is blank', function () {
         const values = {
           auth: { test: '' },
         };
@@ -156,13 +157,13 @@ describe('configure-security', () => {
             values,
             'schemeName'
           )
-        ).toBe(false);
+        ).to.be.false;
       });
     });
   });
 
-  describe('oauth2 support', () => {
-    it('should work for oauth2', () => {
+  describe('oauth2 support', function () {
+    it('should work for oauth2', function () {
       const apiKey = '123456';
 
       expect(
@@ -173,7 +174,7 @@ describe('configure-security', () => {
           { schemeName: apiKey },
           'schemeName'
         )
-      ).toStrictEqual({
+      ).to.deep.equal({
         type: 'headers',
         value: {
           name: 'Authorization',
@@ -182,7 +183,7 @@ describe('configure-security', () => {
       });
     });
 
-    it('should return with no header if apiKey is blank', () => {
+    it('should return with no header if apiKey is blank', function () {
       expect(
         configureSecurity(
           {
@@ -191,13 +192,13 @@ describe('configure-security', () => {
           { schemeName: '' },
           'schemeName'
         )
-      ).toBe(false);
+      ).to.be.false;
     });
   });
 
-  describe('apiKey auth support', () => {
-    describe('in `query`', () => {
-      it('should work for query', () => {
+  describe('apiKey auth support', function () {
+    describe('in `query`', function () {
+      it('should work for query', function () {
         const values = { schemeName: 'value' };
         const security = { type: 'apiKey', in: 'query', name: 'key' };
 
@@ -209,7 +210,7 @@ describe('configure-security', () => {
             values,
             'schemeName'
           )
-        ).toStrictEqual({
+        ).to.deep.equal({
           type: 'queryString',
           value: {
             name: security.name,
@@ -219,8 +220,8 @@ describe('configure-security', () => {
       });
     });
 
-    describe('in `header`', () => {
-      it('should work for header', () => {
+    describe('in `header`', function () {
+      it('should work for header', function () {
         const values = { schemeName: 'value' };
         const security = { type: 'apiKey', in: 'header', name: 'key' };
 
@@ -232,7 +233,7 @@ describe('configure-security', () => {
             values,
             'schemeName'
           )
-        ).toStrictEqual({
+        ).to.deep.equal({
           type: 'headers',
           value: {
             name: security.name,
@@ -241,8 +242,8 @@ describe('configure-security', () => {
         });
       });
 
-      describe('x-bearer-format', () => {
-        it('should work for bearer', () => {
+      describe('x-bearer-format', function () {
+        it('should work for bearer', function () {
           const values = { schemeName: 'value' };
           const security = {
             type: 'apiKey',
@@ -259,7 +260,7 @@ describe('configure-security', () => {
               values,
               'schemeName'
             )
-          ).toStrictEqual({
+          ).to.deep.equal({
             type: 'headers',
             value: {
               name: security.name,
@@ -268,7 +269,7 @@ describe('configure-security', () => {
           });
         });
 
-        it('should work for basic', () => {
+        it('should work for basic', function () {
           const values = { schemeName: 'value' };
           const security = {
             type: 'apiKey',
@@ -285,7 +286,7 @@ describe('configure-security', () => {
               values,
               'schemeName'
             )
-          ).toStrictEqual({
+          ).to.deep.equal({
             type: 'headers',
             value: {
               name: security.name,
@@ -294,7 +295,7 @@ describe('configure-security', () => {
           });
         });
 
-        it('should work for token', () => {
+        it('should work for token', function () {
           const values = { schemeName: 'value' };
           const security = {
             type: 'apiKey',
@@ -311,7 +312,7 @@ describe('configure-security', () => {
               values,
               'schemeName'
             )
-          ).toStrictEqual({
+          ).to.deep.equal({
             type: 'headers',
             value: {
               name: security.name,
