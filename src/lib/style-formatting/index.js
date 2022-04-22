@@ -152,14 +152,13 @@ function handleExplode(value, parameter) {
     const newObj = {};
 
     Object.keys(value).forEach(key => {
-      const stylizedValue = stylizeValue(value[key], parameter);
       if (parameter.style === 'deepObject') {
         const deepObjs = handleDeepObject(value, parameter);
         deepObjs.forEach(obj => {
           newObj[obj.label] = obj.value;
         });
       } else {
-        newObj[key] = stylizedValue;
+        newObj[key] = stylizeValue(value[key], parameter);
       }
     });
 
