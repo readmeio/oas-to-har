@@ -1,3 +1,9 @@
+## <small>17.0.1 (2022-04-22)</small>
+
+* fix: issue where a lowercase `Accept` header may be duplicated (#80) ([cb9e1b4](https://github.com/readmeio/oas-to-har/commit/cb9e1b4)), closes [#80](https://github.com/readmeio/oas-to-har/issues/80)
+
+
+
 ## 17.0.0 (2022-04-22)
 
 > **BREAKING RELEASE**
