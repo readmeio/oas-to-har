@@ -15,14 +15,37 @@ npm install --save @readme/oas-to-har
 ## Usage
 
 ```js
-const Oas = require('oas');
+const Oas = require('oas').default;
 const oasToHar = require('@readme/oas-to-har');
 
-const spec = new Oas('petstore.json');
-console.log(oasToHar(spec, { path: '/pets', method: 'post'}));
+const petstore = require('./petstore.json');
+
+const spec = new Oas(petstore);
+console.log(oasToHar(spec, spec.operation('/pets', 'post')));
 ```
 
-### `oasToHar(har, operationSchema, values, auth, opts) => Object`
+```json
+{
+  log: {
+    entries: [
+      {
+        request: {
+          cookies: [],
+          headers: [],
+          headersSize: 0,
+          queryString: [],
+          bodySize: 0,
+          method: 'POST',
+          url: 'http://petstore.swagger.io/v2/pets',
+          httpVersion: 'HTTP/1.1'
+        }
+      }
+    ]
+  }
+}
+```
+
+### `oasToHar(oas, operationSchema, values, auth, opts) => Object`
 
 - `oas` *{Oas}*: Instance of our [oas/tooling](https://npm.im/oas) class.
 - `operationSchema` *{Object\|Operation}*: Can either be an object with `path` and `method` properties (that exist in the supplied OAS), or an instance of our `Operation` class from [oas/tooling](https://npm.im/oas) - accessed through `new Oas(spec).operation(path, method)`.
@@ -36,10 +59,3 @@ console.log(oasToHar(spec, { path: '/pets', method: 'post'}));
   - `server` &mdash; If the supplied OAS has multiple severs or server variables you can use this to set which server and variables to use. Shape of it should be: `{ selected: Integer, variables: { ...key-values }}`. `selected` should coorespond to index of the `servers` array in your OAS.
 - `auth` *{Object}*: Authentication information for the request.
 - `opts.proxyUrl` *{Boolean}*: Boolean to toggle if composed HAR objects should have their `url` be sent through our CORS-friendly proxy. Defaults to `false`.
-
-## Credits
-[Jon Ursenbach](https://github.com/erunion)
-
-## License
-
-ISC

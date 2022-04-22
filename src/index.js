@@ -11,8 +11,8 @@ const { jsonSchemaTypes } = utils;
 function formatter(values, param, type, onlyIfExists) {
   if (param.style) {
     const value = values[type][param.name];
-    // Note: Technically we could send everything through the format style and choose the proper default for each
-    //  `in` type (e.g. query defaults to form).
+    // Note: Technically we could send everything through the format style and choose the proper
+    // default for each `in` type (e.g. query defaults to form).
     return formatStyle(value, param);
   }
 
@@ -26,18 +26,20 @@ function formatter(values, param, type, onlyIfExists) {
   } else if (param.required && param.schema && param.schema.default) {
     value = param.schema.default;
   } else if (type === 'path') {
-    // If we don't have any values for the path parameter, just use the name of the parameter as the value so we don't
-    // try try to build a URL to something like `https://example.com/undefined`.
+    // If we don't have any values for the path parameter, just use the name of the parameter as the
+    // value so we don't try try to build a URL to something like `https://example.com/undefined`.
     return param.name;
   }
 
-  // Handle file uploads. Specifically arrays of file uploads which need to be formatted very specifically.
+  // Handle file uploads. Specifically arrays of file uploads which need to be formatted very
+  // specifically.
   if (param.schema && param.schema.type === 'array' && param.schema.items && param.schema.items.format === 'binary') {
     return JSON.stringify(value);
   }
 
   if (value !== undefined) {
-    // Query params should always be formatted, even if they don't have a `style` serialization configured.
+    // Query params should always be formatted, even if they don't have a `style` serialization
+    // configured.
     if (type === 'query') {
       return formatStyle(value, param);
     }
@@ -77,7 +79,8 @@ function multipartBodyToFormatterParams(multipartBody, oasMediaTypeObject) {
       .filter(Boolean);
   }
 
-  // Pretty sure that we'll never have anything but an object for multipart bodies, so returning empty array if we get anything else.
+  // Pretty sure that we'll never have anything but an object for multipart bodies, so returning
+  // empty array if we get anything else.
   return [];
 }
 
@@ -118,12 +121,14 @@ function appendHarValue(harParam, name, value, addtlData = {}) {
   if (typeof value === 'undefined') return;
 
   if (Array.isArray(value)) {
-    // If the formatter gives us an array, we're expected to add each array value as a new parameter item with the same parameter name
+    // If the formatter gives us an array, we're expected to add each array value as a new
+    // parameter item with the same parameter name
     value.forEach(singleValue => {
       appendHarValue(harParam, name, singleValue);
     });
   } else if (typeof value === 'object' && value !== null) {
-    // If the formatter gives us an object, we're expected to add each property value as a new parameter item, each with the name of the property
+    // If the formatter gives us an object, we're expected to add each property value as a new
+    // parameter item, each with the name of the property
     Object.keys(value).forEach(key => {
       appendHarValue(harParam, key, value[key]);
     });
@@ -143,8 +148,8 @@ module.exports = (
   values = {},
   auth = {},
   opts = {
-    // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in order to funnel requests
-    // through our CORS-friendly proxy.
+    // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in
+    // order to funnel requests through our CORS-friendly proxy.
     proxyUrl: false,
   }
 ) => {
@@ -196,7 +201,8 @@ module.exports = (
     // Find the path parameter or set a default value if it does not exist
     const parameter = parameters.find(param => param.name === key) || { name: key };
 
-    // The library that handles our style processing already encodes uri elements. For everything else we need to handle it here.
+    // The library that handles our style processing already encodes uri elements. For everything
+    // else we need to handle it here.
     if (!parameter.style) {
       return encodeURIComponent(formatter(formData, parameter, 'path'));
     }
@@ -316,8 +322,9 @@ module.exports = (
             har.postData.mimeType = 'multipart/form-data';
             har.postData.params = [];
 
-            // Discover all `{ type: string, format: binary }` properties the schema. If there are any, then that means
-            // that we're dealing with a `multipart/form-data` request and need to treat the payload as `postData.params`.
+            // Discover all `{ type: string, format: binary }` properties the schema. If there are
+            // any, then that means that we're dealing with a `multipart/form-data` request and
+            // need to treat the payload as `postData.params`.
             const binaryTypes = Object.keys(requestBody.schema.properties).filter(
               key => requestBody.schema.properties[key].format === 'binary'
             );
@@ -333,9 +340,10 @@ module.exports = (
 
                 const value = formatter(formData, param, 'body', true);
 
-                // If we're dealing with a binary type, and the value is a valid data URL we should parse out any
-                // available filename and content type to send along with the parameter to interpreters like `fetch-har`
-                // can make sense of it and send a usable payload.
+                // If we're dealing with a binary type, and the value is a valid data URL we should
+                // parse out any available filename and content type to send along with the
+                // parameter to interpreters like `fetch-har` can make sense of it and send a usable
+                // payload.
                 const addtlData = {};
 
                 if (binaryTypes.includes(name)) {
@@ -355,17 +363,21 @@ module.exports = (
             har.postData.mimeType = contentType;
 
             // Handle arbitrary JSON input via a string.
-            // In OAS you usually find this in an application/json content type.
-            //   with a schema type=string, format=json.
-            // In the UI this is represented by an arbitrary text input
-            // This ensures we remove any newlines or tabs and use a clean json block in the example
+            //
+            // In OAS you usually find this in an `application/json` content type with a schema
+            // `type=string, format=json`. In the UI this is represented by an arbitrary text input.
+            //
+            // This ensures we remove any newlines or tabs and use a clean JSON block in the
+            // example.
             if (requestBody.schema.type === 'string') {
               har.postData.text = JSON.stringify(JSON.parse(cleanBody));
             } else {
-              // Handle formatted JSON objects that have properties that accept arbitrary JSON
-              // Find all `{ type: string, format: json }` properties in the schema because we need to manually JSON.parse
-              // them before submit, otherwise they'll be escaped instead of actual objects.
-              // We also only want values that the user has entered, so we drop any undefined cleanBody keys
+              // Handle formatted JSON objects that have properties that accept arbitrary JSON.
+              //
+              // Find all `{ type: string, format: json }` properties in the schema because we need
+              // to manually `JSON.parse` them before submit, otherwise they'll be escaped instead
+              // of actual objects. We also only want values that the user has entered, so we drop
+              // any `undefined` `cleanBody` keys
               const jsonTypes = Object.keys(requestBody.schema.properties).filter(
                 key => requestBody.schema.properties[key].format === 'json' && cleanBody[key] !== undefined
               );
@@ -380,7 +392,8 @@ module.exports = (
                     }
                   });
 
-                  // `RAW_BODY` is a ReadMe-specific thing where we'll interpret its contents as raw JSON.
+                  // `RAW_BODY` is a ReadMe-specific thing where we'll interpret its contents as
+                  // raw JSON.
                   if (typeof cleanBody.RAW_BODY !== 'undefined') {
                     cleanBody = cleanBody.RAW_BODY;
                   }
@@ -395,10 +408,8 @@ module.exports = (
             }
           }
         } catch (e) {
-          // you should log this error if you're debugging why data is showing up in text, when it  should show up in params
-          // console.log('catching ', e);
-          // If anything above fails for whatever reason, assume that whatever we had is invalid JSON and just treat it
-          // as raw text.
+          // If anything above fails for whatever reason, assume that whatever we had is invalid
+          // JSON and just treat it as raw text.
           har.postData.text = stringify(formData.body);
         }
       } else {
@@ -412,8 +423,9 @@ module.exports = (
     }
   }
 
-  // Add a `Content-Type` header if there are any body values setup above or if there is a schema defined, but only do
-  // so if we don't already have a `Content-Type` present as it's impossible for a request to have multiple.
+  // Add a `Content-Type` header if there are any body values setup above or if there is a schema
+  // defined, but only do so if we don't already have a `Content-Type` present as it's impossible
+  // for a request to have multiple.
   if ((har.postData.text || (requestBody && Object.keys(requestBody.schema).length)) && !hasContentType) {
     har.headers.push({
       name: 'Content-Type',

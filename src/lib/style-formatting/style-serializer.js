@@ -16,8 +16,8 @@ function isURIEncoded(value) {
   try {
     return decodeURIComponent(value) !== value;
   } catch (err) {
-    // `decodeURIComponent` will throw an exception if a string that has an un-encoded percent sign in it (like 20%),
-    // so if it's throwing we can just assume that the value hasn't been encoded.
+    // `decodeURIComponent` will throw an exception if a string that has an un-encoded percent sign
+    //  in it (like 20%), o if it's throwing we can just assume that the value hasn't been encoded.
     return false;
   }
 }
@@ -61,10 +61,9 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
     return JSON.parse(str);
   }
 
-  // In ES6 you can do this quite easily by using the new ... spread operator.
-  // This causes the string iterator (another new ES6 feature) to be used internally,
-  // and because that iterator is designed to deal with
-  // code points rather than UCS-2/UTF-16 code units.
+  // In ES6 you can do this quite easily by using the new ... spread operator. This causes the
+  // string iterator (another new ES6 feature) to be used internally, and because that iterator is
+  // designed to deal with code points rather than UCS-2/UTF-16 code units.
   return [...str]
     .map(char => {
       if (isRfc3986Unreserved(char)) {
@@ -86,6 +85,9 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
     .join('');
 };
 
+/**
+ * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples}
+ */
 function encodeArray({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
@@ -94,43 +96,70 @@ function encodeArray({ location, key, value, style, explode, escape, isAllowedRe
       isAllowedReserved,
     });
 
-  if (style === 'simple') {
-    return value.map(val => valueEncoder(val)).join(',');
-  }
+  switch (style) {
+    /**
+     * @example <caption>`style: simple`</caption>
+     * `["blue","black","brown"]` → `blue,black,brown`
+     */
+    case 'simple':
+      return value.map(val => valueEncoder(val)).join(',');
 
-  if (style === 'label') {
-    return `.${value.map(val => valueEncoder(val)).join('.')}`;
-  }
+    /**
+     * @example <caption>`style: label`</caption>
+     * `["blue","black","brown"]` → `.blue.black.brown`
+     */
+    case 'label':
+      return `.${value.map(val => valueEncoder(val)).join('.')}`;
 
-  if (style === 'matrix') {
-    return value
-      .map(val => valueEncoder(val))
-      .reduce((prev, curr) => {
-        if (!prev || explode) {
-          return `${prev || ''};${key}=${curr}`;
-        }
-        return `${prev},${curr}`;
-      }, '');
-  }
+    /**
+     * @example <caption>`style: matrix` + `explode: true`</caption>
+     * `["blue","black","brown"]` → `;color=blue;color=black;color=brown`
+     *
+     * @example <caption>`style: matrix` + `explode: false` (the default behavior)</caption>
+     * `["blue","black","brown"]` → `;color=blue,black,brown	`
+     */
+    case 'matrix':
+      return value
+        .map(val => valueEncoder(val))
+        .reduce((prev, curr) => {
+          if (!prev || explode) {
+            return `${prev || ''};${key}=${curr}`;
+          }
+          return `${prev},${curr}`;
+        }, '');
 
-  if (style === 'form') {
-    const after = explode ? `&${key}=` : ',';
-    return value.map(val => valueEncoder(val)).join(after);
-  }
+    /**
+     * @example <caption>`style: form` + `explode: true`</caption>
+     * `["blue","black","brown"]` → `color=blue&color=black&color=brown`
+     *
+     * @example <caption>`style: form` + `explode: false` (the default behavior)</caption>
+     * `["blue","black","brown"]` → `ccolor=blue,black,brown`
+     */
+    case 'form':
+      return value.map(val => valueEncoder(val)).join(explode ? `&${key}=` : ',');
 
-  if (style === 'spaceDelimited') {
-    const after = explode ? `${key}=` : '';
-    return value.map(val => valueEncoder(val)).join(` ${after}`);
-  }
+    /**
+     * @example <caption>`style: spaceDelimited`</caption>
+     * `["blue","black","brown"]` → `blue%20black%20brown`
+     */
+    case 'spaceDelimited':
+      return value.map(val => valueEncoder(val)).join(` ${explode ? `${key}=` : ''}`);
 
-  if (style === 'pipeDelimited') {
-    const after = explode ? `${key}=` : '';
-    return value.map(val => valueEncoder(val)).join(`|${after}`);
-  }
+    /**
+     * @example <caption>`style: pipeDelimited`</caption>
+     * `["blue","black","brown"]` → `blue|black|brown`
+     */
+    case 'pipeDelimited':
+      return value.map(val => valueEncoder(val)).join(`|${explode ? `${key}=` : ''}`);
 
-  return undefined;
+    default:
+      return undefined;
+  }
 }
 
+/**
+ * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples}
+ */
 function encodeObject({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
@@ -141,85 +170,121 @@ function encodeObject({ location, key, value, style, explode, escape, isAllowedR
 
   const valueKeys = Object.keys(value);
 
-  if (style === 'simple') {
-    return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
-      const middleChar = explode ? '=' : ',';
-      const prefix = prev ? `${prev},` : '';
+  switch (style) {
+    /**
+     * @example <caption>`style: simple` + `explode: true`</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `R=100,G=200,B=150`
+     *
+     * @example <caption>`style: simple` + `explode: false` (the default behavior)</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `R,100,G,200,B,150`
+     */
+    case 'simple':
+      return valueKeys.reduce((prev, curr) => {
+        const val = valueEncoder(value[curr]);
+        const middleChar = explode ? '=' : ',';
+        const prefix = prev ? `${prev},` : '';
 
-      return `${prefix}${curr}${middleChar}${val}`;
-    }, '');
+        return `${prefix}${curr}${middleChar}${val}`;
+      }, '');
+
+    /**
+     * @example <caption>`style: label` + `explode: true`</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `.R=100.G=200.B=150`
+     *
+     * @example <caption>`style: label` + `explode: false` (the default behavior)</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `.R.100.G.200.B.150`
+     */
+    case 'label':
+      return valueKeys.reduce((prev, curr) => {
+        const val = valueEncoder(value[curr]);
+        const middleChar = explode ? '=' : '.';
+        const prefix = prev ? `${prev}.` : '.';
+
+        return `${prefix}${curr}${middleChar}${val}`;
+      }, '');
+
+    /**
+     * @example <caption>`style: matrix` + `explode: true`</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `;R=100;G=200;B=150`
+     *
+     * @example <caption>`style: matrix` + `explode: false` (the default behavior)</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `;color=R,100,G,200,B,150`
+     */
+    case 'matrix':
+      if (explode) {
+        return valueKeys.reduce((prev, curr) => {
+          const val = valueEncoder(value[curr]);
+          const prefix = prev ? `${prev};` : ';';
+
+          return `${prefix}${curr}=${val}`;
+        }, '');
+      }
+
+      return valueKeys.reduce((prev, curr) => {
+        const val = valueEncoder(value[curr]);
+        const prefix = prev ? `${prev},` : `;${key}=`;
+
+        return `${prefix}${curr},${val}`;
+      }, '');
+
+    /**
+     * @example <caption>`style: form` + `explode: true`</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `R=100&G=200&B=150`
+     *
+     * @example <caption>`style: form` + `explode: false` (the default behavior)</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `color=R,100,G,200,B,150`
+     */
+    case 'form':
+      return valueKeys.reduce((prev, curr) => {
+        const val = valueEncoder(value[curr]);
+        const prefix = prev ? `${prev}${explode ? '&' : ','}` : '';
+        const separator = explode ? '=' : ',';
+
+        return `${prefix}${curr}${separator}${val}`;
+      }, '');
+
+    /**
+     * @example <caption>`style: spaceDelimited`</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `R%20100%20G%20200%20B%20150`
+     */
+    case 'spaceDelimited':
+      return valueKeys.reduce((prev, curr) => {
+        const val = valueEncoder(value[curr]);
+        const prefix = prev ? `${prev} ` : '';
+
+        return `${prefix}${curr} ${val}`;
+      }, '');
+
+    /**
+     * @example <caption>`style: pipeDelimited`</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `R|100|G|200|B|150`
+     */
+    case 'pipeDelimited':
+      return valueKeys.reduce((prev, curr) => {
+        const val = valueEncoder(value[curr]);
+        const prefix = prev ? `${prev}|` : '';
+
+        return `${prefix}${curr}|${val}`;
+      }, '');
+
+    /**
+     * @example <caption>`style: deepObject`</caption>
+     * `{ "R": 100, "G": 200, "B": 150 }` → `color[R]=100&color[G]=200&color[B]=150`
+     */
+    case 'deepObject':
+      return valueKeys.reduce(curr => {
+        const val = valueEncoder(value[curr], {}, true);
+        return `${val}`;
+      }, '');
+
+    default:
+      return undefined;
   }
-
-  if (style === 'label') {
-    return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
-      const middleChar = explode ? '=' : '.';
-      const prefix = prev ? `${prev}.` : '.';
-
-      return `${prefix}${curr}${middleChar}${val}`;
-    }, '');
-  }
-
-  if (style === 'matrix' && explode) {
-    return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
-      const prefix = prev ? `${prev};` : ';';
-
-      return `${prefix}${curr}=${val}`;
-    }, '');
-  }
-
-  if (style === 'matrix') {
-    // no explode
-    return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
-      const prefix = prev ? `${prev},` : `;${key}=`;
-
-      return `${prefix}${curr},${val}`;
-    }, '');
-  }
-
-  if (style === 'form') {
-    return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
-      const prefix = prev ? `${prev}${explode ? '&' : ','}` : '';
-      const separator = explode ? '=' : ',';
-
-      return `${prefix}${curr}${separator}${val}`;
-    }, '');
-  }
-
-  // Supported in 3.1, added by Readme
-  if (style === 'spaceDelimited') {
-    return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
-      const prefix = prev ? `${prev} ` : '';
-
-      return `${prefix}${curr} ${val}`;
-    }, '');
-  }
-
-  // Supported in 3.1, added by Readme
-  if (style === 'pipeDelimited') {
-    return valueKeys.reduce((prev, curr) => {
-      const val = valueEncoder(value[curr]);
-      const prefix = prev ? `${prev}|` : '';
-
-      return `${prefix}${curr}|${val}`;
-    }, '');
-  }
-
-  if (style === 'deepObject') {
-    return valueKeys.reduce(curr => {
-      const val = valueEncoder(value[curr], {}, true);
-      return `${val}`;
-    }, '');
-  }
-
-  return undefined;
 }
 
+/**
+ * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples}
+ */
 function encodePrimitive({ location, key, value, style, escape, isAllowedReserved = false }) {
   const valueEncoder = str =>
     module.exports.encodeDisallowedCharacters(str, {
@@ -228,30 +293,47 @@ function encodePrimitive({ location, key, value, style, escape, isAllowedReserve
       isAllowedReserved,
     });
 
-  if (style === 'simple') {
-    return valueEncoder(value);
+  switch (style) {
+    /**
+     * @example <caption>`style: simple`</caption>
+     * `blue` → `blue`
+     */
+    case 'simple':
+      return valueEncoder(value);
+
+    /**
+     * @example <caption>`style: label`</caption>
+     * `blue` → `.blue`
+     */
+    case 'label':
+      return `.${valueEncoder(value)}`;
+
+    /**
+     * @example <caption>`style: matrix`</caption>
+     * `blue` → `;color=blue`
+     */
+    case 'matrix':
+      if (value === '') {
+        return `;${key}`;
+      }
+
+      return `;${key}=${valueEncoder(value)}`;
+
+    /**
+     * @example <caption>`style: form`</caption>
+     * `blue` → `color=blue`
+     */
+    case 'form':
+      return valueEncoder(value);
+
+    /**
+     * @example <caption>`style: deepObject`</caption>
+     * `blue` → n/a
+     */
+    case 'deepObject':
+      return valueEncoder(value, {}, true);
+
+    default:
+      return undefined;
   }
-
-  if (style === 'label') {
-    return `.${valueEncoder(value)}`;
-  }
-
-  if (style === 'matrix') {
-    // This conditional added by Aaron to be more accurate to the spec
-    if (value === '') {
-      return `;${key}`;
-    }
-
-    return `;${key}=${valueEncoder(value)}`;
-  }
-
-  if (style === 'form') {
-    return valueEncoder(value);
-  }
-
-  if (style === 'deepObject') {
-    return valueEncoder(value, {}, true);
-  }
-
-  return undefined;
 }
