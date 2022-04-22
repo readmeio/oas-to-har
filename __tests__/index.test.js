@@ -4,7 +4,7 @@ const oasToHar = require('../src');
 const toBeAValidHAR = require('jest-expect-har').default;
 
 const petstore = require('@readme/oas-examples/3.0/json/petstore.json');
-const serverVariables = require('./__fixtures__/server-variables.json');
+const serverVariables = require('./__datasets__/server-variables.json');
 
 expect.extend({ toBeAValidHAR });
 

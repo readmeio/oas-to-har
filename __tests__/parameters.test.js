@@ -2,7 +2,7 @@ const Oas = require('oas').default;
 const oasToHar = require('../src');
 const toBeAValidHAR = require('jest-expect-har').default;
 
-const commonParameters = require('./__fixtures__/common-parameters.json');
+const commonParameters = require('./__datasets__/common-parameters.json');
 
 expect.extend({ toBeAValidHAR });
 

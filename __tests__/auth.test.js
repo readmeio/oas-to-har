@@ -2,7 +2,7 @@ const Oas = require('oas').default;
 const oasToHar = require('../src');
 const toBeAValidHAR = require('jest-expect-har').default;
 
-const security = require('./__fixtures__/security.json');
+const security = require('./__datasets__/security.json');
 
 expect.extend({ toBeAValidHAR });
 

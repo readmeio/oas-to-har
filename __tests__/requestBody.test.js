@@ -5,9 +5,9 @@ const datauri = require('datauri');
 const oasToHar = require('../src');
 const toBeAValidHAR = require('jest-expect-har').default;
 
-const multipartFormData = require('./__fixtures__/multipart-form-data.json');
-const multipartFormDataArrayOfFiles = require('./__fixtures__/multipart-form-data/array-of-files.json');
-const requestBodyRawBody = require('./__fixtures__/requestBody-raw_body.json');
+const multipartFormData = require('./__datasets__/multipart-form-data.json');
+const multipartFormDataArrayOfFiles = require('./__datasets__/multipart-form-data/array-of-files.json');
+const requestBodyRawBody = require('./__datasets__/requestBody-raw_body.json');
 
 expect.extend({ toBeAValidHAR });
 
@@ -378,7 +378,7 @@ describe('`body` data handling', () => {
       let owlbert;
 
       beforeAll(async () => {
-        owlbert = await datauri(path.join(__dirname, '__fixtures__', 'owlbert.png'));
+        owlbert = await datauri(path.join(__dirname, '__datasets__', 'owlbert.png'));
 
         // Doing this manually for now until when/if https://github.com/data-uri/datauri/pull/29 is accepted.
         owlbert = owlbert.replace(';base64', `;name=${encodeURIComponent('owlbert.png')};base64`);
@@ -462,7 +462,7 @@ describe('`body` data handling', () => {
 
     describe('image/png', () => {
       it('should handle a image/png request body', async () => {
-        let owlbert = await datauri(path.join(__dirname, '__fixtures__', 'owlbert.png'));
+        let owlbert = await datauri(path.join(__dirname, '__datasets__', 'owlbert.png'));
 
         // Doing this manually for now until when/if https://github.com/data-uri/datauri/pull/29 is accepted.
         owlbert = owlbert.replace(';base64', `;name=${encodeURIComponent('owlbert.png')};base64`);
@@ -853,7 +853,7 @@ describe('`formData` data handling', () => {
 
   it('should support nested objects', () => {
     // eslint-disable-next-line global-require
-    const spec = new Oas(require('./__fixtures__/formData-nested-object.json'));
+    const spec = new Oas(require('./__datasets__/formData-nested-object.json'));
     const operation = spec.operation('/anything', 'post');
     const formData = {
       id: 12345,
