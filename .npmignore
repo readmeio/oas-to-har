@@ -1,5 +1,8 @@
+.github/
+.husky/
 .nyc_output/
 coverage/
 test/
 .eslint*
+.mocha*
 .prettier*
