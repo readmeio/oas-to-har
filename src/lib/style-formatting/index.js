@@ -1,7 +1,7 @@
 const qs = require('qs');
 const stylize = require('./style-serializer');
 
-// Certain styles don't support empty values, This function tracks that list
+// Certain styles don't support empty values.
 function shouldNotStyleEmptyValues(parameter) {
   return ['simple', 'spaceDelimited', 'pipeDelimited', 'deepObject'].includes(parameter.style);
 }
@@ -10,9 +10,12 @@ function shouldNotStyleReservedHeader(parameter) {
   return ['accept', 'authorization', 'content-type'].includes(parameter.name.toLowerCase());
 }
 
-// Note: This isn't necessarily part of the spec. Behavior for the value 'undefined' is, well, undefined.
-//   This code makes our system look better. If we wanted to be more accurate, we might want to remove this,
-//   restore the un-fixed behavior for undefined and have our UI pass in empty string instead of undefined.
+/**
+ * Note: This isn't necessarily part of the spec. Behavior for the value 'undefined' is, well,
+ * undefined. This code makes our system look better. If we wanted to be more accurate, we might
+ * want to remove this, restore the un-fixed behavior for undefined and have our UI pass in empty
+ * string instead of undefined.
+ */
 function removeUndefinedForPath(value) {
   let finalValue = value;
 
@@ -42,35 +45,43 @@ function stylizeValue(value, parameter) {
 
   // Some styles don't work with empty values. We catch those there
   if (shouldNotStyleEmptyValues(parameter) && (typeof finalValue === 'undefined' || finalValue === '')) {
-    // Paths need return an unstyled empty string instead of undefined so it's ignored in the final path string
+    // Paths need return an unstyled empty string instead of undefined so it's ignored in the final
+    // path string.
     if (parameter.in === 'path') {
       return '';
     }
-    // Everything but path should return undefined when unstyled so it's ignored in the final parameter array
+
+    // Everything but path should return undefined when unstyled so it's ignored in the final
+    // parameter array.
     return undefined;
   }
 
-  // Every style that adds their style to empty values should use emptystring for path parameters instead of undefined to avoid the string 'undefined'
+  // Every style that adds their style to empty values should use emptystring for path parameters
+  // instead of undefined to avoid the string `undefined`.
   if (parameter.in === 'path') {
     finalValue = removeUndefinedForPath(finalValue);
   }
 
-  // Eventhough `Accept`, `Authorization`, and `Content-Type` headers can be defined as parameters, they should be
-  // completely ignored when it comes to serialization.
-  //
-  //  > If in is "header" and the name field is "Accept", "Content-Type" or "Authorization", the parameter definition
-  //  > SHALL be ignored.
-  //
-  // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10
+  /**
+   * Eventhough `Accept`, `Authorization`, and `Content-Type` headers can be defined as parameters,
+   * they should be completely ignored when it comes to serialization.
+   *
+   *  > If in is "header" and the name field is "Accept", "Content-Type" or "Authorization", the
+   *  > parameter definition SHALL be ignored.
+   *
+   * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10}
+   */
   if (parameter.in === 'header' && shouldNotStyleReservedHeader(parameter)) {
     return value;
   }
 
-  // All parameter types have a default `style` format so if they don't have one prescribed we should still conform to
-  // what the spec defines.
-  //
-  // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#user-content-parameterstyle
-  // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#user-content-parameterstyle
+  /**
+   * All parameter types have a default `style` format so if they don't have one prescribed we
+   * should still conform to what the spec defines.
+   *
+   * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#user-content-parameterstyle}
+   * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#user-content-parameterstyle}
+   */
   let style = parameter.style;
   if (!style) {
     if (parameter.in === 'query') {
@@ -86,10 +97,12 @@ function stylizeValue(value, parameter) {
 
   let explode = parameter.explode;
   if (explode === undefined && style === 'form') {
-    // Per the spec if no `explode` is present but `style` is `form` then `explode` should default to `true`.
-    //
-    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#user-content-parameterexplode
-    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#user-content-parameterexplode
+    /**
+     * Per the spec if no `explode` is present but `style` is `form` then `explode` should default to `true`.
+     *
+     * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#user-content-parameterexplode}
+     * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#user-content-parameterexplode}
+     */
     explode = true;
   }
 
@@ -99,10 +112,10 @@ function stylizeValue(value, parameter) {
     key: parameter.name,
     style,
     explode,
-    /*
-      TODO: this parameter is optional to stylize. It defaults to false, and can accept falsy, truthy, or "unsafe".
-      I do not know if it is correct for query to use this. See style-serializer for more info
-    */
+    /**
+     * @todo this parameter is optional to stylize. It defaults to false, and can accept falsy, truthy, or "unsafe".
+     *  I do not know if it is correct for query to use this. See style-serializer for more info
+     */
     escape: true,
     ...(parameter.in === 'query' ? { isAllowedReserved: parameter.allowReserved || false } : {}),
   });
@@ -140,7 +153,8 @@ function handleDeepObject(value, parameter) {
     });
 }
 
-// Explode is handled on its own, because style-serializer doesn't return what we expect for proper HAR output
+// Explode is handled on its own, because style-serializer doesn't return what we expect for proper
+// HAR output.
 function handleExplode(value, parameter) {
   if (Array.isArray(value)) {
     return value.map(val => {
@@ -183,10 +197,15 @@ module.exports = function formatStyle(value, parameter) {
     return undefined;
   }
 
-  // This custom explode logic allows us to bubble up arrays and objects to be handled differently by our HAR transformer
-  //  We need this because the stylizeValue function assumes we're building strings, not richer data types
-  // The first part of this conditional checks if explode is enabled. Explode is disabled for everything by default except for forms.
-  // The second part of this conditional bypasses the custom explode logic for headers, because they work differently, and stylizeValue is accurate
+  // This custom explode logic allows us to bubble up arrays and objects to be handled differently
+  // by our HAR transformer. We need this because the `stylizeValue` function assumes we're building
+  // strings, not richer data types.
+  //
+  // The first part of this conditional checks if `explode` is enabled. Explode is disabled for
+  // everything by default except for forms.
+  //
+  // The second part of this conditional bypasses the custom explode logic for headers, because they
+  // work differently, and `stylizeValue` is accurate.
   if (shouldExplode(parameter)) {
     return handleExplode(value, parameter);
   }
