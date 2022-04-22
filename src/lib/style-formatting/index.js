@@ -116,7 +116,7 @@ function handleDeepObject(value, parameter) {
         if (type === 'key') {
           // `str` will be here as `dog[treats][0]` but because the `qs` library doesn't have any
           // awareness of our OpenAPI parameters we need to rewrite it to slap the `parameter.name`
-          // to the top, like `${parameter.name}[dog][treats][0]`.
+          // to the top, like `pets[dog][treats][0]`.
           const prefixedKey = str
             .split(/[[\]]/g)
             .filter(Boolean)
