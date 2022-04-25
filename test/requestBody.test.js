@@ -7,6 +7,7 @@ const oasToHar = require('../src');
 
 const chaiPlugins = require('./helpers/chai-plugins');
 
+const schemaTypes = require('@readme/oas-examples/3.0/json/schema-types.json');
 const multipartFormData = require('./__datasets__/multipart-form-data.json');
 const multipartFormDataArrayOfFiles = require('./__datasets__/multipart-form-data/array-of-files.json');
 const requestBodyRawBody = require('./__datasets__/requestBody-raw_body.json');
@@ -339,6 +340,44 @@ describe('request body handling', function () {
 
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: undefined });
       expect(har.log.entries[0].request.postData).to.be.undefined;
+    });
+
+    describe('raw payloads', function () {
+      it('should support raw JSON payloads', function () {
+        const spec = new Oas(schemaTypes);
+
+        const har = oasToHar(spec, spec.operation('/anything/strings/top-level-payloads', 'post'), {
+          body: JSON.stringify({ pug: 'buster' }),
+        });
+
+        expect(har.log.entries[0].request.postData.text).to.equal('{"pug":"buster"}');
+      });
+
+      it('should support raw XML payloads', function () {
+        const spec = new Oas({
+          paths: {
+            '/requestBody': {
+              post: {
+                requestBody: {
+                  content: {
+                    'application/xml': {
+                      schema: {
+                        type: 'string',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const har = oasToHar(spec, spec.operation('/requestBody', 'post'), {
+          body: '<xml>some content</xml>',
+        });
+
+        expect(har.log.entries[0].request.postData.text).to.equal('<xml>some content</xml>');
+      });
     });
 
     describe('`RAW_BODY`-named properties', function () {
