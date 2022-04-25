@@ -50,6 +50,26 @@
         }
       }
     },
+    "/xml": {
+      "post": {
+        "summary": "`RAW_BODY` handling of string content with `format: xml`.",
+        "requestBody": {
+          "content": {
+            "application/xml": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "RAW_BODY": {
+                    "type": "string",
+                    "format": "xml"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/objects": {
       "post": {
         "summary": "`RAW_BODY` handling of shaped objects.",
