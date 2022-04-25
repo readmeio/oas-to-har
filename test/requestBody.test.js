@@ -363,6 +363,13 @@ describe('request body handling', function () {
         expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 1 }));
       });
 
+      it('should work for RAW_BODY xml', function () {
+        const spec = new Oas(requestBodyRawBody);
+        const har = oasToHar(spec, spec.operation('/xml', 'post'), { body: { RAW_BODY: '<xml>' } });
+
+        expect(har.log.entries[0].request.postData.text).to.equal('<xml>');
+      });
+
       it('should work for RAW_BODY objects', function () {
         const spec = new Oas(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: { a: 'test' } } });

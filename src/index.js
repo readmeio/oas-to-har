@@ -396,8 +396,8 @@ module.exports = (
                     }
                   });
 
-                  // `RAW_BODY` is a ReadMe-specific thing where we'll interpret its contents as
-                  // raw JSON.
+                  // `RAW_BODY` is a ReadMe-specific thing where we'll interpret the entire payload
+                  // as a raw string. https://docs.readme.com/docs/raw-body-content
                   if (typeof cleanBody.RAW_BODY !== 'undefined') {
                     cleanBody = cleanBody.RAW_BODY;
                   }
@@ -420,6 +420,15 @@ module.exports = (
         har.postData.mimeType = contentType;
         if (isPrimitive(formData.body)) {
           har.postData.text = formData.body;
+        } else if (
+          typeof formData.body === 'object' &&
+          formData.body !== null &&
+          !Array.isArray(formData.body) &&
+          typeof formData.body.RAW_BODY !== 'undefined'
+        ) {
+          // `RAW_BODY` is a ReadMe-specific thing where we'll interpret the entire payload as a
+          // raw string. https://docs.readme.com/docs/raw-body-content
+          har.postData.text = formData.body.RAW_BODY;
         } else {
           har.postData.text = stringify(formData.body);
         }
