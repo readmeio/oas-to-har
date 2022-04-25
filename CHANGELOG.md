@@ -1,3 +1,10 @@
+## <small>17.0.2 (2022-04-25)</small>
+
+* test: adding some clearer test coverage for raw string payloads ([a47ebc1](https://github.com/readmeio/oas-to-har/commit/a47ebc1))
+* feat: adding support for RAW_BODY payloads when not on JSON-like content types (#81) ([ca2d395](https://github.com/readmeio/oas-to-har/commit/ca2d395)), closes [#81](https://github.com/readmeio/oas-to-har/issues/81)
+
+
+
 ## <small>17.0.1 (2022-04-22)</small>
 
 * fix: issue where a lowercase `Accept` header may be duplicated (#80) ([cb9e1b4](https://github.com/readmeio/oas-to-har/commit/cb9e1b4)), closes [#80](https://github.com/readmeio/oas-to-har/issues/80)
