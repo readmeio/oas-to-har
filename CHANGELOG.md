@@ -1,3 +1,9 @@
+## <small>17.0.3 (2022-04-26)</small>
+
+* chore(deps): bumping deps to resolve node 18 compat warnings (#82) ([d202509](https://github.com/readmeio/oas-to-har/commit/d202509)), closes [#82](https://github.com/readmeio/oas-to-har/issues/82)
+
+
+
 ## <small>17.0.2 (2022-04-25)</small>
 
 * test: adding some clearer test coverage for raw string payloads ([a47ebc1](https://github.com/readmeio/oas-to-har/commit/a47ebc1))
