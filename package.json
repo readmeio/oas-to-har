@@ -24,26 +24,26 @@
     "test": "nyc mocha"
   },
   "dependencies": {
-    "@readme/oas-extensions": "^14.2.0",
-    "oas": "^18.0.6",
+    "@readme/oas-extensions": "^14.3.0",
+    "oas": "^18.3.1",
     "parse-data-url": "^4.0.1",
     "qs": "^6.10.3",
-    "remove-undefined-objects": "^1.1.0"
+    "remove-undefined-objects": "^2.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",
     "@commitlint/config-conventional": "^16.0.0",
     "@jsdevtools/host-environment": "^2.1.2",
     "@jsdevtools/karma-config": "^3.1.7",
-    "@readme/eslint-config": "^8.5.1",
+    "@readme/eslint-config": "^8.7.2",
     "@readme/oas-examples": "^5.1.1",
     "chai": "^4.3.6",
-    "eslint": "^8.11.0",
+    "eslint": "^8.14.0",
     "har-validator": "^5.1.5",
     "husky": "^7.0.4",
     "mocha": "^9.2.2",
     "nyc": "^15.1.0",
-    "prettier": "^2.6.0"
+    "prettier": "^2.6.2"
   },
   "prettier": "@readme/eslint-config/prettier",
   "commitlint": {
