@@ -142,6 +142,27 @@ function appendHarValue(harParam, name, value, addtlData = {}) {
   }
 }
 
+function encodeBodyForHAR(body) {
+  if (isPrimitive(body)) {
+    return body;
+  } else if (
+    typeof body === 'object' &&
+    body !== null &&
+    !Array.isArray(body) &&
+    typeof body.RAW_BODY !== 'undefined'
+  ) {
+    // `RAW_BODY` is a ReadMe-specific thing where we'll interpret the entire payload as a
+    // raw string. https://docs.readme.com/docs/raw-body-content
+    if (isPrimitive(body.RAW_BODY)) {
+      return body.RAW_BODY;
+    }
+
+    return stringify(body.RAW_BODY);
+  }
+
+  return stringify(body);
+}
+
 module.exports = (
   oas,
   operationSchema = { path: '', method: '' },
@@ -407,7 +428,7 @@ module.exports = (
                   har.postData.text = stringify(formData.body);
                 }
               } else {
-                har.postData.text = stringify(formData.body);
+                har.postData.text = encodeBodyForHAR(formData.body);
               }
             }
           }
@@ -418,20 +439,7 @@ module.exports = (
         }
       } else {
         har.postData.mimeType = contentType;
-        if (isPrimitive(formData.body)) {
-          har.postData.text = formData.body;
-        } else if (
-          typeof formData.body === 'object' &&
-          formData.body !== null &&
-          !Array.isArray(formData.body) &&
-          typeof formData.body.RAW_BODY !== 'undefined'
-        ) {
-          // `RAW_BODY` is a ReadMe-specific thing where we'll interpret the entire payload as a
-          // raw string. https://docs.readme.com/docs/raw-body-content
-          har.postData.text = formData.body.RAW_BODY;
-        } else {
-          har.postData.text = stringify(formData.body);
-        }
+        har.postData.text = encodeBodyForHAR(formData.body);
       }
     }
   }
