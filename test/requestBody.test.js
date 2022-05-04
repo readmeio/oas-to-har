@@ -385,14 +385,14 @@ describe('request body handling', function () {
         const spec = new Oas(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/primitive', 'post'), { body: { RAW_BODY: 'test' } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify('test'));
+        expect(har.log.entries[0].request.postData.text).to.equal('test');
       });
 
       it('should return empty for falsy RAW_BODY primitives', function () {
         const spec = new Oas(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/primitive', 'post'), { body: { RAW_BODY: '' } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify(''));
+        expect(har.log.entries[0].request.postData.text).to.equal('');
       });
 
       it('should work for RAW_BODY json', function () {
@@ -414,6 +414,13 @@ describe('request body handling', function () {
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: { a: 'test' } } });
 
         expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 'test' }));
+      });
+
+      it('should work for RAW_BODY objects (but data is a primitive somehow)', function () {
+        const spec = new Oas(requestBodyRawBody);
+        const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: 'test' } });
+
+        expect(har.log.entries[0].request.postData.text).to.equal('test');
       });
 
       it('should return empty for RAW_BODY objects', function () {
