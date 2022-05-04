@@ -1,3 +1,14 @@
+## <small>17.0.4 (2022-05-04)</small>
+
+* fix: more quirks with handling RAW_BODY primitives (#88) ([9f421cd](https://github.com/readmeio/oas-to-har/commit/9f421cd)), closes [#88](https://github.com/readmeio/oas-to-har/issues/88)
+* chore(deps-dev): bump @commitlint/cli from 16.2.3 to 16.2.4 (#84) ([eb0dd24](https://github.com/readmeio/oas-to-har/commit/eb0dd24)), closes [#84](https://github.com/readmeio/oas-to-har/issues/84)
+* chore(deps-dev): bump @commitlint/config-conventional (#85) ([efad0c3](https://github.com/readmeio/oas-to-har/commit/efad0c3)), closes [#85](https://github.com/readmeio/oas-to-har/issues/85)
+* chore(deps-dev): bump @readme/eslint-config from 8.7.2 to 8.7.3 (#87) ([d173c39](https://github.com/readmeio/oas-to-har/commit/d173c39)), closes [#87](https://github.com/readmeio/oas-to-har/issues/87)
+* chore(deps-dev): bump mocha from 9.2.2 to 10.0.0 (#86) ([e730a1b](https://github.com/readmeio/oas-to-har/commit/e730a1b)), closes [#86](https://github.com/readmeio/oas-to-har/issues/86)
+* chore(deps): bump github/codeql-action from 1 to 2 (#83) ([69407c1](https://github.com/readmeio/oas-to-har/commit/69407c1)), closes [#83](https://github.com/readmeio/oas-to-har/issues/83)
+
+
+
 ## <small>17.0.3 (2022-04-26)</small>
 
 * chore(deps): bumping deps to resolve node 18 compat warnings (#82) ([d202509](https://github.com/readmeio/oas-to-har/commit/d202509)), closes [#82](https://github.com/readmeio/oas-to-har/issues/82)
