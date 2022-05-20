@@ -447,7 +447,10 @@ module.exports = (
   // Add a `Content-Type` header if there are any body values setup above or if there is a schema
   // defined, but only do so if we don't already have a `Content-Type` present as it's impossible
   // for a request to have multiple.
-  if ((har.postData.text || (requestBody && Object.keys(requestBody.schema).length)) && !hasContentType) {
+  if (
+    (har.postData.text || (requestBody && requestBody.schema && Object.keys(requestBody.schema).length)) &&
+    !hasContentType
+  ) {
     har.headers.push({
       name: 'Content-Type',
       value: contentType,
