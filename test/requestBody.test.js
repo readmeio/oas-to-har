@@ -18,6 +18,26 @@ chai.use(chaiPlugins);
 
 describe('request body handling', function () {
   describe('`body` data handling', function () {
+    it('should not fail if a requestBody is present without a `schema`', function () {
+      const spec = new Oas({
+        paths: {
+          '/requestBody': {
+            post: {
+              requestBody: {
+                content: {
+                  'text/plain': {
+                    example: '',
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      expect(oasToHar(spec, spec.operation('/requestBody', 'post')).log.entries[0].request.postData).to.be.undefined;
+    });
+
     it('should not add on empty unrequired values', function () {
       const spec = new Oas({
         paths: {
