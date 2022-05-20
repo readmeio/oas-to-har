@@ -1,3 +1,9 @@
+## <small>17.0.5 (2022-05-20)</small>
+
+* fix: add handling for when `requestBody` is present w/o a `schema` (#89) ([d8911e0](https://github.com/readmeio/oas-to-har/commit/d8911e0)), closes [#89](https://github.com/readmeio/oas-to-har/issues/89)
+
+
+
 ## <small>17.0.4 (2022-05-04)</small>
 
 * fix: more quirks with handling RAW_BODY primitives (#88) ([9f421cd](https://github.com/readmeio/oas-to-har/commit/9f421cd)), closes [#88](https://github.com/readmeio/oas-to-har/issues/88)
