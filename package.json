@@ -31,7 +31,7 @@
     "remove-undefined-objects": "^2.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.2.3",
+    "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^16.0.0",
     "@jsdevtools/host-environment": "^2.1.2",
     "@jsdevtools/karma-config": "^3.1.7",
