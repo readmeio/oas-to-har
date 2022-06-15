@@ -1,3 +1,18 @@
+## <small>17.0.6 (2022-06-15)</small>
+
+* chore(deps-dev): bump @commitlint/cli from 16.2.4 to 17.0.2 (#96) ([290ad39](https://github.com/readmeio/oas-to-har/commit/290ad39)), closes [#96](https://github.com/readmeio/oas-to-har/issues/96)
+* chore(deps-dev): bump @commitlint/config-conventional (#94) ([6d850d2](https://github.com/readmeio/oas-to-har/commit/6d850d2)), closes [#94](https://github.com/readmeio/oas-to-har/issues/94)
+* chore(deps-dev): bump @jsdevtools/karma-config from 3.1.7 to 3.2.0 (#95) ([bd11282](https://github.com/readmeio/oas-to-har/commit/bd11282)), closes [#95](https://github.com/readmeio/oas-to-har/issues/95)
+* chore(deps-dev): bump @readme/eslint-config from 8.7.3 to 8.7.5 (#90) ([a1c1c80](https://github.com/readmeio/oas-to-har/commit/a1c1c80)), closes [#90](https://github.com/readmeio/oas-to-har/issues/90)
+* chore(deps-dev): bump @readme/oas-examples from 5.1.1 to 5.2.0 (#91) ([6c94867](https://github.com/readmeio/oas-to-har/commit/6c94867)), closes [#91](https://github.com/readmeio/oas-to-har/issues/91)
+* chore(deps-dev): bump eslint from 8.14.0 to 8.16.0 (#93) ([89af165](https://github.com/readmeio/oas-to-har/commit/89af165)), closes [#93](https://github.com/readmeio/oas-to-har/issues/93)
+* chore(deps-dev): bump husky from 7.0.4 to 8.0.1 (#97) ([0044414](https://github.com/readmeio/oas-to-har/commit/0044414)), closes [#97](https://github.com/readmeio/oas-to-har/issues/97)
+* chore(deps): bump oas from 18.3.1 to 18.3.3 (#92) ([c990941](https://github.com/readmeio/oas-to-har/commit/c990941)), closes [#92](https://github.com/readmeio/oas-to-har/issues/92)
+* chore(deps): bumping out of date deps ([8504853](https://github.com/readmeio/oas-to-har/commit/8504853))
+* fix: quirk where an auth header may be added twice (#98) ([cdc4a44](https://github.com/readmeio/oas-to-har/commit/cdc4a44)), closes [#98](https://github.com/readmeio/oas-to-har/issues/98)
+
+
+
 ## <small>17.0.5 (2022-05-20)</small>
 
 * fix: add handling for when `requestBody` is present w/o a `schema` (#89) ([d8911e0](https://github.com/readmeio/oas-to-har/commit/d8911e0)), closes [#89](https://github.com/readmeio/oas-to-har/issues/89)
