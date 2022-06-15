@@ -3,19 +3,39 @@ const { expect } = require('chai');
 const oasToHar = require('../src');
 
 const security = require('./__datasets__/security.json');
+const securityQuirks = require('./__datasets__/security-quirks.json');
 
 const spec = new Oas(security);
 
 describe('auth handling', function () {
-  it('should work for header auth', function () {
-    expect(
-      oasToHar(spec, spec.operation('/header', 'post'), {}, { auth_header: 'value' }).log.entries[0].request.headers
-    ).to.deep.equal([
-      {
-        name: 'x-auth-header',
-        value: 'value',
-      },
-    ]);
+  describe('headers', function () {
+    it('should work for header auth', function () {
+      expect(
+        oasToHar(spec, spec.operation('/header', 'post'), {}, { auth_header: 'value' }).log.entries[0].request.headers
+      ).to.deep.equal([
+        {
+          name: 'x-auth-header',
+          value: 'value',
+        },
+      ]);
+    });
+
+    it('should not send the same auth header twice', function () {
+      const auth = {
+        appId: '1234567890',
+        accessToken: 'e229822e-f625-45eb-a963-4d197d29637b',
+      };
+
+      const oas = new Oas(securityQuirks);
+      const har = oasToHar(oas, oas.operation('/anything', 'post'), {}, auth);
+
+      expect(har.log.entries[0].request.headers).to.deep.equal([
+        {
+          name: 'Access-Token',
+          value: 'e229822e-f625-45eb-a963-4d197d29637b',
+        },
+      ]);
+    });
   });
 
   it('should work for query auth', function () {

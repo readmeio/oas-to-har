@@ -1,0 +1,42 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Security quirks",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "https://httpbin.org" }],
+  "security": [
+    { "appId": [], "accessToken": [] },
+    { "orgId": [], "accessToken": [] }
+  ],
+  "paths": {
+    "/anything": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "accessToken": {
+        "type": "apiKey",
+        "name": "Access-Token",
+        "in": "header"
+      },
+      "orgId": {
+        "type": "apiKey",
+        "name": "organization_id",
+        "in": "query"
+      },
+      "appId": {
+        "type": "apiKey",
+        "name": "app_id",
+        "in": "query"
+      }
+    }
+  }
+}
