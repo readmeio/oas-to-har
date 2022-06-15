@@ -279,6 +279,7 @@ module.exports = (
         hasContentType = true;
         contentType = String(value);
       }
+
       appendHarValue(har.headers, header.name, value);
     });
   }
@@ -465,6 +466,15 @@ module.exports = (
       Object.keys(schemes).forEach(security => {
         const securityValue = configureSecurity(apiDefinition, auth, security);
         if (!securityValue) {
+          return;
+        }
+
+        // If we've already added this security value then don't add it again.
+        if (
+          har[securityValue.type].find(
+            v => v.name === securityValue.value.name && v.value === securityValue.value.value
+          )
+        ) {
           return;
         }
 
