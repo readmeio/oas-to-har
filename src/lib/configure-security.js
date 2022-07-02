@@ -17,7 +17,11 @@ module.exports = function configureSecurity(apiDefinition, values, scheme) {
       if (!values[scheme]) return false;
       if (!values[scheme].user && !values[scheme].pass) return false;
 
-      const user = values[scheme].user;
+      let user = values[scheme].user;
+      if (user === null || user.length === 0) {
+        user = '';
+      }
+
       let pass = values[scheme].pass;
       if (pass === null || pass.length === 0) {
         pass = '';
