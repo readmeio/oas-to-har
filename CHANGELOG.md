@@ -1,3 +1,16 @@
+## <small>17.0.7 (2022-07-05)</small>
+
+* fix: quirk in basic auth handling where it expected a username to be present (#106) ([56cb339](https://github.com/readmeio/oas-to-har/commit/56cb339)), closes [#106](https://github.com/readmeio/oas-to-har/issues/106)
+* chore(deps-dev): bump @commitlint/cli from 17.0.2 to 17.0.3 (#102) ([a769593](https://github.com/readmeio/oas-to-har/commit/a769593)), closes [#102](https://github.com/readmeio/oas-to-har/issues/102)
+* chore(deps-dev): bump @commitlint/config-conventional (#104) ([eccd926](https://github.com/readmeio/oas-to-har/commit/eccd926)), closes [#104](https://github.com/readmeio/oas-to-har/issues/104)
+* chore(deps-dev): bump @readme/eslint-config from 8.7.6 to 8.8.0 (#99) ([3d83ed0](https://github.com/readmeio/oas-to-har/commit/3d83ed0)), closes [#99](https://github.com/readmeio/oas-to-har/issues/99)
+* chore(deps-dev): bump @readme/oas-examples from 5.3.0 to 5.4.0 (#101) ([d4eac8e](https://github.com/readmeio/oas-to-har/commit/d4eac8e)), closes [#101](https://github.com/readmeio/oas-to-har/issues/101)
+* chore(deps-dev): bump eslint from 8.17.0 to 8.18.0 (#103) ([fc652aa](https://github.com/readmeio/oas-to-har/commit/fc652aa)), closes [#103](https://github.com/readmeio/oas-to-har/issues/103)
+* chore(deps-dev): bump prettier from 2.7.0 to 2.7.1 (#100) ([6643d12](https://github.com/readmeio/oas-to-har/commit/6643d12)), closes [#100](https://github.com/readmeio/oas-to-har/issues/100)
+* chore(deps): bump qs from 6.10.5 to 6.11.0 (#105) ([ae8d056](https://github.com/readmeio/oas-to-har/commit/ae8d056)), closes [#105](https://github.com/readmeio/oas-to-har/issues/105)
+
+
+
 ## <small>17.0.6 (2022-06-15)</small>
 
 * chore(deps-dev): bump @commitlint/cli from 16.2.4 to 17.0.2 (#96) ([290ad39](https://github.com/readmeio/oas-to-har/commit/290ad39)), closes [#96](https://github.com/readmeio/oas-to-har/issues/96)
