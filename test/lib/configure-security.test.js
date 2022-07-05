@@ -57,6 +57,27 @@ describe('configure-security', function () {
         });
       });
 
+      it('should work if a password is present but the username is empty or null', function () {
+        const user = null;
+        const pass = 'pass';
+
+        expect(
+          configureSecurity(
+            {
+              components: { securitySchemes: { schemeName: { type: 'http', scheme: 'basic' } } },
+            },
+            { schemeName: { user, pass } },
+            'schemeName'
+          )
+        ).to.deep.equal({
+          type: 'headers',
+          value: {
+            name: 'Authorization',
+            value: `Basic ${Buffer.from(`:${pass}`).toString('base64')}`,
+          },
+        });
+      });
+
       it('should work if the password is empty or null', function () {
         const user = 'user';
         const pass = null;
