@@ -1,3 +1,9 @@
+## <small>17.0.8 (2022-07-07)</small>
+
+* fix: weird mess with instanceof checks not always working (#107) ([80c965e](https://github.com/readmeio/oas-to-har/commit/80c965e)), closes [#107](https://github.com/readmeio/oas-to-har/issues/107)
+
+
+
 ## <small>17.0.7 (2022-07-05)</small>
 
 * fix: quirk in basic auth handling where it expected a username to be present (#106) ([56cb339](https://github.com/readmeio/oas-to-har/commit/56cb339)), closes [#106](https://github.com/readmeio/oas-to-har/issues/106)
