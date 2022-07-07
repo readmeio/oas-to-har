@@ -37,6 +37,38 @@ describe('oas-to-har', function () {
     });
   });
 
+  it('should create an Operation instance if supplied a plain object', async function () {
+    const spec = new Oas(petstore);
+    await spec.dereference();
+
+    const operation = { method: 'post', path: '/pet' };
+    const har = oasToHar(spec, operation);
+
+    await expect(har).to.be.a.har;
+    expect(har).to.deep.equal({
+      log: {
+        entries: [
+          {
+            request: {
+              cookies: [],
+              headers: [
+                // `POST /pet` normally has `Content-Type: application/json` headers but because we
+                // didn't supply `oas-to-har` with the full schema of `POST /pet` we don't have
+                // this information.
+              ],
+              headersSize: 0,
+              queryString: [],
+              bodySize: 0,
+              method: 'POST',
+              url: 'http://petstore.swagger.io/v2/pet',
+              httpVersion: 'HTTP/1.1',
+            },
+          },
+        ],
+      },
+    });
+  });
+
   it('should accept an Operation instance as the operation schema', async function () {
     const spec = new Oas(petstore);
     await spec.dereference();

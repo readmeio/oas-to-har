@@ -175,7 +175,12 @@ module.exports = (
   }
 ) => {
   let operation = operationSchema;
-  if (!(operationSchema instanceof Operation)) {
+  if (typeof operationSchema.getParameters !== 'function') {
+    // If `operationSchema` was supplied as a plain object instead of an instance of `Operation`
+    // then we should create a new instance of it. We're doing it with a check on `getParameters`
+    // instead of checking `instanceof Operation` because JS is very weird when it comes to checking
+    // `instanceof` against classes. One instance of `Operation` may not always match up with
+    // another if they're being loaded between two different libraries. It's weird. This is easier.
     operation = new Operation(oas, operationSchema.path, operationSchema.method, operationSchema);
   }
 
