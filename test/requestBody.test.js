@@ -13,6 +13,7 @@ const multipartFormDataArrayOfFiles = require('./__datasets__/multipart-form-dat
 const requestBodyRawBody = require('./__datasets__/requestBody-raw_body.json');
 
 const owlbertDataURL = require('./__datasets__/owlbert.dataurl.json');
+const owlbertShrubDataURL = require('./__datasets__/owlbert-shrub.dataurl.json');
 
 chai.use(chaiPlugins);
 
@@ -513,7 +514,7 @@ describe('request body handling', function () {
           const fixture = new Oas(multipartFormDataArrayOfFiles);
           const har = oasToHar(fixture, fixture.operation('/anything', 'post'), {
             body: {
-              documentFiles: [owlbertDataURL, owlbertDataURL],
+              documentFiles: [owlbertDataURL, owlbertShrubDataURL],
             },
           });
 
@@ -522,7 +523,15 @@ describe('request body handling', function () {
             params: [
               {
                 name: 'documentFiles',
-                value: JSON.stringify([owlbertDataURL, owlbertDataURL]),
+                value: owlbertDataURL,
+                fileName: 'owlbert.png',
+                contentType: 'image/png',
+              },
+              {
+                name: 'documentFiles',
+                value: owlbertShrubDataURL,
+                fileName: 'owlbert-shrub.png',
+                contentType: 'image/png',
               },
             ],
           });
