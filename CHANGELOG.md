@@ -1,3 +1,12 @@
+## 17.1.0 (2022-07-26)
+
+* docs: fixing weird code formatting in the readme ([85e80a8](https://github.com/readmeio/oas-to-har/commit/85e80a8))
+* chore(deps): bump terser from 4.8.0 to 4.8.1 (#108) ([b0ffb8e](https://github.com/readmeio/oas-to-har/commit/b0ffb8e)), closes [#108](https://github.com/readmeio/oas-to-har/issues/108)
+* chore(deps): bumping out of date deps ([c667505](https://github.com/readmeio/oas-to-har/commit/c667505))
+* fix: keep arrays of binary files as separate params in postData (#109) ([545c0eb](https://github.com/readmeio/oas-to-har/commit/545c0eb)), closes [#109](https://github.com/readmeio/oas-to-har/issues/109)
+
+
+
 ## <small>17.0.8 (2022-07-07)</small>
 
 * fix: weird mess with instanceof checks not always working (#107) ([80c965e](https://github.com/readmeio/oas-to-har/commit/80c965e)), closes [#107](https://github.com/readmeio/oas-to-har/issues/107)
