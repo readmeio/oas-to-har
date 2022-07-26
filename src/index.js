@@ -36,7 +36,7 @@ function formatter(values, param, type, onlyIfExists) {
   if (param.schema && param.schema.type === 'array' && param.schema.items && param.schema.items.format === 'binary') {
     if (Array.isArray(value)) {
       // If this is array of binary data then we shouldn't do anything because we'll prepare them
-      // separately in the HAR in order to preserve `fileName` and `contentType` data within`
+      // separately in the HAR in order to preserve `fileName` and `contentType` data within
       // `postData.params`. If we don't then the HAR we generate for this data will be invalid.
       return value;
     }
