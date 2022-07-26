@@ -34,6 +34,13 @@ function formatter(values, param, type, onlyIfExists) {
   // Handle file uploads. Specifically arrays of file uploads which need to be formatted very
   // specifically.
   if (param.schema && param.schema.type === 'array' && param.schema.items && param.schema.items.format === 'binary') {
+    if (Array.isArray(value)) {
+      // If this is array of binary data then we shouldn't do anything because we'll prepare them
+      // separately in the HAR in order to preserve `fileName` and `contentType` data within
+      // `postData.params`. If we don't then the HAR we generate for this data will be invalid.
+      return value;
+    }
+
     return JSON.stringify(value);
   }
 
@@ -353,12 +360,31 @@ module.exports = (
             har.postData.mimeType = 'multipart/form-data';
             har.postData.params = [];
 
-            // Discover all `{ type: string, format: binary }` properties the schema. If there are
-            // any, then that means that we're dealing with a `multipart/form-data` request and
-            // need to treat the payload as `postData.params`.
-            const binaryTypes = Object.keys(requestBody.schema.properties).filter(
-              key => requestBody.schema.properties[key].format === 'binary'
-            );
+            /**
+             * Discover all `{ type: string, format: binary }` properties, or arrays containing the
+             * same, within the request body. If there are any, then that means that we're dealing
+             * with a `multipart/form-data` request and need to treat the payload as
+             * `postData.params` and supply filenames and content types for the files (if they're
+             * available).
+             *
+             * @example `{ type: string, format: binary }`
+             * @example `{ type: array, items: { type: string, format: binary } }`
+             */
+            const binaryTypes = Object.keys(requestBody.schema.properties).filter(key => {
+              if (requestBody.schema.properties[key].format === 'binary') {
+                return true;
+              } else if (
+                requestBody.schema.properties[key].type === 'array' &&
+                requestBody.schema.properties[key].items &&
+                typeof requestBody.schema.properties[key].items === 'object' &&
+                requestBody.schema.properties[key].items !== null &&
+                requestBody.schema.properties[key].items.format === 'binary'
+              ) {
+                return true;
+              }
+
+              return false;
+            });
 
             if (cleanBody !== undefined) {
               const multipartParams = multipartBodyToFormatterParams(
@@ -369,25 +395,30 @@ module.exports = (
               Object.keys(cleanBody).forEach(name => {
                 const param = multipartParams.find(multipartParam => multipartParam.name === name);
 
-                const value = formatter(formData, param, 'body', true);
-
                 // If we're dealing with a binary type, and the value is a valid data URL we should
                 // parse out any available filename and content type to send along with the
                 // parameter to interpreters like `fetch-har` can make sense of it and send a usable
                 // payload.
                 const addtlData = {};
 
-                if (binaryTypes.includes(name)) {
-                  const parsed = parseDataUrl(value);
-                  if (parsed) {
-                    addtlData.fileName = 'name' in parsed ? parsed.name : 'unknown';
-                    if ('contentType' in parsed) {
-                      addtlData.contentType = parsed.contentType;
-                    }
-                  }
+                let value = formatter(formData, param, 'body', true);
+                if (!Array.isArray(value)) {
+                  value = [value];
                 }
 
-                appendHarValue(har.postData.params, name, value, addtlData);
+                value.forEach(val => {
+                  if (binaryTypes.includes(name)) {
+                    const parsed = parseDataUrl(val);
+                    if (parsed) {
+                      addtlData.fileName = 'name' in parsed ? parsed.name : 'unknown';
+                      if ('contentType' in parsed) {
+                        addtlData.contentType = parsed.contentType;
+                      }
+                    }
+                  }
+
+                  appendHarValue(har.postData.params, name, val, addtlData);
+                });
               });
             }
           } else {
