@@ -8,6 +8,7 @@ const oasToHar = require('../src');
 const chaiPlugins = require('./helpers/chai-plugins');
 
 const schemaTypes = require('@readme/oas-examples/3.0/json/schema-types.json');
+const fileUploads = require('@readme/oas-examples/3.0/json/file-uploads.json');
 const multipartFormData = require('./__datasets__/multipart-form-data.json');
 const multipartFormDataArrayOfFiles = require('./__datasets__/multipart-form-data/array-of-files.json');
 const requestBodyRawBody = require('./__datasets__/requestBody-raw_body.json');
@@ -532,6 +533,27 @@ describe('request body handling', function () {
                 value: owlbertShrubDataURL,
                 fileName: 'owlbert-shrub.png',
                 contentType: 'image/png',
+              },
+            ],
+          });
+        });
+
+        it('should handle a file that has an underscore in its name', function () {
+          const fixture = new Oas(fileUploads);
+          const har = oasToHar(fixture, fixture.operation('/anything/multipart-formdata', 'post'), {
+            body: {
+              documentFile: 'data:text/plain;name=lorem_ipsum.txt;base64,TG9yZW0gaXBzdW0gZG9sb3Igc2l0IG1ldA==',
+            },
+          });
+
+          expect(har.log.entries[0].request.postData).to.deep.equal({
+            mimeType: 'multipart/form-data',
+            params: [
+              {
+                fileName: 'lorem_ipsum.txt',
+                contentType: 'text/plain',
+                name: 'documentFile',
+                value: 'data:text/plain;name=lorem_ipsum.txt;base64,TG9yZW0gaXBzdW0gZG9sb3Igc2l0IG1ldA==',
               },
             ],
           });
