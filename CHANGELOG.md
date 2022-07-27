@@ -1,3 +1,9 @@
+## <small>17.1.2 (2022-07-27)</small>
+
+* fix: issue with filenames in data URLs not retaining their casing ([e8a7edb](https://github.com/readmeio/oas-to-har/commit/e8a7edb))
+
+
+
 ## <small>17.1.1 (2022-07-27)</small>
 
 * fix: support for filenames that have underscores in them (#110) ([98a3972](https://github.com/readmeio/oas-to-har/commit/98a3972)), closes [#110](https://github.com/readmeio/oas-to-har/issues/110)
