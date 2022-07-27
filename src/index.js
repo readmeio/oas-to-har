@@ -1,6 +1,6 @@
 const extensions = require('@readme/oas-extensions');
 const { Operation, utils } = require('oas');
-const parseDataUrl = require('parse-data-url');
+const { parse: parseDataUrl } = require('@readme/data-urls');
 const { default: removeUndefinedObjects } = require('remove-undefined-objects');
 
 const configureSecurity = require('./lib/configure-security');
