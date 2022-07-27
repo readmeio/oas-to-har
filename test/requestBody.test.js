@@ -558,6 +558,27 @@ describe('request body handling', function () {
             ],
           });
         });
+
+        it('should retain filename casing', function () {
+          const fixture = new Oas(fileUploads);
+          const har = oasToHar(fixture, fixture.operation('/anything/multipart-formdata', 'post'), {
+            body: {
+              documentFile: 'data:text/plain;name=LoREM_IpSuM.txt;base64,TG9yZW0gaXBzdW0gZG9sb3Igc2l0IG1ldA==',
+            },
+          });
+
+          expect(har.log.entries[0].request.postData).to.deep.equal({
+            mimeType: 'multipart/form-data',
+            params: [
+              {
+                fileName: 'LoREM_IpSuM.txt',
+                contentType: 'text/plain',
+                name: 'documentFile',
+                value: 'data:text/plain;name=LoREM_IpSuM.txt;base64,TG9yZW0gaXBzdW0gZG9sb3Igc2l0IG1ldA==',
+              },
+            ],
+          });
+        });
       });
 
       describe('image/png', function () {
