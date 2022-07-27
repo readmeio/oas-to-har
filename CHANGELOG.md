@@ -1,3 +1,9 @@
+## <small>17.1.1 (2022-07-27)</small>
+
+* fix: support for filenames that have underscores in them (#110) ([98a3972](https://github.com/readmeio/oas-to-har/commit/98a3972)), closes [#110](https://github.com/readmeio/oas-to-har/issues/110)
+
+
+
 ## 17.1.0 (2022-07-26)
 
 * docs: fixing weird code formatting in the readme ([85e80a8](https://github.com/readmeio/oas-to-har/commit/85e80a8))
