@@ -1029,8 +1029,8 @@ describe('style formatting', function () {
      * Eventhough `Accept`, `Authorization`, and `Content-Type` headers can be defined as path
      * parameters, they should be completely ignored when it comes to serialization.
      *
-     *    > If in is "header" and the name field is "Accept", "Content-Type" or "Authorization",
-     *    > the parameter definition SHALL be ignored.
+     *  > If `in` is "header" and the `name` field is "Accept", "Content-Type" or "Authorization",
+     *  > the parameter definition SHALL be ignored.
      *
      * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10
      */

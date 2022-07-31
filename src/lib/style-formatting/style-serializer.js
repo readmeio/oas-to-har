@@ -22,13 +22,17 @@ function isURIEncoded(value) {
   }
 }
 
+function isObject(value) {
+  return typeof value === 'object' && value !== null;
+}
+
 module.exports = function stylize(config) {
   const { value } = config;
 
   if (Array.isArray(value)) {
     return encodeArray(config);
   }
-  if (typeof value === 'object' && value !== null) {
+  if (isObject(value)) {
     return encodeObject(config);
   }
   return encodePrimitive(config);
@@ -133,7 +137,7 @@ function encodeArray({ location, key, value, style, explode, escape, isAllowedRe
      * `["blue","black","brown"]` → `color=blue&color=black&color=brown`
      *
      * @example <caption>`style: form` + `explode: false` (the default behavior)</caption>
-     * `["blue","black","brown"]` → `ccolor=blue,black,brown`
+     * `["blue","black","brown"]` → `color=blue,black,brown`
      */
     case 'form':
       return value.map(val => valueEncoder(val)).join(explode ? `&${key}=` : ',');
