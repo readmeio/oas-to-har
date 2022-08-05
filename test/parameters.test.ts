@@ -1,19 +1,21 @@
-const chai = require('chai');
-const { expect } = require('chai');
+import type { Request } from 'har-format';
+import type { OperationObject } from 'oas/dist/rmoas.types';
+import type { DataForHAR } from '../src';
 
-const Oas = require('oas').default;
-const oasToHar = require('../src');
+import chai, { expect } from 'chai';
+import Oas from 'oas';
+import oasToHar from '../src';
 
-const chaiPlugins = require('./helpers/chai-plugins');
+import chaiPlugins from './helpers/chai-plugins';
 
-const commonParameters = require('./__datasets__/common-parameters.json');
+import commonParameters from './__datasets__/common-parameters.json';
 
 chai.use(chaiPlugins);
 
 describe('parameter handling', function () {
   describe('path', function () {
     it('should pass through unknown path params', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/path-param/{id}': {
             get: {},
@@ -39,43 +41,9 @@ describe('parameter handling', function () {
       );
     });
 
-    // eslint-disable-next-line mocha/no-setup-in-describe
-    [
-      [
-        'should not error if empty object passed in for values',
-        {
-          parameters: [{ name: 'id', in: 'path', required: true }],
-        },
-        {},
-        'https://example.com/path-param/id',
-      ],
-      [
-        'should use default if no value',
-        {
-          parameters: [{ name: 'id', in: 'path', required: true, schema: { default: '123' } }],
-        },
-        {},
-        'https://example.com/path-param/123',
-      ],
-      [
-        'should add path values to the url',
-        {
-          parameters: [{ name: 'id', in: 'path', required: true }],
-        },
-        { path: { id: '456' } },
-        'https://example.com/path-param/456',
-      ],
-      [
-        'should add falsy values to the url',
-        {
-          parameters: [{ name: 'id', in: 'path', required: true }],
-        },
-        { path: { id: 0 } },
-        'https://example.com/path-param/0',
-      ],
-    ].forEach(([test, operation, formData, expectedUrl]) => {
-      it(test, async function () {
-        const spec = new Oas({
+    function assertPath(operation: OperationObject, formData: DataForHAR, expected: string) {
+      return async () => {
+        const spec = Oas.init({
           paths: {
             '/path-param/{id}': {
               get: operation,
@@ -86,68 +54,141 @@ describe('parameter handling', function () {
         const har = oasToHar(spec, spec.operation('/path-param/{id}', 'get'), formData);
         await expect(har).to.be.a.har;
 
-        expect(har.log.entries[0].request.url).to.equal(expectedUrl);
-      });
-    });
+        expect(har.log.entries[0].request.url).to.equal(expected);
+      };
+    }
+
+    it(
+      'should not error if empty object passed in for values',
+      assertPath(
+        {
+          parameters: [{ name: 'id', in: 'path', required: true }],
+        },
+        {},
+        'https://example.com/path-param/id'
+      )
+    );
+
+    it(
+      'should use default if no value',
+      assertPath(
+        {
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { default: '123' } }],
+        },
+        {},
+        'https://example.com/path-param/123'
+      )
+    );
+
+    it(
+      'should add path values to the url',
+      assertPath(
+        {
+          parameters: [{ name: 'id', in: 'path', required: true }],
+        },
+        { path: { id: '456' } },
+        'https://example.com/path-param/456'
+      )
+    );
+
+    it(
+      'should add falsy values to the url',
+      assertPath(
+        {
+          parameters: [{ name: 'id', in: 'path', required: true }],
+        },
+        { path: { id: 0 } },
+        'https://example.com/path-param/0'
+      )
+    );
   });
 
   describe('query', function () {
-    // eslint-disable-next-line mocha/no-setup-in-describe
-    [
-      [
-        'should not add on empty unrequired values',
-        {
-          parameters: [{ name: 'a', in: 'query' }],
-        },
-      ],
-      [
-        'should not add the parameter name as a value if required but missing',
-        {
-          parameters: [{ name: 'a', in: 'query', required: true }],
-        },
-      ],
-      [
-        'should set defaults if no value provided but is required',
+    function assertQueryParams(operation: OperationObject, formData: DataForHAR, expected: Request['queryString']) {
+      return async () => {
+        const spec = Oas.init({
+          paths: {
+            '/query': {
+              get: operation,
+            },
+          },
+        });
+
+        const har = oasToHar(spec, spec.operation('/query', 'get'), formData);
+        await expect(har).to.be.a.har;
+
+        expect(har.log.entries[0].request.queryString).to.deep.equal(expected);
+      };
+    }
+
+    it(
+      'should not add on empty unrequired values',
+      assertQueryParams({ parameters: [{ name: 'a', in: 'query' }] }, {}, [])
+    );
+
+    it(
+      'should not add the parameter name as a value if required but missing',
+      assertQueryParams({ parameters: [{ name: 'a', in: 'query', required: true }] }, {}, [])
+    );
+
+    it(
+      'should set defaults if no value provided but is required',
+      assertQueryParams(
         {
           parameters: [{ name: 'a', in: 'query', required: true, schema: { default: 'value' } }],
         },
         {},
-        [{ name: 'a', value: 'value' }],
-      ],
-      [
-        'should pass in value if one is set and prioritise provided values',
+        [{ name: 'a', value: 'value' }]
+      )
+    );
+
+    it(
+      'should pass in value if one is set and prioritise provided values',
+      assertQueryParams(
         {
           parameters: [{ name: 'a', in: 'query', required: true, schema: { default: 'value' } }],
         },
         { query: { a: 'test' } },
-        [{ name: 'a', value: 'test' }],
-      ],
-      [
-        'should add falsy values to the querystring',
+        [{ name: 'a', value: 'test' }]
+      )
+    );
+
+    it(
+      'should add falsy values to the querystring',
+      assertQueryParams(
         {
           parameters: [{ name: 'id', in: 'query' }],
         },
         { query: { id: 0 } },
-        [{ name: 'id', value: '0' }],
-      ],
-      [
-        'should handle null array values',
+        [{ name: 'id', value: '0' }]
+      )
+    );
+
+    it(
+      'should handle null array values',
+      assertQueryParams(
         {
           parameters: [{ name: 'id', in: 'query' }],
         },
         { query: { id: [null, null] } },
-        [{ name: 'id', value: '&id=' }],
-      ],
-      [
-        'should handle null values',
+        [{ name: 'id', value: '&id=' }]
+      )
+    );
+
+    it(
+      'should handle null values',
+      assertQueryParams(
         {
           parameters: [{ name: 'id', in: 'query' }],
         },
         { query: { id: null } },
-        [{ name: 'id', value: 'null' }],
-      ],
-      [
-        'should handle null default values',
+        [{ name: 'id', value: 'null' }]
+      )
+    );
+
+    it(
+      'should handle null default values',
+      assertQueryParams(
         {
           parameters: [
             {
@@ -165,30 +206,15 @@ describe('parameter handling', function () {
           ],
         },
         { query: {} },
-        [{ name: 'id', value: '&id=' }],
-      ],
-    ].forEach(([test, operation = {}, formData = {}, expectedQueryString = []]) => {
-      it(test, async function () {
-        const spec = new Oas({
-          paths: {
-            '/query': {
-              get: operation,
-            },
-          },
-        });
-
-        const har = oasToHar(spec, spec.operation('/query', 'get'), formData);
-        await expect(har).to.be.a.har;
-
-        expect(har.log.entries[0].request.queryString).to.deep.equal(expectedQueryString);
-      });
-    });
+        [{ name: 'id', value: '&id=' }]
+      )
+    );
 
     describe('URI encoding', function () {
       let spec;
 
       beforeEach(function () {
-        spec = new Oas({
+        spec = Oas.init({
           servers: [{ url: 'https://httpbin.org/' }],
           paths: {
             '/anything': {
@@ -274,47 +300,9 @@ describe('parameter handling', function () {
   });
 
   describe('cookie', function () {
-    // eslint-disable-next-line mocha/no-setup-in-describe
-    [
-      [
-        'should not add on empty unrequired values',
-        {
-          parameters: [{ name: 'a', in: 'cookie' }],
-        },
-      ],
-      [
-        'should not add the parameter name as a value if required but missing',
-        {
-          parameters: [{ name: 'a', in: 'cookie', required: true }],
-        },
-      ],
-      [
-        'should set defaults if no value provided but is required',
-        {
-          parameters: [{ name: 'a', in: 'cookie', required: true, schema: { default: 'value' } }],
-        },
-        {},
-        [{ name: 'a', value: 'value' }],
-      ],
-      [
-        'should pass in value if one is set and prioritize provided values',
-        {
-          parameters: [{ name: 'a', in: 'cookie', required: true, schema: { default: 'value' } }],
-        },
-        { cookie: { a: 'test' } },
-        [{ name: 'a', value: 'test' }],
-      ],
-      [
-        'should add falsy values to the cookies',
-        {
-          parameters: [{ name: 'id', in: 'cookie' }],
-        },
-        { cookie: { id: 0 } },
-        [{ name: 'id', value: '0' }],
-      ],
-    ].forEach(([test, operation = {}, formData = {}, expectedCookies = []]) => {
-      it(test, async function () {
-        const spec = new Oas({
+    function assertCookies(operation: OperationObject, formData: DataForHAR, expected: Request['cookies']) {
+      return async () => {
+        const spec = Oas.init({
           paths: {
             '/cookie': {
               get: operation,
@@ -325,122 +313,58 @@ describe('parameter handling', function () {
         const har = oasToHar(spec, spec.operation('/cookie', 'get'), formData);
         await expect(har).to.be.a.har;
 
-        expect(har.log.entries[0].request.cookies).to.deep.equal(expectedCookies);
-      });
-    });
+        expect(har.log.entries[0].request.cookies).to.deep.equal(expected);
+      };
+    }
+
+    it(
+      'should not add on empty unrequired values',
+      assertCookies({ parameters: [{ name: 'a', in: 'cookie' }] }, {}, [])
+    );
+
+    it(
+      'should not add the parameter name as a value if required but missing',
+      assertCookies({ parameters: [{ name: 'a', in: 'cookie', required: true }] }, {}, [])
+    );
+
+    it(
+      'should set defaults if no value provided but is required',
+      assertCookies(
+        {
+          parameters: [{ name: 'a', in: 'cookie', required: true, schema: { default: 'value' } }],
+        },
+        {},
+        [{ name: 'a', value: 'value' }]
+      )
+    );
+
+    it(
+      'should pass in value if one is set and prioritize provided values',
+      assertCookies(
+        {
+          parameters: [{ name: 'a', in: 'cookie', required: true, schema: { default: 'value' } }],
+        },
+        { cookie: { a: 'test' } },
+        [{ name: 'a', value: 'test' }]
+      )
+    );
+
+    it(
+      'should add falsy values to the cookies',
+      assertCookies(
+        {
+          parameters: [{ name: 'id', in: 'cookie' }],
+        },
+        { cookie: { id: 0 } },
+        [{ name: 'id', value: '0' }]
+      )
+    );
   });
 
   describe('header', function () {
-    // eslint-disable-next-line mocha/no-setup-in-describe
-    [
-      [
-        'should not add on empty unrequired values',
-        {
-          parameters: [{ name: 'a', in: 'header' }],
-        },
-      ],
-      [
-        'should not add the parameter name as a value if required but missing',
-        {
-          parameters: [{ name: 'a', in: 'header', required: true }],
-        },
-      ],
-      [
-        'should set defaults if no value provided but is required',
-        {
-          parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
-        },
-        {},
-        [{ name: 'a', value: 'value' }],
-      ],
-      [
-        'should pass in value if one is set and prioritise provided values',
-        {
-          parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
-        },
-        { header: { a: 'test' } },
-        [{ name: 'a', value: 'test' }],
-      ],
-      [
-        'should pass `Accept`  header if endpoint expects a content back from response',
-        {
-          parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
-          responses: {
-            200: {
-              content: {
-                'application/xml': { type: 'array' },
-                'application/json': { type: 'array' },
-              },
-            },
-          },
-        },
-        {},
-        [
-          { name: 'Accept', value: 'application/xml' },
-          { name: 'a', value: 'value' },
-        ],
-      ],
-      [
-        'should only add one `Accept` header when multiple responses are present',
-        {
-          responses: {
-            200: {
-              content: {
-                'application/xml': {},
-              },
-            },
-            400: {
-              content: {
-                'application/json': {},
-              },
-            },
-          },
-        },
-        {},
-        [{ name: 'Accept', value: 'application/xml' }],
-      ],
-      [
-        'should only receive one `Accept` header if specified in values',
-        {
-          parameters: [{ name: 'accept', in: 'header' }],
-          responses: {
-            200: {
-              content: {
-                'application/json': {},
-                'application/xml': {},
-              },
-            },
-          },
-        },
-        { header: { accept: 'application/xml' } },
-        [{ name: 'accept', value: 'application/xml' }],
-      ],
-      [
-        'should add `Accept` header if specified in formdata',
-        {
-          responses: {
-            200: {
-              content: {
-                'application/json': {},
-                'application/xml': {},
-              },
-            },
-          },
-        },
-        { header: { accept: 'application/xml' } },
-        [{ name: 'Accept', value: 'application/xml' }],
-      ],
-      [
-        'should add falsy values to the headers',
-        {
-          parameters: [{ name: 'id', in: 'header' }],
-        },
-        { header: { id: 0 } },
-        [{ name: 'id', value: '0' }],
-      ],
-    ].forEach(([test, operation = {}, formData = {}, expectedHeaders = []]) => {
-      it(test, async function () {
-        const spec = new Oas({
+    function assertHeaders(operation: OperationObject, formData: DataForHAR, expected: Request['headers']) {
+      return async () => {
+        const spec = Oas.init({
           paths: {
             '/header': {
               post: operation,
@@ -451,14 +375,143 @@ describe('parameter handling', function () {
         const har = oasToHar(spec, spec.operation('/header', 'post'), formData);
         await expect(har).to.be.a.har;
 
-        expect(har.log.entries[0].request.headers).to.deep.equal(expectedHeaders);
-      });
-    });
+        expect(har.log.entries[0].request.headers).to.deep.equal(expected);
+      };
+    }
+
+    it(
+      'should not add on empty unrequired values',
+      assertHeaders({ parameters: [{ name: 'a', in: 'header' }] }, {}, [])
+    );
+
+    it(
+      'should not add the parameter name as a value if required but missing',
+      assertHeaders({ parameters: [{ name: 'a', in: 'header', required: true }] }, {}, [])
+    );
+
+    it(
+      'should set defaults if no value provided but is required',
+      assertHeaders(
+        {
+          parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
+        },
+        {},
+        [{ name: 'a', value: 'value' }]
+      )
+    );
+
+    it(
+      'should pass in value if one is set and prioritise provided values',
+      assertHeaders(
+        {
+          parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
+        },
+        { header: { a: 'test' } },
+        [{ name: 'a', value: 'test' }]
+      )
+    );
+
+    it(
+      'should pass `Accept`  header if endpoint expects a content back from response',
+      assertHeaders(
+        {
+          parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
+          responses: {
+            200: {
+              description: 'ok',
+              content: {
+                'application/xml': { schema: { type: 'array', items: {} } },
+                'application/json': { schema: { type: 'array', items: {} } },
+              },
+            },
+          },
+        },
+        {},
+        [
+          { name: 'Accept', value: 'application/xml' },
+          { name: 'a', value: 'value' },
+        ]
+      )
+    );
+
+    it(
+      'should only add one `Accept` header when multiple responses are present',
+      assertHeaders(
+        {
+          responses: {
+            200: {
+              description: 'OK',
+              content: {
+                'application/xml': {},
+              },
+            },
+            400: {
+              description: 'Bad Request',
+              content: {
+                'application/json': {},
+              },
+            },
+          },
+        },
+        {},
+        [{ name: 'Accept', value: 'application/xml' }]
+      )
+    );
+
+    it(
+      'should only receive one `Accept` header if specified in values',
+      assertHeaders(
+        {
+          parameters: [{ name: 'accept', in: 'header' }],
+          responses: {
+            200: {
+              description: 'OK',
+              content: {
+                'application/json': {},
+                'application/xml': {},
+              },
+            },
+          },
+        },
+        { header: { accept: 'application/xml' } },
+        [{ name: 'accept', value: 'application/xml' }]
+      )
+    );
+
+    it(
+      'should add `Accept` header if specified in formdata',
+      assertHeaders(
+        {
+          responses: {
+            200: {
+              description: 'OK',
+              content: {
+                'application/json': {},
+                'application/xml': {},
+              },
+            },
+          },
+        },
+        { header: { accept: 'application/xml' } },
+        [{ name: 'Accept', value: 'application/xml' }]
+      )
+    );
+
+    it(
+      'should add falsy values to the headers',
+      assertHeaders(
+        {
+          parameters: [{ name: 'id', in: 'header' }],
+        },
+        { header: { id: 0 } },
+        [{ name: 'id', value: '0' }]
+      )
+    );
   });
 
   describe('common parameters', function () {
     it('should work for common parameters', async function () {
-      const spec = new Oas(commonParameters);
+      const spec = Oas.init(commonParameters);
       await spec.dereference();
 
       const har = oasToHar(spec, spec.operation('/anything/{id}', 'post'), {
@@ -482,7 +535,7 @@ describe('parameter handling', function () {
     });
 
     it('should not mutate the original operation that was passed in', function () {
-      const spec = new Oas(commonParameters);
+      const spec = Oas.init(commonParameters);
       const operation = spec.operation('/anything/{id}', 'post');
 
       const existingCount = operation.schema.parameters.length;

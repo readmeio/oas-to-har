@@ -1,20 +1,21 @@
-const chai = require('chai');
-const { expect } = require('chai');
+import type { Operation } from 'oas';
 
-const extensions = require('@readme/oas-extensions');
-const Oas = require('oas').default;
-const oasToHar = require('../src');
+import chai, { expect } from 'chai';
 
-const chaiPlugins = require('./helpers/chai-plugins');
+import * as extensions from '@readme/oas-extensions';
+import Oas from 'oas';
+import oasToHar from '../src';
 
-const petstore = require('@readme/oas-examples/3.0/json/petstore.json');
-const serverVariables = require('./__datasets__/server-variables.json');
+import chaiPlugins from './helpers/chai-plugins';
+
+import petstore from '@readme/oas-examples/3.0/json/petstore.json';
+import serverVariables from './__datasets__/server-variables.json';
 
 chai.use(chaiPlugins);
 
 describe('oas-to-har', function () {
   it('should output a HAR object if no operation information is supplied', async function () {
-    const har = oasToHar(new Oas({}));
+    const har = oasToHar(Oas.init({}));
 
     await expect(har).to.be.a.har;
     expect(har).to.deep.equal({
@@ -38,11 +39,11 @@ describe('oas-to-har', function () {
   });
 
   it('should create an Operation instance if supplied a plain object', async function () {
-    const spec = new Oas(petstore);
+    const spec = Oas.init(petstore);
     await spec.dereference();
 
     const operation = { method: 'post', path: '/pet' };
-    const har = oasToHar(spec, operation);
+    const har = oasToHar(spec, operation as Operation);
 
     await expect(har).to.be.a.har;
     expect(har).to.deep.equal({
@@ -70,7 +71,7 @@ describe('oas-to-har', function () {
   });
 
   it('should accept an Operation instance as the operation schema', async function () {
-    const spec = new Oas(petstore);
+    const spec = Oas.init(petstore);
     await spec.dereference();
 
     const operation = spec.operation('/pet', 'post');
@@ -98,7 +99,7 @@ describe('oas-to-har', function () {
   });
 
   it('should return a valid HAR without an apiDefintion', async function () {
-    const spec = new Oas({});
+    const spec = Oas.init({});
     const operation = spec.operation('/pet', 'post');
     const har = oasToHar(spec, operation);
 
@@ -107,7 +108,7 @@ describe('oas-to-har', function () {
 
   describe('url', function () {
     it('should be constructed from oas.url()', function () {
-      const spec = new Oas(petstore);
+      const spec = Oas.init(petstore);
       const operation = spec.operation('/pet', 'post');
       const har = oasToHar(spec, operation);
 
@@ -115,7 +116,7 @@ describe('oas-to-har', function () {
     });
 
     it('should replace whitespace with %20', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/path with spaces': {
             get: {},
@@ -194,7 +195,7 @@ describe('oas-to-har', function () {
       let proxyOas;
 
       beforeEach(function () {
-        proxyOas = new Oas({
+        proxyOas = Oas.init({
           paths: {
             '/path': {
               get: {},
@@ -218,7 +219,7 @@ describe('oas-to-har', function () {
 
   describe('auth', function () {
     it('should work for header', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/security': {
             get: {
@@ -249,7 +250,7 @@ describe('oas-to-har', function () {
     });
 
     it('should work for query', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/security': {
             get: {
@@ -286,7 +287,7 @@ describe('oas-to-har', function () {
     });
 
     it('should work for cookie', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/security': {
             get: {
@@ -323,7 +324,7 @@ describe('oas-to-har', function () {
     });
 
     it('should work for multiple (||)', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/security': {
             get: {
@@ -370,7 +371,7 @@ describe('oas-to-har', function () {
     });
 
     it('should work for multiple (&&)', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/security': {
             get: {
@@ -417,7 +418,7 @@ describe('oas-to-har', function () {
     });
 
     it('should not set non-existent values', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/security': {
             get: {
@@ -443,7 +444,7 @@ describe('oas-to-har', function () {
 
   describe('x-headers', function () {
     it('should append any static headers to the request', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/': {
             post: {},
