@@ -1,7 +1,7 @@
 {
   "name": "@readme/oas-to-har",
   "description": "Utility to transform an OAS operation into a HAR representation",
-  "version": "17.1.2",
+  "version": "18.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jon Ursenbach <jon@ursenba.ch>",
@@ -22,10 +22,10 @@
     "pretest": "npm run lint",
     "prettier": "prettier --list-different --write \"./**/**.{js,ts}\"",
     "release": "npx conventional-changelog-cli -i CHANGELOG.md -s && git add CHANGELOG.md",
+    "test": "nyc mocha \"test/**/*.test.ts\"",
     "test:browser": "karma start --single-run",
     "test:browser:chrome": "karma start --browsers=Chrome --single-run=false",
-    "test:browser:debug": "karma start --single-run=false",
-    "test": "nyc mocha \"test/**/*.test.ts\""
+    "test:browser:debug": "karma start --single-run=false"
   },
   "dependencies": {
     "@readme/data-urls": "^1.0.1",

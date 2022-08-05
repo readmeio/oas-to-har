@@ -1,3 +1,12 @@
+## 18.0.0 (2022-08-05)
+
+* feat: rewrite the library in Typescript (#113) ([a40c56d](https://github.com/readmeio/oas-to-har/commit/a40c56d)), closes [#113](https://github.com/readmeio/oas-to-har/issues/113)
+* chore(deps-dev): bump @readme/oas-examples from 5.4.1 to 5.5.0 (#111) ([93952e9](https://github.com/readmeio/oas-to-har/commit/93952e9)), closes [#111](https://github.com/readmeio/oas-to-har/issues/111)
+* chore(deps-dev): bump eslint from 8.20.0 to 8.21.0 (#112) ([394ed04](https://github.com/readmeio/oas-to-har/commit/394ed04)), closes [#112](https://github.com/readmeio/oas-to-har/issues/112)
+* fix: minor comment cleanup ([598ff32](https://github.com/readmeio/oas-to-har/commit/598ff32))
+
+
+
 ## <small>17.1.2 (2022-07-27)</small>
 
 * fix: issue with filenames in data URLs not retaining their casing ([e8a7edb](https://github.com/readmeio/oas-to-har/commit/e8a7edb))
