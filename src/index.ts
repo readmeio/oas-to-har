@@ -1,14 +1,48 @@
-const extensions = require('@readme/oas-extensions');
-const { Operation, utils } = require('oas');
-const { parse: parseDataUrl } = require('@readme/data-urls');
-const { default: removeUndefinedObjects } = require('remove-undefined-objects');
+import type Oas from 'oas';
+import type {
+  HttpMethods,
+  JSONSchema,
+  MediaTypeObject,
+  OASDocument,
+  OperationObject,
+  ParameterObject,
+  RequestBodyObject,
+  ResponseObject,
+  SchemaObject,
+} from 'oas/dist/rmoas.types';
+import type { PostDataParams, Request } from 'har-format';
+import type { Extensions } from '@readme/oas-extensions';
 
-const configureSecurity = require('./lib/configure-security');
-const formatStyle = require('./lib/style-formatting');
+import * as extensions from '@readme/oas-extensions';
+import { isRef } from 'oas/dist/rmoas.types';
+import { Operation, utils } from 'oas';
+import { parse as parseDataUrl } from '@readme/data-urls';
+import removeUndefinedObjects from 'remove-undefined-objects';
+
+import configureSecurity from './lib/configure-security';
+import formatStyle from './lib/style-formatting';
 
 const { jsonSchemaTypes } = utils;
 
-function formatter(values, param, type, onlyIfExists) {
+export type DataForHAR = {
+  body?: any;
+  cookie?: Record<string, any>;
+  formData?: Record<string, any>; // `application/x-www-form-urlencoded` requests payloads.
+  header?: Record<string, any>;
+  path?: Record<string, any>;
+  query?: Record<string, any>;
+  server?: {
+    selected: number;
+    variables: Record<string, unknown>;
+  };
+};
+
+function formatter(
+  values: DataForHAR,
+  param: ParameterObject,
+  type: 'body' | 'cookie' | 'header' | 'path' | 'query',
+  onlyIfExists = false
+) {
   if (param.style) {
     const value = values[type][param.name];
     // Note: Technically we could send everything through the format style and choose the proper
@@ -23,7 +57,7 @@ function formatter(values, param, type, onlyIfExists) {
     value = values[type][param.name];
   } else if (onlyIfExists && !param.required) {
     value = undefined;
-  } else if (param.required && param.schema && param.schema.default) {
+  } else if (param.required && param.schema && !isRef(param.schema) && param.schema.default) {
     value = param.schema.default;
   } else if (type === 'path') {
     // If we don't have any values for the path parameter, just use the name of the parameter as the
@@ -33,7 +67,14 @@ function formatter(values, param, type, onlyIfExists) {
 
   // Handle file uploads. Specifically arrays of file uploads which need to be formatted very
   // specifically.
-  if (param.schema && param.schema.type === 'array' && param.schema.items && param.schema.items.format === 'binary') {
+  if (
+    param.schema &&
+    !isRef(param.schema) &&
+    param.schema.type === 'array' &&
+    param.schema.items &&
+    !isRef(param.schema.items) &&
+    param.schema.items.format === 'binary'
+  ) {
     if (Array.isArray(value)) {
       // If this is array of binary data then we shouldn't do anything because we'll prepare them
       // separately in the HAR in order to preserve `fileName` and `contentType` data within
@@ -57,15 +98,14 @@ function formatter(values, param, type, onlyIfExists) {
   return undefined;
 }
 
-function multipartBodyToFormatterParams(multipartBody, oasMediaTypeObject) {
-  const schema = oasMediaTypeObject.schema;
+function multipartBodyToFormatterParams(multipartBody: unknown, oasMediaTypeObject: MediaTypeObject) {
+  const schema = oasMediaTypeObject.schema as SchemaObject;
   const encoding = oasMediaTypeObject.encoding;
 
   if (typeof multipartBody === 'object' && multipartBody !== null) {
     return Object.keys(multipartBody)
       .map(key => {
-        // If we have an incoming parameter, but it's not in the schema
-        //    ignore it
+        // If we have an incoming parameter, but it's not in the schema ignore it.
         if (!schema.properties[key]) {
           return false;
         }
@@ -78,12 +118,14 @@ function multipartBodyToFormatterParams(multipartBody, oasMediaTypeObject) {
           style: paramEncoding ? paramEncoding.style : undefined,
           // If explode isn't defined, use the default
           explode: paramEncoding ? paramEncoding.explode : undefined,
-          required: schema.required && schema.required.includes(key),
+          required:
+            (schema.required && typeof schema.required === 'boolean' && Boolean(schema.required)) ||
+            (Array.isArray(schema.required) && schema.required.includes(key)),
           schema: schema.properties[key],
           in: 'body',
         };
       })
-      .filter(Boolean);
+      .filter(Boolean) as ParameterObject[];
   }
 
   // Pretty sure that we'll never have anything but an object for multipart bodies, so returning
@@ -95,7 +137,7 @@ const defaultFormDataTypes = Object.keys(jsonSchemaTypes).reduce((prev, curr) =>
   return Object.assign(prev, { [curr]: {} });
 }, {});
 
-function getResponseContentType(content) {
+function getResponseContentType(content: MediaTypeObject) {
   const types = Object.keys(content) || [];
 
   let type = 'application/json';
@@ -106,15 +148,15 @@ function getResponseContentType(content) {
   return type;
 }
 
-function isPrimitive(val) {
+function isPrimitive(val: unknown) {
   return typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean';
 }
 
-function stringify(json) {
+function stringify(json: Record<string | 'RAW_BODY', unknown>) {
   return JSON.stringify(removeUndefinedObjects(typeof json.RAW_BODY !== 'undefined' ? json.RAW_BODY : json));
 }
 
-function stringifyParameter(param) {
+function stringifyParameter(param: any): string {
   if (param === null || isPrimitive(param)) {
     return param;
   } else if (Array.isArray(param) && param.every(isPrimitive)) {
@@ -124,7 +166,15 @@ function stringifyParameter(param) {
   return JSON.stringify(param);
 }
 
-function appendHarValue(harParam, name, value, addtlData = {}) {
+function appendHarValue(
+  harParam: Request['cookies'] | Request['headers'] | Request['queryString'] | PostDataParams['params'],
+  name: string,
+  value: any,
+  addtlData: {
+    fileName?: string;
+    contentType?: string;
+  } = {}
+) {
   if (typeof value === 'undefined') return;
 
   if (Array.isArray(value)) {
@@ -149,7 +199,7 @@ function appendHarValue(harParam, name, value, addtlData = {}) {
   }
 }
 
-function encodeBodyForHAR(body) {
+function encodeBodyForHAR(body: any) {
   if (isPrimitive(body)) {
     return body;
   } else if (
@@ -170,30 +220,47 @@ function encodeBodyForHAR(body) {
   return stringify(body);
 }
 
-module.exports = (
-  oas,
-  operationSchema = { path: '', method: '' },
+export type oasToHarOptions = {
+  // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in
+  // order to funnel requests through our CORS-friendly proxy.
+  proxyUrl: boolean;
+};
+
+export default function oasToHar(
+  oas: Oas,
+  operationSchema?: Operation,
   values = {},
   auth = {},
-  opts = {
+  opts: oasToHarOptions = {
     // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in
     // order to funnel requests through our CORS-friendly proxy.
     proxyUrl: false,
   }
-) => {
-  let operation = operationSchema;
-  if (typeof operationSchema.getParameters !== 'function') {
-    // If `operationSchema` was supplied as a plain object instead of an instance of `Operation`
-    // then we should create a new instance of it. We're doing it with a check on `getParameters`
-    // instead of checking `instanceof Operation` because JS is very weird when it comes to checking
-    // `instanceof` against classes. One instance of `Operation` may not always match up with
-    // another if they're being loaded between two different libraries. It's weird. This is easier.
-    operation = new Operation(oas, operationSchema.path, operationSchema.method, operationSchema);
+) {
+  let operation: Operation;
+  if (!operationSchema || typeof operationSchema.getParameters !== 'function') {
+    /**
+     * If `operationSchema` was supplied as a plain object instead of an instance of `Operation`
+     * then we should create a new instance of it. We're doing it with a check on `getParameters`
+     * instead of checking `instanceof Operation` because JS is very weird when it comes to
+     * checking `instanceof` against classes. One instance of `Operation` may not always match up
+     * with another if they're being loaded between two different libraries.
+     *
+     * It's weird. This is easier.
+     */
+    operation = new Operation(
+      oas as unknown as OASDocument,
+      operationSchema?.path || '',
+      operationSchema?.method || ('' as HttpMethods),
+      (operationSchema as unknown as OperationObject) || { path: '', method: '' }
+    );
+  } else {
+    operation = operationSchema;
   }
 
   const apiDefinition = oas.getDefinition();
 
-  const formData = {
+  const formData: DataForHAR = {
     ...defaultFormDataTypes,
     server: {
       selected: 0,
@@ -208,11 +275,12 @@ module.exports = (
     ...formData.server.variables,
   };
 
-  const har = {
+  const har: Request = {
     cookies: [],
     headers: [],
     headersSize: 0,
     queryString: [],
+    // @ts-expect-error This is fine because we're fleshing `postData` out further down.
     postData: {},
     bodySize: 0,
     method: operation.method.toUpperCase(),
@@ -232,11 +300,11 @@ module.exports = (
     if (!operation || !parameters) return key; // No path params at all
 
     // Find the path parameter or set a default value if it does not exist
-    const parameter = parameters.find(param => param.name === key) || { name: key };
+    const parameter = parameters.find(param => param.name === key) || ({ name: key } as ParameterObject);
 
     // The library that handles our style processing already encodes uri elements. For everything
     // else we need to handle it here.
-    if (!parameter.style) {
+    if (!('style' in parameter) || !parameter.style) {
       return encodeURIComponent(formatter(formData, parameter, 'path'));
     }
 
@@ -263,7 +331,10 @@ module.exports = (
   // Does this response have any documented content types?
   if (operation.schema.responses) {
     Object.keys(operation.schema.responses).some(response => {
-      if (!operation.schema.responses[response].content) return false;
+      if (isRef(operation.schema.responses[response])) return false;
+
+      const content = (operation.schema.responses[response] as ResponseObject).content;
+      if (!content) return false;
 
       // If there's no `Accept` header present we should add one so their eventual code snippet
       // follows best practices.
@@ -271,7 +342,7 @@ module.exports = (
 
       har.headers.push({
         name: 'Accept',
-        value: getResponseContentType(operation.schema.responses[response].content),
+        value: getResponseContentType(content),
       });
 
       return true;
@@ -297,16 +368,16 @@ module.exports = (
   }
 
   // Are there `x-headers` static headers configured for this OAS?
-  const userDefinedHeaders = extensions.getExtension(extensions.HEADERS, oas, operation);
+  const userDefinedHeaders = extensions.getExtension(extensions.HEADERS, oas, operation) as Extensions['headers'];
   if (userDefinedHeaders) {
     userDefinedHeaders.forEach(header => {
-      if (header.key.toLowerCase() === 'content-type') {
+      if (typeof header.key === 'string' && header.key.toLowerCase() === 'content-type') {
         hasContentType = true;
         contentType = String(header.value);
       }
 
       har.headers.push({
-        name: header.key,
+        name: String(header.key),
         value: String(header.value),
       });
     });
@@ -323,12 +394,15 @@ module.exports = (
     }
   }
 
-  let requestBody = false;
+  let requestBody: MediaTypeObject;
   if (operation.hasRequestBody()) {
+    // @ts-expect-error TODO `requestBody` coming back as `false | MediaTypeObject | [string, MediaTypeObject]` seems like a problem
     [, requestBody] = operation.getRequestBody();
   }
 
   if (requestBody && requestBody.schema && Object.keys(requestBody.schema).length) {
+    const requestBodySchema = requestBody.schema as SchemaObject;
+
     if (operation.isFormUrlEncoded()) {
       if (Object.keys(formData.formData).length) {
         const cleanFormData = removeUndefinedObjects(JSON.parse(JSON.stringify(formData.formData)));
@@ -370,15 +444,16 @@ module.exports = (
              * @example `{ type: string, format: binary }`
              * @example `{ type: array, items: { type: string, format: binary } }`
              */
-            const binaryTypes = Object.keys(requestBody.schema.properties).filter(key => {
-              if (requestBody.schema.properties[key].format === 'binary') {
+            const binaryTypes = Object.keys(requestBodySchema.properties).filter(key => {
+              const propData = requestBodySchema.properties[key] as JSONSchema;
+              if (propData.format === 'binary') {
                 return true;
               } else if (
-                requestBody.schema.properties[key].type === 'array' &&
-                requestBody.schema.properties[key].items &&
-                typeof requestBody.schema.properties[key].items === 'object' &&
-                requestBody.schema.properties[key].items !== null &&
-                requestBody.schema.properties[key].items.format === 'binary'
+                propData.type === 'array' &&
+                propData.items &&
+                typeof propData.items === 'object' &&
+                propData.items !== null &&
+                (propData.items as JSONSchema).format === 'binary'
               ) {
                 return true;
               }
@@ -389,7 +464,7 @@ module.exports = (
             if (cleanBody !== undefined) {
               const multipartParams = multipartBodyToFormatterParams(
                 formData.body,
-                operation.schema.requestBody.content['multipart/form-data']
+                (operation.schema.requestBody as RequestBodyObject).content['multipart/form-data']
               );
 
               Object.keys(cleanBody).forEach(name => {
@@ -399,14 +474,14 @@ module.exports = (
                 // parse out any available filename and content type to send along with the
                 // parameter to interpreters like `fetch-har` can make sense of it and send a usable
                 // payload.
-                const addtlData = {};
+                const addtlData: { fileName?: string; contentType?: string } = {};
 
                 let value = formatter(formData, param, 'body', true);
                 if (!Array.isArray(value)) {
                   value = [value];
                 }
 
-                value.forEach(val => {
+                value.forEach((val: string) => {
                   if (binaryTypes.includes(name)) {
                     const parsed = parseDataUrl(val);
                     if (parsed) {
@@ -424,25 +499,30 @@ module.exports = (
           } else {
             har.postData.mimeType = contentType;
 
-            // Handle arbitrary JSON input via a string.
-            //
-            // In OAS you usually find this in an `application/json` content type with a schema
-            // `type=string, format=json`. In the UI this is represented by an arbitrary text input.
-            //
-            // This ensures we remove any newlines or tabs and use a clean JSON block in the
-            // example.
-            if (requestBody.schema.type === 'string') {
+            /**
+             * Handle arbitrary JSON input via a string.
+             *
+             * In OAS you usually find this in an `application/json` content type with a schema
+             * `type=string, format=json`. In the UI this is represented by an arbitrary text input.
+             *
+             * This ensures we remove any newlines or tabs and use a clean JSON block in the
+             * example.
+             */
+            if ((requestBody.schema as SchemaObject).type === 'string') {
               har.postData.text = JSON.stringify(JSON.parse(cleanBody));
             } else {
-              // Handle formatted JSON objects that have properties that accept arbitrary JSON.
-              //
-              // Find all `{ type: string, format: json }` properties in the schema because we need
-              // to manually `JSON.parse` them before submit, otherwise they'll be escaped instead
-              // of actual objects. We also only want values that the user has entered, so we drop
-              // any `undefined` `cleanBody` keys
-              const jsonTypes = Object.keys(requestBody.schema.properties).filter(
-                key => requestBody.schema.properties[key].format === 'json' && cleanBody[key] !== undefined
-              );
+              /**
+               * Handle formatted JSON objects that have properties that accept arbitrary JSON.
+               *
+               * Find all `{ type: string, format: json }` properties in the schema because we need
+               * to manually `JSON.parse` them before submit, otherwise they'll be escaped instead
+               * of actual objects. We also only want values that the user has entered, so we drop
+               * any `undefined` `cleanBody` keys.
+               */
+              const jsonTypes = Object.keys(requestBodySchema.properties).filter(key => {
+                const propData = requestBodySchema.properties[key] as JSONSchema;
+                return propData.format === 'json' && cleanBody[key] !== undefined;
+              });
 
               if (jsonTypes.length) {
                 try {
@@ -524,5 +604,13 @@ module.exports = (
     delete har.postData;
   }
 
-  return { log: { entries: [{ request: har }] } };
-};
+  return {
+    log: {
+      entries: [
+        {
+          request: har,
+        },
+      ],
+    },
+  };
+}

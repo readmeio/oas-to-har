@@ -1,11 +1,12 @@
-const Oas = require('oas').default;
-const { expect } = require('chai');
-const oasToHar = require('../src');
+import { expect } from 'chai';
+import Oas from 'oas';
 
-const security = require('./__datasets__/security.json');
-const securityQuirks = require('./__datasets__/security-quirks.json');
+import oasToHar from '../src';
 
-const spec = new Oas(security);
+import security from './__datasets__/security.json';
+import securityQuirks from './__datasets__/security-quirks.json';
+
+const spec = Oas.init(security);
 
 describe('auth handling', function () {
   describe('headers', function () {
@@ -26,7 +27,7 @@ describe('auth handling', function () {
         accessToken: 'e229822e-f625-45eb-a963-4d197d29637b',
       };
 
-      const oas = new Oas(securityQuirks);
+      const oas = Oas.init(securityQuirks);
       const har = oasToHar(oas, oas.operation('/anything', 'post'), {}, auth);
 
       expect(har.log.entries[0].request.headers).to.deep.equal([

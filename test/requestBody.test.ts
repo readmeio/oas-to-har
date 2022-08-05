@@ -1,27 +1,26 @@
-const chai = require('chai');
-const { expect } = require('chai');
+import chai, { expect } from 'chai';
 
-const Oas = require('oas').default;
-const extensions = require('@readme/oas-extensions');
-const oasToHar = require('../src');
+import Oas from 'oas';
+import * as extensions from '@readme/oas-extensions';
+import oasToHar from '../src';
 
-const chaiPlugins = require('./helpers/chai-plugins');
+import chaiPlugins from './helpers/chai-plugins';
 
-const schemaTypes = require('@readme/oas-examples/3.0/json/schema-types.json');
-const fileUploads = require('@readme/oas-examples/3.0/json/file-uploads.json');
-const multipartFormData = require('./__datasets__/multipart-form-data.json');
-const multipartFormDataArrayOfFiles = require('./__datasets__/multipart-form-data/array-of-files.json');
-const requestBodyRawBody = require('./__datasets__/requestBody-raw_body.json');
+import schemaTypes from '@readme/oas-examples/3.0/json/schema-types.json';
+import fileUploads from '@readme/oas-examples/3.0/json/file-uploads.json';
+import multipartFormData from './__datasets__/multipart-form-data.json';
+import multipartFormDataArrayOfFiles from './__datasets__/multipart-form-data/array-of-files.json';
+import requestBodyRawBody from './__datasets__/requestBody-raw_body.json';
 
-const owlbertDataURL = require('./__datasets__/owlbert.dataurl.json');
-const owlbertShrubDataURL = require('./__datasets__/owlbert-shrub.dataurl.json');
+import owlbertDataURL from './__datasets__/owlbert.dataurl.json';
+import owlbertShrubDataURL from './__datasets__/owlbert-shrub.dataurl.json';
 
 chai.use(chaiPlugins);
 
 describe('request body handling', function () {
   describe('`body` data handling', function () {
     it('should not fail if a requestBody is present without a `schema`', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -41,7 +40,7 @@ describe('request body handling', function () {
     });
 
     it('should not add on empty unrequired values', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -68,7 +67,7 @@ describe('request body handling', function () {
     });
 
     it('should pass in value if one is set and prioritise provided values', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -98,7 +97,7 @@ describe('request body handling', function () {
     });
 
     it('should support a null-assigned property', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -128,7 +127,7 @@ describe('request body handling', function () {
     });
 
     it('should return nothing for undefined body property', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -157,7 +156,7 @@ describe('request body handling', function () {
     });
 
     it('should work for schemas that require a lookup', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -186,7 +185,7 @@ describe('request body handling', function () {
     });
 
     it('should work for top level primitives', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -238,7 +237,7 @@ describe('request body handling', function () {
     });
 
     it('should work for top level falsy primitives', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -290,7 +289,7 @@ describe('request body handling', function () {
     });
 
     it('should not include objects with undefined sub properties', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -337,7 +336,7 @@ describe('request body handling', function () {
     // the form. When using anyOf/oneOf if we change the schema before typing anything into the
     // form, then `onChange` is fired with `undefined` which causes this to error.
     it('should not error if `formData.body` is undefined', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -366,7 +365,7 @@ describe('request body handling', function () {
 
     describe('raw payloads', function () {
       it('should support raw JSON payloads', function () {
-        const spec = new Oas(schemaTypes);
+        const spec = Oas.init(schemaTypes);
 
         const har = oasToHar(spec, spec.operation('/anything/strings/top-level-payloads', 'post'), {
           body: JSON.stringify({ pug: 'buster' }),
@@ -376,7 +375,7 @@ describe('request body handling', function () {
       });
 
       it('should support raw XML payloads', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -404,49 +403,49 @@ describe('request body handling', function () {
 
     describe('`RAW_BODY`-named properties', function () {
       it('should work for RAW_BODY primitives', function () {
-        const spec = new Oas(requestBodyRawBody);
+        const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/primitive', 'post'), { body: { RAW_BODY: 'test' } });
 
         expect(har.log.entries[0].request.postData.text).to.equal('test');
       });
 
       it('should return empty for falsy RAW_BODY primitives', function () {
-        const spec = new Oas(requestBodyRawBody);
+        const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/primitive', 'post'), { body: { RAW_BODY: '' } });
 
         expect(har.log.entries[0].request.postData.text).to.equal('');
       });
 
       it('should work for RAW_BODY json', function () {
-        const spec = new Oas(requestBodyRawBody);
+        const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/json', 'post'), { body: { RAW_BODY: '{ "a": 1 }' } });
 
         expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 1 }));
       });
 
       it('should work for RAW_BODY xml', function () {
-        const spec = new Oas(requestBodyRawBody);
+        const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/xml', 'post'), { body: { RAW_BODY: '<xml>' } });
 
         expect(har.log.entries[0].request.postData.text).to.equal('<xml>');
       });
 
       it('should work for RAW_BODY objects', function () {
-        const spec = new Oas(requestBodyRawBody);
+        const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: { a: 'test' } } });
 
         expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 'test' }));
       });
 
       it('should work for RAW_BODY objects (but data is a primitive somehow)', function () {
-        const spec = new Oas(requestBodyRawBody);
+        const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: 'test' } });
 
         expect(har.log.entries[0].request.postData.text).to.equal('test');
       });
 
       it('should return empty for RAW_BODY objects', function () {
-        const spec = new Oas(requestBodyRawBody);
+        const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: {} } });
 
         expect(har.log.entries[0].request.postData.text).to.be.undefined;
@@ -456,7 +455,7 @@ describe('request body handling', function () {
     describe('content types', function () {
       describe('multipart/form-data', function () {
         it('should handle multipart/form-data request bodies', function () {
-          const fixture = new Oas(multipartFormData);
+          const fixture = Oas.init(multipartFormData);
           const har = oasToHar(fixture, fixture.operation('/anything', 'post'), {
             body: { orderId: 12345, userId: 67890, documentFile: owlbertDataURL },
           });
@@ -487,7 +486,7 @@ describe('request body handling', function () {
             `name=${encodeURIComponent('owlbert (1).png')};`
           );
 
-          const fixture = new Oas(multipartFormData);
+          const fixture = Oas.init(multipartFormData);
           const har = oasToHar(fixture, fixture.operation('/anything', 'post'), {
             body: { orderId: 12345, userId: 67890, documentFile: specialcharacters },
           });
@@ -512,7 +511,7 @@ describe('request body handling', function () {
         });
 
         it('should handle a multipart/form-data request where files are in an array', function () {
-          const fixture = new Oas(multipartFormDataArrayOfFiles);
+          const fixture = Oas.init(multipartFormDataArrayOfFiles);
           const har = oasToHar(fixture, fixture.operation('/anything', 'post'), {
             body: {
               documentFiles: [owlbertDataURL, owlbertShrubDataURL],
@@ -539,7 +538,7 @@ describe('request body handling', function () {
         });
 
         it('should handle a file that has an underscore in its name', function () {
-          const fixture = new Oas(fileUploads);
+          const fixture = Oas.init(fileUploads);
           const har = oasToHar(fixture, fixture.operation('/anything/multipart-formdata', 'post'), {
             body: {
               documentFile: 'data:text/plain;name=lorem_ipsum.txt;base64,TG9yZW0gaXBzdW0gZG9sb3Igc2l0IG1ldA==',
@@ -560,7 +559,7 @@ describe('request body handling', function () {
         });
 
         it('should retain filename casing', function () {
-          const fixture = new Oas(fileUploads);
+          const fixture = Oas.init(fileUploads);
           const har = oasToHar(fixture, fixture.operation('/anything/multipart-formdata', 'post'), {
             body: {
               documentFile: 'data:text/plain;name=LoREM_IpSuM.txt;base64,TG9yZW0gaXBzdW0gZG9sb3Igc2l0IG1ldA==',
@@ -583,7 +582,7 @@ describe('request body handling', function () {
 
       describe('image/png', function () {
         it('should handle a image/png request body', async function () {
-          const spec = new Oas({
+          const spec = Oas.init({
             paths: {
               '/image': {
                 post: {
@@ -629,7 +628,7 @@ describe('request body handling', function () {
 
     describe('format: `json`', function () {
       it('should work for refs that require a lookup', async function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -662,7 +661,7 @@ describe('request body handling', function () {
       });
 
       it('should leave invalid JSON as strings', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -692,7 +691,7 @@ describe('request body handling', function () {
       });
 
       it('should parse valid arbitrary JSON request bodies', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -716,7 +715,7 @@ describe('request body handling', function () {
       });
 
       it('should parse invalid arbitrary JSON request bodies as strings', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -740,7 +739,7 @@ describe('request body handling', function () {
       });
 
       it('should parse valid JSON as an object', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -772,7 +771,7 @@ describe('request body handling', function () {
       });
 
       it('should parse one valid JSON format even if another is invalid', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -811,7 +810,7 @@ describe('request body handling', function () {
       });
 
       it('should parse one valid JSON format even if another is left empty', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -850,7 +849,7 @@ describe('request body handling', function () {
       });
 
       it('should leave user specified empty object JSON alone', function () {
-        const spec = new Oas({
+        const spec = Oas.init({
           paths: {
             '/requestBody': {
               post: {
@@ -883,7 +882,7 @@ describe('request body handling', function () {
 
   describe('`formData` data handling', function () {
     it('should not add on empty unrequired values', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -910,7 +909,7 @@ describe('request body handling', function () {
     });
 
     it('should not add undefined formData into postData', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -944,7 +943,7 @@ describe('request body handling', function () {
     });
 
     it('should pass in value if one is set and prioritise provided values', function () {
-      const spec = new Oas({
+      const spec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -975,9 +974,8 @@ describe('request body handling', function () {
       ]);
     });
 
-    it('should support nested objects', function () {
-      // eslint-disable-next-line global-require
-      const spec = new Oas(require('./__datasets__/formData-nested-object.json'));
+    it('should support nested objects', async function () {
+      const spec = await import('./__datasets__/formData-nested-object.json').then(r => r.default).then(Oas.init);
       const operation = spec.operation('/anything', 'post');
       const formData = {
         id: 12345,
@@ -995,7 +993,8 @@ describe('request body handling', function () {
   });
 
   describe('`content-type` and `accept` header', function () {
-    const spec = new Oas({
+    // eslint-disable-next-line mocha/no-setup-in-describe
+    const spec = Oas.init({
       paths: {
         '/requestBody': {
           post: {
@@ -1047,7 +1046,7 @@ describe('request body handling', function () {
     });
 
     it('should fetch the type from the first `requestBody.content` and first `responseBody.content` object', async function () {
-      const contentSpec = new Oas({
+      const contentSpec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -1081,7 +1080,7 @@ describe('request body handling', function () {
 
     // Whether this is right or wrong, i'm not sure but this is what readme currently does
     it('should prioritise json if it exists', async function () {
-      const contentSpec = new Oas({
+      const contentSpec = Oas.init({
         paths: {
           '/requestBody': {
             post: {
@@ -1125,7 +1124,7 @@ describe('request body handling', function () {
     });
 
     it("should only add a content-type if one isn't already present", async function () {
-      const contentSpec = new Oas({
+      const contentSpec = Oas.init({
         paths: {
           '/requestBody': {
             post: {

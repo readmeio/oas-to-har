@@ -1,12 +1,15 @@
-const qs = require('qs');
-const stylize = require('./style-serializer');
+import type { ParameterObject } from 'oas/dist/rmoas.types';
+import type { StylizerConfig } from './style-serializer';
+
+import qs from 'qs';
+import stylize from './style-serializer';
 
 // Certain styles don't support empty values.
-function shouldNotStyleEmptyValues(parameter) {
+function shouldNotStyleEmptyValues(parameter: ParameterObject) {
   return ['simple', 'spaceDelimited', 'pipeDelimited', 'deepObject'].includes(parameter.style);
 }
 
-function shouldNotStyleReservedHeader(parameter) {
+function shouldNotStyleReservedHeader(parameter: ParameterObject) {
   return ['accept', 'authorization', 'content-type'].includes(parameter.name.toLowerCase());
 }
 
@@ -16,7 +19,7 @@ function shouldNotStyleReservedHeader(parameter) {
  * want to remove this, restore the un-fixed behavior for undefined and have our UI pass in empty
  * string instead of undefined.
  */
-function removeUndefinedForPath(value) {
+function removeUndefinedForPath(value: any) {
   let finalValue = value;
 
   if (typeof finalValue === 'undefined') {
@@ -40,7 +43,7 @@ function removeUndefinedForPath(value) {
   return finalValue;
 }
 
-function stylizeValue(value, parameter) {
+function stylizeValue(value: unknown, parameter: ParameterObject) {
   let finalValue = value;
 
   // Some styles don't work with empty values. We catch those there
@@ -107,10 +110,10 @@ function stylizeValue(value, parameter) {
   }
 
   return stylize({
-    location: parameter.in,
+    location: parameter.in as StylizerConfig['location'],
     value: finalValue,
     key: parameter.name,
-    style,
+    style: style as StylizerConfig['style'],
     explode,
     /**
      * @todo this parameter is optional to stylize. It defaults to false, and can accept falsy, truthy, or "unsafe".
@@ -121,7 +124,7 @@ function stylizeValue(value, parameter) {
   });
 }
 
-function handleDeepObject(value, parameter) {
+function handleDeepObject(value: any, parameter: ParameterObject) {
   return qs
     .stringify(value, {
       // eslint-disable-next-line consistent-return
@@ -133,7 +136,7 @@ function handleDeepObject(value, parameter) {
           const prefixedKey = str
             .split(/[[\]]/g)
             .filter(Boolean)
-            .map(k => `[${k}]`)
+            .map((k: string) => `[${k}]`)
             .join('');
 
           return `${parameter.name}${prefixedKey}`;
@@ -155,7 +158,7 @@ function handleDeepObject(value, parameter) {
 
 // Explode is handled on its own, because style-serializer doesn't return what we expect for proper
 // HAR output.
-function handleExplode(value, parameter) {
+function handleExplode(value: any, parameter: ParameterObject) {
   if (Array.isArray(value)) {
     return value.map(val => {
       return stylizeValue(val, parameter);
@@ -163,7 +166,7 @@ function handleExplode(value, parameter) {
   }
 
   if (typeof value === 'object' && value !== null) {
-    const newObj = {};
+    const newObj: Record<string, unknown> = {};
 
     Object.keys(value).forEach(key => {
       if (parameter.style === 'deepObject') {
@@ -182,7 +185,7 @@ function handleExplode(value, parameter) {
   return stylizeValue(value, parameter);
 }
 
-function shouldExplode(parameter) {
+function shouldExplode(parameter: ParameterObject) {
   return (
     (parameter.explode || (parameter.explode !== false && parameter.style === 'form')) &&
     // header and path doesn't explode into separate parameters like query and cookie do
@@ -191,7 +194,7 @@ function shouldExplode(parameter) {
   );
 }
 
-module.exports = function formatStyle(value, parameter) {
+export default function formatStyle(value: unknown, parameter: ParameterObject) {
   // Deep object only works on exploded non-array objects
   if (parameter.style === 'deepObject' && (!value || value.constructor !== Object || parameter.explode === false)) {
     return undefined;
@@ -211,4 +214,4 @@ module.exports = function formatStyle(value, parameter) {
   }
 
   return stylizeValue(value, parameter);
-};
+}

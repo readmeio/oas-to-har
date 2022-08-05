@@ -1,5 +1,7 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable import/no-import-module-exports */
 /* eslint-disable no-param-reassign */
+import type { Merge } from 'type-fest';
 
 /**
  * This file has been extracted and modified from `swagger-client`.
@@ -9,10 +11,10 @@
  * @link https://github.com/swagger-api/swagger-js/blob/master/src/execute/oas3/style-serializer.js
  */
 
-const isRfc3986Reserved = char => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
-const isRfc3986Unreserved = char => /^[a-z0-9\-._~]+$/i.test(char);
+const isRfc3986Reserved = (char: string) => ":/?#[]@!$&'()*+,;=".indexOf(char) > -1;
+const isRfc3986Unreserved = (char: string) => /^[a-z0-9\-._~]+$/i.test(char);
 
-function isURIEncoded(value) {
+function isURIEncoded(value: string) {
   try {
     return decodeURIComponent(value) !== value;
   } catch (err) {
@@ -22,29 +24,50 @@ function isURIEncoded(value) {
   }
 }
 
-function isObject(value) {
+function isObject(value: unknown) {
   return typeof value === 'object' && value !== null;
 }
 
-module.exports = function stylize(config) {
+export interface StylizerConfig {
+  location: 'body' | 'query';
+  key: string;
+  value: any;
+  style: 'deepObject' | 'form' | 'label' | 'matrix' | 'pipeDelimited' | 'simple' | 'spaceDelimited';
+  explode: boolean;
+  escape: boolean | 'unsafe';
+  isAllowedReserved?: boolean;
+}
+
+export default function stylize(config: StylizerConfig) {
   const { value } = config;
 
   if (Array.isArray(value)) {
     return encodeArray(config);
   }
+
   if (isObject(value)) {
     return encodeObject(config);
   }
-  return encodePrimitive(config);
-};
 
-module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
-  str,
-  { escape, returnIfEncoded = false, isAllowedReserved } = {}, // eslint-disable-line default-param-last
-  parse
+  return encodePrimitive(config);
+}
+
+export function encodeDisallowedCharacters(
+  str: string,
+  // eslint-disable-next-line @typescript-eslint/default-param-last
+  {
+    escape,
+    returnIfEncoded = false,
+    isAllowedReserved,
+  }: {
+    escape?: boolean | 'unsafe';
+    returnIfEncoded?: boolean;
+    isAllowedReserved?: boolean;
+  } = {},
+  parse: boolean
 ) {
   if (typeof str === 'number') {
-    str = str.toString();
+    str = (str as number).toString();
   }
 
   if (returnIfEncoded) {
@@ -87,13 +110,21 @@ module.exports.encodeDisallowedCharacters = function encodeDisallowedCharacters(
       return encoded;
     })
     .join('');
-};
+}
 
 /**
  * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples}
  */
-function encodeArray({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
-  const valueEncoder = str =>
+function encodeArray({
+  location,
+  key,
+  value,
+  style,
+  explode,
+  escape,
+  isAllowedReserved = false,
+}: Merge<StylizerConfig, { value: string[] }>) {
+  const valueEncoder = (str: string) =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query',
@@ -164,8 +195,8 @@ function encodeArray({ location, key, value, style, explode, escape, isAllowedRe
 /**
  * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples}
  */
-function encodeObject({ location, key, value, style, explode, escape, isAllowedReserved = false }) {
-  const valueEncoder = str =>
+function encodeObject({ location, key, value, style, explode, escape, isAllowedReserved = false }: StylizerConfig) {
+  const valueEncoder = (str: string) =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query',
@@ -277,7 +308,7 @@ function encodeObject({ location, key, value, style, explode, escape, isAllowedR
      */
     case 'deepObject':
       return valueKeys.reduce(curr => {
-        const val = valueEncoder(value[curr], {}, true);
+        const val = valueEncoder(value[curr]);
         return `${val}`;
       }, '');
 
@@ -289,8 +320,8 @@ function encodeObject({ location, key, value, style, explode, escape, isAllowedR
 /**
  * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples}
  */
-function encodePrimitive({ location, key, value, style, escape, isAllowedReserved = false }) {
-  const valueEncoder = str =>
+function encodePrimitive({ location, key, value, style, escape, isAllowedReserved = false }: StylizerConfig) {
+  const valueEncoder = (str: string) =>
     module.exports.encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query' || location === 'body',
@@ -335,7 +366,7 @@ function encodePrimitive({ location, key, value, style, escape, isAllowedReserve
      * `blue` → n/a
      */
     case 'deepObject':
-      return valueEncoder(value, {}, true);
+      return valueEncoder(value);
 
     default:
       return undefined;
