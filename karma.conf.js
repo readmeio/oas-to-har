@@ -12,4 +12,16 @@ module.exports = karmaConfig({
     edge: false,
     ie: false,
   },
+  tests: ['test/*.ts'],
+  config: {
+    webpack: {
+      resolve: {
+        extensions: ['.js', '.ts'],
+      },
+      mode: 'production',
+      module: {
+        rules: [{ test: /\.ts$/, use: 'ts-loader' }],
+      },
+    },
+  },
 });
