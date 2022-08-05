@@ -2,14 +2,14 @@ import type { OASDocument, SecuritySchemeObject } from 'oas/dist/rmoas.types';
 
 import { isRef } from 'oas/dist/rmoas.types';
 
-export type Auth = Record<string, string | number | { user?: string; pass?: string }>;
+export type AuthForHAR = Record<string, string | number | { user?: string; pass?: string }>;
 
 function harValue(type: 'cookies' | 'headers' | 'queryString', value: { name: string; value: string }) {
   if (!value.value) return undefined;
   return { type, value };
 }
 
-export default function configureSecurity(apiDefinition: OASDocument, values: Auth, scheme: string) {
+export default function configureSecurity(apiDefinition: OASDocument, values: AuthForHAR, scheme: string) {
   if (!scheme) return undefined;
 
   if (Object.keys(values || {}).length === 0) return undefined;

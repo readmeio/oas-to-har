@@ -12,6 +12,7 @@ import type {
 } from 'oas/dist/rmoas.types';
 import type { PostDataParams, Request } from 'har-format';
 import type { Extensions } from '@readme/oas-extensions';
+import type { AuthForHAR } from './lib/configure-security';
 
 import * as extensions from '@readme/oas-extensions';
 import { isRef } from 'oas/dist/rmoas.types';
@@ -24,6 +25,7 @@ import formatStyle from './lib/style-formatting';
 
 const { jsonSchemaTypes } = utils;
 
+export type { AuthForHAR } from './lib/configure-security';
 export type DataForHAR = {
   body?: any;
   cookie?: Record<string, any>;
@@ -33,7 +35,7 @@ export type DataForHAR = {
   query?: Record<string, any>;
   server?: {
     selected: number;
-    variables: Record<string, unknown>;
+    variables?: Record<string, unknown>;
   };
 };
 
@@ -229,8 +231,8 @@ export type oasToHarOptions = {
 export default function oasToHar(
   oas: Oas,
   operationSchema?: Operation,
-  values = {},
-  auth = {},
+  values: DataForHAR = {},
+  auth: AuthForHAR = {},
   opts: oasToHarOptions = {
     // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in
     // order to funnel requests through our CORS-friendly proxy.
@@ -272,7 +274,7 @@ export default function oasToHar(
   // If the incoming `server.variables` is missing variables let's pad it out with defaults.
   formData.server.variables = {
     ...oas.defaultVariables(formData.server.selected),
-    ...formData.server.variables,
+    ...(formData.server.variables ? formData.server.variables : {}),
   };
 
   const har: Request = {
