@@ -15,10 +15,10 @@ npm install --save @readme/oas-to-har
 ## Usage
 
 ```js
-const Oas = require('oas').default;
-const oasToHar = require('@readme/oas-to-har');
+import Oas from 'oas';
+import oasToHar from '@readme/oas-to-har';
 
-const petstore = require('./petstore.json');
+import petstore from './petstore.json';
 
 const spec = new Oas(petstore);
 console.log(oasToHar(spec, spec.operation('/pets', 'post')));
