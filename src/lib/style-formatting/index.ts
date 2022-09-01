@@ -1,7 +1,8 @@
-import type { ParameterObject } from 'oas/dist/rmoas.types';
 import type { StylizerConfig } from './style-serializer';
+import type { ParameterObject } from 'oas/dist/rmoas.types';
 
 import qs from 'qs';
+
 import stylize from './style-serializer';
 
 // Certain styles don't support empty values.

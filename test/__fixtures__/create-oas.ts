@@ -1,4 +1,5 @@
 import type { OASDocument } from 'oas/dist/rmoas.types';
+
 import Oas from 'oas';
 
 export default function createOas(method) {

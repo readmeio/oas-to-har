@@ -1,15 +1,14 @@
 import type { Operation } from 'oas';
 
-import chai, { expect } from 'chai';
-
+import petstore from '@readme/oas-examples/3.0/json/petstore.json';
 import * as extensions from '@readme/oas-extensions';
+import chai, { expect } from 'chai';
 import Oas from 'oas';
+
 import oasToHar from '../src';
 
-import chaiPlugins from './helpers/chai-plugins';
-
-import petstore from '@readme/oas-examples/3.0/json/petstore.json';
 import serverVariables from './__datasets__/server-variables.json';
+import chaiPlugins from './helpers/chai-plugins';
 
 chai.use(chaiPlugins);
 
