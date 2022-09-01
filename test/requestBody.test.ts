@@ -1,19 +1,17 @@
-import chai, { expect } from 'chai';
-
-import Oas from 'oas';
+import fileUploads from '@readme/oas-examples/3.0/json/file-uploads.json';
+import schemaTypes from '@readme/oas-examples/3.0/json/schema-types.json';
 import * as extensions from '@readme/oas-extensions';
+import chai, { expect } from 'chai';
+import Oas from 'oas';
+
 import oasToHar from '../src';
 
-import chaiPlugins from './helpers/chai-plugins';
-
-import schemaTypes from '@readme/oas-examples/3.0/json/schema-types.json';
-import fileUploads from '@readme/oas-examples/3.0/json/file-uploads.json';
 import multipartFormData from './__datasets__/multipart-form-data.json';
 import multipartFormDataArrayOfFiles from './__datasets__/multipart-form-data/array-of-files.json';
-import requestBodyRawBody from './__datasets__/requestBody-raw_body.json';
-
-import owlbertDataURL from './__datasets__/owlbert.dataurl.json';
 import owlbertShrubDataURL from './__datasets__/owlbert-shrub.dataurl.json';
+import owlbertDataURL from './__datasets__/owlbert.dataurl.json';
+import requestBodyRawBody from './__datasets__/requestBody-raw_body.json';
+import chaiPlugins from './helpers/chai-plugins';
 
 chai.use(chaiPlugins);
 

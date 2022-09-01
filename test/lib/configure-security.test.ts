@@ -1,5 +1,7 @@
 import type { OASDocument, SecuritySchemeObject } from 'oas/dist/rmoas.types';
+
 import { expect } from 'chai';
+
 import configureSecurity from '../../src/lib/configure-security';
 
 function createSecurityOAS(scheme: SecuritySchemeObject) {

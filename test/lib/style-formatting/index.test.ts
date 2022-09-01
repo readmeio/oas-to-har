@@ -1,10 +1,9 @@
 import type { DataForHAR } from '../../../src';
 import type { Request } from 'har-format';
+
 import chai, { expect } from 'chai';
 
 import oasToHar from '../../../src';
-import chaiPlugins from '../../helpers/chai-plugins';
-
 import oasFixture from '../../__fixtures__/create-oas';
 import {
   emptyInput,
@@ -20,6 +19,7 @@ import {
   objectInputEncoded,
   undefinedObjectInput,
 } from '../../__fixtures__/style-data';
+import chaiPlugins from '../../helpers/chai-plugins';
 
 chai.use(chaiPlugins);
 

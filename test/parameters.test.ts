@@ -1,14 +1,14 @@
+import type { DataForHAR } from '../src';
 import type { Request } from 'har-format';
 import type { OperationObject } from 'oas/dist/rmoas.types';
-import type { DataForHAR } from '../src';
 
 import chai, { expect } from 'chai';
 import Oas from 'oas';
+
 import oasToHar from '../src';
 
-import chaiPlugins from './helpers/chai-plugins';
-
 import commonParameters from './__datasets__/common-parameters.json';
+import chaiPlugins from './helpers/chai-plugins';
 
 chai.use(chaiPlugins);
 

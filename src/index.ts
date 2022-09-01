@@ -1,3 +1,6 @@
+import type { AuthForHAR } from './lib/configure-security';
+import type { Extensions } from '@readme/oas-extensions';
+import type { PostDataParams, Request } from 'har-format';
 import type Oas from 'oas';
 import type {
   HttpMethods,
@@ -10,14 +13,11 @@ import type {
   ResponseObject,
   SchemaObject,
 } from 'oas/dist/rmoas.types';
-import type { PostDataParams, Request } from 'har-format';
-import type { Extensions } from '@readme/oas-extensions';
-import type { AuthForHAR } from './lib/configure-security';
 
-import * as extensions from '@readme/oas-extensions';
-import { isRef } from 'oas/dist/rmoas.types';
-import { Operation, utils } from 'oas';
 import { parse as parseDataUrl } from '@readme/data-urls';
+import * as extensions from '@readme/oas-extensions';
+import { Operation, utils } from 'oas';
+import { isRef } from 'oas/dist/rmoas.types';
 import removeUndefinedObjects from 'remove-undefined-objects';
 
 import configureSecurity from './lib/configure-security';

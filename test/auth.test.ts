@@ -3,8 +3,8 @@ import Oas from 'oas';
 
 import oasToHar from '../src';
 
-import security from './__datasets__/security.json';
 import securityQuirks from './__datasets__/security-quirks.json';
+import security from './__datasets__/security.json';
 
 const spec = Oas.init(security);
 
