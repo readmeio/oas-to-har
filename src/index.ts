@@ -338,12 +338,12 @@ export default function oasToHar(
       const content = (operation.schema.responses[response] as ResponseObject).content;
       if (!content) return false;
 
-      // If there's no `Accept` header present we should add one so their eventual code snippet
+      // If there's no `accept` header present we should add one so their eventual code snippet
       // follows best practices.
       if (Object.keys(formData.header).find(h => h.toLowerCase() === 'accept')) return true;
 
       har.headers.push({
-        name: 'Accept',
+        name: 'accept',
         value: getResponseContentType(content),
       });
 
@@ -385,12 +385,12 @@ export default function oasToHar(
     });
   }
 
-  // Do we have an `Accept` header set up in the form, but it hasn't been added yet?
+  // Do we have an `accept` header set up in the form, but it hasn't been added yet?
   if (formData.header) {
     const acceptHeader = Object.keys(formData.header).find(h => h.toLowerCase() === 'accept');
     if (acceptHeader && !har.headers.find(hdr => hdr.name.toLowerCase() === 'accept')) {
       har.headers.push({
-        name: 'Accept',
+        name: 'accept',
         value: String(formData.header[acceptHeader]),
       });
     }
@@ -563,15 +563,15 @@ export default function oasToHar(
     }
   }
 
-  // Add a `Content-Type` header if there are any body values setup above or if there is a schema
-  // defined, but only do so if we don't already have a `Content-Type` present as it's impossible
+  // Add a `content-type` header if there are any body values setup above or if there is a schema
+  // defined, but only do so if we don't already have a `content-type` present as it's impossible
   // for a request to have multiple.
   if (
     (har.postData.text || (requestBody && requestBody.schema && Object.keys(requestBody.schema).length)) &&
     !hasContentType
   ) {
     har.headers.push({
-      name: 'Content-Type',
+      name: 'content-type',
       value: contentType,
     });
   }

@@ -1046,7 +1046,7 @@ describe('style formatting', function () {
     );
 
     /**
-     * Eventhough `Accept`, `Authorization`, and `Content-Type` headers can be defined as path
+     * Eventhough `accept`, `authorization`, and `content-type` headers can be defined as path
      * parameters, they should be completely ignored when it comes to serialization.
      *
      *  > If `in` is "header" and the `name` field is "Accept", "Content-Type" or "Authorization",
@@ -1057,11 +1057,11 @@ describe('style formatting', function () {
     describe('should ignore styling definitions on OAS-level handled headers', function () {
       // eslint-disable-next-line mocha/no-setup-in-describe
       [
-        ['`accept`', 'accept', 'application/json'],
-        ['`content-type`', 'content-type', 'application/json'],
-        ['`authorization`', 'authorization', 'scheme d9b23eb/0df'],
-      ].forEach(([test, headerName, value]) => {
-        it(test, async function () {
+        ['accept', 'application/json'],
+        ['content-type', 'application/json'],
+        ['authorization', 'scheme d9b23eb/0df'],
+      ].forEach(([headerName, value]) => {
+        it(headerName, async function () {
           const oas = createOas('/header', {
             parameters: [
               {
