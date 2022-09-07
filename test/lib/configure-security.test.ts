@@ -37,7 +37,7 @@ describe('configure-security', function () {
         expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
           type: 'headers',
           value: {
-            name: 'Authorization',
+            name: 'authorization',
             value: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`,
           },
         });
@@ -51,7 +51,7 @@ describe('configure-security', function () {
         expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
           type: 'headers',
           value: {
-            name: 'Authorization',
+            name: 'authorization',
             value: `Basic ${Buffer.from(`:${pass}`).toString('base64')}`,
           },
         });
@@ -65,7 +65,7 @@ describe('configure-security', function () {
         expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
           type: 'headers',
           value: {
-            name: 'Authorization',
+            name: 'authorization',
             value: `Basic ${Buffer.from(`${user}:`).toString('base64')}`,
           },
         });
@@ -90,7 +90,7 @@ describe('configure-security', function () {
         expect(configureSecurity(spec, { busterAuth: { user, pass: '' } }, 'busterAuth')).to.deep.equal({
           type: 'headers',
           value: {
-            name: 'Authorization',
+            name: 'authorization',
             value: `Basic ${Buffer.from(`${user}:`).toString('base64')}`,
           },
         });
@@ -105,7 +105,7 @@ describe('configure-security', function () {
         expect(configureSecurity(spec, { busterAuth: apiKey }, 'busterAuth')).to.deep.equal({
           type: 'headers',
           value: {
-            name: 'Authorization',
+            name: 'authorization',
             value: `Bearer ${apiKey}`,
           },
         });
@@ -138,7 +138,7 @@ describe('configure-security', function () {
       expect(configureSecurity(spec, { busterAuth: apiKey }, 'busterAuth')).to.deep.equal({
         type: 'headers',
         value: {
-          name: 'Authorization',
+          name: 'authorization',
           value: `Bearer ${apiKey}`,
         },
       });

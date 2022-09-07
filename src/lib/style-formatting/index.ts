@@ -67,7 +67,7 @@ function stylizeValue(value: unknown, parameter: ParameterObject) {
   }
 
   /**
-   * Eventhough `Accept`, `Authorization`, and `Content-Type` headers can be defined as parameters,
+   * Eventhough `accept`, `authorization`, and `content-type` headers can be defined as parameters,
    * they should be completely ignored when it comes to serialization.
    *
    *  > If `in` is "header" and the `name` field is "Accept", "Content-Type" or "Authorization", the

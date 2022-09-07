@@ -412,7 +412,7 @@ describe('parameter handling', function () {
     );
 
     it(
-      'should pass `Accept`  header if endpoint expects a content back from response',
+      'should pass `accept`  header if endpoint expects a content back from response',
       assertHeaders(
         {
           parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
@@ -428,14 +428,14 @@ describe('parameter handling', function () {
         },
         {},
         [
-          { name: 'Accept', value: 'application/xml' },
+          { name: 'accept', value: 'application/xml' },
           { name: 'a', value: 'value' },
         ]
       )
     );
 
     it(
-      'should only add one `Accept` header when multiple responses are present',
+      'should only add one `accept` header when multiple responses are present',
       assertHeaders(
         {
           responses: {
@@ -454,12 +454,12 @@ describe('parameter handling', function () {
           },
         },
         {},
-        [{ name: 'Accept', value: 'application/xml' }]
+        [{ name: 'accept', value: 'application/xml' }]
       )
     );
 
     it(
-      'should only receive one `Accept` header if specified in values',
+      'should only receive one `accept` header if specified in values',
       assertHeaders(
         {
           parameters: [{ name: 'accept', in: 'header' }],
@@ -479,7 +479,7 @@ describe('parameter handling', function () {
     );
 
     it(
-      'should add `Accept` header if specified in formdata',
+      'should add `accept` header if specified in formdata',
       assertHeaders(
         {
           responses: {
@@ -493,7 +493,7 @@ describe('parameter handling', function () {
           },
         },
         { header: { accept: 'application/xml' } },
-        [{ name: 'Accept', value: 'application/xml' }]
+        [{ name: 'accept', value: 'application/xml' }]
       )
     );
 

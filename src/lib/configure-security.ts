@@ -43,14 +43,14 @@ export default function configureSecurity(apiDefinition: OASDocument, values: Au
       }
 
       return harValue('headers', {
-        name: 'Authorization',
+        name: 'authorization',
         value: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`,
       });
     } else if (security.scheme === 'bearer') {
       if (!values[scheme]) return false;
 
       return harValue('headers', {
-        name: 'Authorization',
+        name: 'authorization',
         value: `Bearer ${values[scheme]}`,
       });
     }
@@ -88,7 +88,7 @@ export default function configureSecurity(apiDefinition: OASDocument, values: Au
     if (!values[scheme]) return false;
 
     return harValue('headers', {
-      name: 'Authorization',
+      name: 'authorization',
       value: `Bearer ${values[scheme]}`,
     });
   }

@@ -459,7 +459,7 @@ describe('request body handling', function () {
           });
 
           expect(har.log.entries[0].request.headers).to.deep.equal([
-            { name: 'Content-Type', value: 'multipart/form-data' },
+            { name: 'content-type', value: 'multipart/form-data' },
           ]);
 
           expect(har.log.entries[0].request.postData).to.deep.equal({
@@ -490,7 +490,7 @@ describe('request body handling', function () {
           });
 
           expect(har.log.entries[0].request.headers).to.deep.equal([
-            { name: 'Content-Type', value: 'multipart/form-data' },
+            { name: 'content-type', value: 'multipart/form-data' },
           ]);
 
           expect(har.log.entries[0].request.postData).to.deep.equal({
@@ -1021,26 +1021,26 @@ describe('request body handling', function () {
       let har = oasToHar(spec, spec.operation('/requestBody', 'post'), {});
       await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'Content-Type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
 
       har = oasToHar(spec, spec.operation('/requestBody', 'post'), { query: { a: 1 } });
       await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'Content-Type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
     });
 
     it('should be sent through if there are any body values', async function () {
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: 'test' } });
       await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'Content-Type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
     });
 
     it('should be sent through if there are any formData values', async function () {
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { formData: { a: 'test' } });
       await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'Content-Type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
     });
 
     it('should fetch the type from the first `requestBody.content` and first `responseBody.content` object', async function () {
@@ -1072,7 +1072,7 @@ describe('request body handling', function () {
       const har = oasToHar(contentSpec, contentSpec.operation('/requestBody', 'post'), { body: { a: 'test' } });
       await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'Content-Type', value: 'text/xml' }]);
+      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'text/xml' }]);
       expect(har.log.entries[0].request.postData.mimeType).to.equal('text/xml');
     });
 
@@ -1118,10 +1118,10 @@ describe('request body handling', function () {
       const har = oasToHar(contentSpec, contentSpec.operation('/requestBody', 'post'), { body: { a: 'test' } });
       await expect(har).to.be.a.har;
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'Content-Type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
     });
 
-    it("should only add a content-type if one isn't already present", async function () {
+    it("should only add a `content-type` if one isn't already present", async function () {
       const contentSpec = Oas.init({
         paths: {
           '/requestBody': {
@@ -1146,18 +1146,18 @@ describe('request body handling', function () {
           },
         },
         'x-readme': {
-          [extensions.HEADERS]: [{ key: 'Content-Type', value: 'multipart/form-data' }],
+          [extensions.HEADERS]: [{ key: 'content-type', value: 'multipart/form-data' }],
         },
       });
 
       const har = oasToHar(contentSpec, contentSpec.operation('/requestBody', 'post'), { body: { a: 'test' } });
       await expect(har).to.be.a.har;
 
-      // `Content-Type: application/json` would normally appear here if there were no
+      // `content-type: application/json` would normally appear here if there were no
       // `x-readme.headers`, but since there is we should default to that so as to we don't double
-      // up on Content-Type headers.
+      // up on `content-type` headers.
       expect(har.log.entries[0].request.headers).to.deep.equal([
-        { name: 'Content-Type', value: 'multipart/form-data' },
+        { name: 'content-type', value: 'multipart/form-data' },
       ]);
 
       expect(har.log.entries[0].request.postData.mimeType).to.equal('multipart/form-data');

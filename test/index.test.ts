@@ -83,7 +83,7 @@ describe('oas-to-har', function () {
           {
             request: {
               cookies: [],
-              headers: [{ name: 'Content-Type', value: 'application/json' }],
+              headers: [{ name: 'content-type', value: 'application/json' }],
               headersSize: 0,
               queryString: [],
               bodySize: 0,
