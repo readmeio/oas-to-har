@@ -21,23 +21,23 @@ export default function configureSecurity(apiDefinition: OASDocument, values: Au
 
   if (isRef(security)) {
     return undefined;
+  } else if (!values[scheme]) {
+    // If we don't have any data for this auth scheme then we shouldn't add it.
+    return false;
   }
 
   if (security.type === 'http') {
     if (security.scheme === 'basic') {
-      // Return with no header if user and password are blank
-      if (!values[scheme]) return false;
-
       const auth = values[scheme];
       if (typeof auth !== 'object') return false;
       if (!auth.user && !auth.pass) return false;
 
-      let user = auth.user;
+      let user = auth.user ?? null;
       if (user === null || user.length === 0) {
         user = '';
       }
 
-      let pass = auth.pass;
+      let pass = auth.pass ?? null;
       if (pass === null || pass.length === 0) {
         pass = '';
       }
@@ -47,8 +47,6 @@ export default function configureSecurity(apiDefinition: OASDocument, values: Au
         value: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`,
       });
     } else if (security.scheme === 'bearer') {
-      if (!values[scheme]) return false;
-
       return harValue('headers', {
         name: 'authorization',
         value: `Bearer ${values[scheme]}`,
@@ -85,8 +83,6 @@ export default function configureSecurity(apiDefinition: OASDocument, values: Au
   }
 
   if (security.type === 'oauth2') {
-    if (!values[scheme]) return false;
-
     return harValue('headers', {
       name: 'authorization',
       value: `Bearer ${values[scheme]}`,

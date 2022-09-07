@@ -5,13 +5,26 @@
     "version": "1.0.0"
   },
   "servers": [{ "url": "https://httpbin.org" }],
-  "security": [
-    { "appId": [], "accessToken": [] },
-    { "orgId": [], "accessToken": [] }
-  ],
   "paths": {
     "/anything": {
       "post": {
+        "description": "If an endpoint can accept two forms of auth, with one of those schemes being used in another potential form, and we specify one of these options, we should not add the scheme that can be used twice twice into the HAR.",
+        "security": [
+          { "appId": [], "accessToken": [] },
+          { "orgId": [], "accessToken": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "description": "If an endpoint can accept either Basic or OAuth Bearer auth, and the user supplies data for one of those, we should only add one `authorization` header into the mix.",
+        "security": [
+          { "Basic": [] },
+          { "Bearer": [] }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -36,6 +49,15 @@
         "type": "apiKey",
         "name": "app_id",
         "in": "query"
+      },
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      },
+      "Basic": {
+        "type": "http",
+        "scheme": "basic"
       }
     }
   }

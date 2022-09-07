@@ -21,7 +21,7 @@ describe('auth handling', function () {
       ]);
     });
 
-    it('should not send the same auth header twice', function () {
+    it('should not send the same auth header twice if an auth scheme can be used in multiple ways', function () {
       const auth = {
         appId: '1234567890',
         accessToken: 'e229822e-f625-45eb-a963-4d197d29637b',
@@ -34,6 +34,20 @@ describe('auth handling', function () {
         {
           name: 'Access-Token',
           value: 'e229822e-f625-45eb-a963-4d197d29637b',
+        },
+      ]);
+    });
+
+    it('should not send the same header twice if only one form of auth is present', function () {
+      const auth = { Basic: { pass: 'buster' } };
+
+      const oas = Oas.init(securityQuirks);
+      const har = oasToHar(oas, oas.operation('/anything', 'put'), {}, auth);
+
+      expect(har.log.entries[0].request.headers).to.deep.equal([
+        {
+          name: 'authorization',
+          value: 'Basic OmJ1c3Rlcg==',
         },
       ]);
     });
