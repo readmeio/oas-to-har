@@ -29,45 +29,36 @@ describe('configure-security', function () {
 
   describe('http auth support', function () {
     describe('type=basic', function () {
-      it('should work for basic type', function () {
-        const user = 'user';
-        const pass = 'pass';
-        const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
+      // eslint-disable-next-line mocha/no-setup-in-describe
+      [
+        ['should work for basic type', { user: 'user', pass: 'pass' }, 'user:pass'],
+        [
+          'should work if a password is present but the username is undefined',
+          { user: undefined, pass: 'pass' },
+          ':pass',
+        ],
+        ['should work if a password is present but the username is null', { user: null, pass: 'pass' }, ':pass'],
+        [
+          'should work if a password is present but the username is an empty string',
+          { user: '', pass: 'pass' },
+          ':pass',
+        ],
+        ['should work if a username is present but the pass is undefined', { user: 'user', pass: undefined }, 'user:'],
+        ['should work if a username is present but the pass is null', { user: 'user', pass: null }, 'user:'],
+        ['should work if a username is present but the pass is an empty string', { user: 'user', pass: '' }, 'user:'],
+      ].forEach(([_, auth, expected]: [string, { user: string; pass: string }, string]) => {
+        it(_, function () {
+          const user = auth.user;
+          const pass = auth.pass;
+          const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
-        expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
-          type: 'headers',
-          value: {
-            name: 'authorization',
-            value: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`,
-          },
-        });
-      });
-
-      it('should work if a password is present but the username is empty or null', function () {
-        const user = null;
-        const pass = 'pass';
-        const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
-
-        expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
-          type: 'headers',
-          value: {
-            name: 'authorization',
-            value: `Basic ${Buffer.from(`:${pass}`).toString('base64')}`,
-          },
-        });
-      });
-
-      it('should work if the password is empty or null', function () {
-        const user = 'user';
-        const pass = null;
-        const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
-
-        expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
-          type: 'headers',
-          value: {
-            name: 'authorization',
-            value: `Basic ${Buffer.from(`${user}:`).toString('base64')}`,
-          },
+          expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
+            type: 'headers',
+            value: {
+              name: 'authorization',
+              value: `Basic ${Buffer.from(expected).toString('base64')}`,
+            },
+          });
         });
       });
 
