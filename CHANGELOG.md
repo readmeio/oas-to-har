@@ -1,3 +1,19 @@
+## 18.1.0 (2022-09-07)
+
+* fix: issue where auth header may be sent twice (#123) ([05c10c3](https://github.com/readmeio/oas-to-har/commit/05c10c3)), closes [#123](https://github.com/readmeio/oas-to-har/issues/123)
+* fix: readme updates ([fa79b04](https://github.com/readmeio/oas-to-har/commit/fa79b04))
+* feat: lowercasing headers we add so we're compatible with http2 (#122) ([4fbd342](https://github.com/readmeio/oas-to-har/commit/4fbd342)), closes [#122](https://github.com/readmeio/oas-to-har/issues/122)
+* chore(deps-dev): bump @commitlint/cli from 17.0.3 to 17.1.2 (#118) ([e21b112](https://github.com/readmeio/oas-to-har/commit/e21b112)), closes [#118](https://github.com/readmeio/oas-to-har/issues/118)
+* chore(deps-dev): bump @commitlint/config-conventional (#121) ([d5ff2fa](https://github.com/readmeio/oas-to-har/commit/d5ff2fa)), closes [#121](https://github.com/readmeio/oas-to-har/issues/121)
+* chore(deps-dev): bump @readme/eslint-config from 9.0.0 to 10.1.0 (#115) ([32eeef7](https://github.com/readmeio/oas-to-har/commit/32eeef7)), closes [#115](https://github.com/readmeio/oas-to-har/issues/115)
+* chore(deps-dev): bump @types/chai from 4.3.1 to 4.3.3 (#116) ([721eb20](https://github.com/readmeio/oas-to-har/commit/721eb20)), closes [#116](https://github.com/readmeio/oas-to-har/issues/116)
+* chore(deps-dev): bump eslint from 8.21.0 to 8.23.0 (#119) ([fd4453c](https://github.com/readmeio/oas-to-har/commit/fd4453c)), closes [#119](https://github.com/readmeio/oas-to-har/issues/119)
+* chore(deps-dev): bump type-fest from 2.18.0 to 2.19.0 (#120) ([d3ec08d](https://github.com/readmeio/oas-to-har/commit/d3ec08d)), closes [#120](https://github.com/readmeio/oas-to-har/issues/120)
+* chore(deps-dev): bump typescript from 4.7.4 to 4.8.2 (#117) ([a9a0c65](https://github.com/readmeio/oas-to-har/commit/a9a0c65)), closes [#117](https://github.com/readmeio/oas-to-har/issues/117)
+* chore(deps): bump oas from 18.3.4 to 18.4.4 (#114) ([56e2f64](https://github.com/readmeio/oas-to-har/commit/56e2f64)), closes [#114](https://github.com/readmeio/oas-to-har/issues/114)
+
+
+
 ## 18.0.0 (2022-08-05)
 
 * feat: rewrite the library in Typescript (#113) ([a40c56d](https://github.com/readmeio/oas-to-har/commit/a40c56d)), closes [#113](https://github.com/readmeio/oas-to-har/issues/113)
