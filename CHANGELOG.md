@@ -1,3 +1,10 @@
+## 18.2.0 (2022-09-13)
+
+* chore(deps-dev): bumping dev deps ([8eb334f](https://github.com/readmeio/oas-to-har/commit/8eb334f))
+* chore(deps): bumping @readme/oas-extensions ([622eec2](https://github.com/readmeio/oas-to-har/commit/622eec2))
+
+
+
 ## 18.1.0 (2022-09-07)
 
 * fix: issue where auth header may be sent twice (#123) ([05c10c3](https://github.com/readmeio/oas-to-har/commit/05c10c3)), closes [#123](https://github.com/readmeio/oas-to-har/issues/123)
