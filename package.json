@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@readme/data-urls": "^1.0.1",
-    "@readme/oas-extensions": "^15.0.0",
-    "oas": "^18.3.1",
+    "@readme/oas-extensions": "^16.0.0",
+    "oas": "^19.0.0",
     "qs": "^6.10.5",
     "remove-undefined-objects": "^2.0.0"
   },
