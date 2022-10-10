@@ -1,3 +1,16 @@
+## 19.0.0 (2022-10-10)
+
+* chore(deps-dev): bump @readme/oas-examples from 5.6.0 to 5.7.0 (#129) ([7a3ad7f](https://github.com/readmeio/oas-to-har/commit/7a3ad7f)), closes [#129](https://github.com/readmeio/oas-to-har/issues/129)
+* chore(deps-dev): bump @types/har-format from 1.2.8 to 1.2.9 (#125) ([e9c350d](https://github.com/readmeio/oas-to-har/commit/e9c350d)), closes [#125](https://github.com/readmeio/oas-to-har/issues/125)
+* chore(deps-dev): bump @types/mocha from 9.1.1 to 10.0.0 (#124) ([c192687](https://github.com/readmeio/oas-to-har/commit/c192687)), closes [#124](https://github.com/readmeio/oas-to-har/issues/124)
+* chore(deps-dev): bump eslint from 8.23.1 to 8.24.0 (#127) ([b072a50](https://github.com/readmeio/oas-to-har/commit/b072a50)), closes [#127](https://github.com/readmeio/oas-to-har/issues/127)
+* chore(deps-dev): bump type-fest from 2.19.0 to 3.0.0 (#128) ([4df3e53](https://github.com/readmeio/oas-to-har/commit/4df3e53)), closes [#128](https://github.com/readmeio/oas-to-har/issues/128)
+* chore(deps-dev): bump typescript from 4.8.3 to 4.8.4 (#126) ([9bc7a81](https://github.com/readmeio/oas-to-har/commit/9bc7a81)), closes [#126](https://github.com/readmeio/oas-to-har/issues/126)
+* chore(deps-dev): bumping dev deps ([434d436](https://github.com/readmeio/oas-to-har/commit/434d436))
+* chore(deps): bumping oas deps ([1fbc469](https://github.com/readmeio/oas-to-har/commit/1fbc469))
+
+
+
 ## 18.2.0 (2022-09-13)
 
 * chore(deps-dev): bumping dev deps ([8eb334f](https://github.com/readmeio/oas-to-har/commit/8eb334f))
