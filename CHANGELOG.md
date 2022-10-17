@@ -1,3 +1,9 @@
+## 19.1.0 (2022-10-17)
+
+* fix: preferring JSON response content accept headers over everything else (#130) ([41fdd11](https://github.com/readmeio/oas-to-har/commit/41fdd11)), closes [#130](https://github.com/readmeio/oas-to-har/issues/130)
+
+
+
 ## 19.0.0 (2022-10-10)
 
 * chore(deps-dev): bump @readme/oas-examples from 5.6.0 to 5.7.0 (#129) ([7a3ad7f](https://github.com/readmeio/oas-to-har/commit/7a3ad7f)), closes [#129](https://github.com/readmeio/oas-to-har/issues/129)

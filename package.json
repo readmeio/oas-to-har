@@ -1,7 +1,7 @@
 {
   "name": "@readme/oas-to-har",
   "description": "Utility to transform an OAS operation into a HAR representation",
-  "version": "19.0.0",
+  "version": "19.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Jon Ursenbach <jon@ursenba.ch>",
