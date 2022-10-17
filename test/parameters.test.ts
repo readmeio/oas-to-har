@@ -412,7 +412,30 @@ describe('parameter handling', function () {
     );
 
     it(
-      'should pass `accept`  header if endpoint expects a content back from response',
+      'should pass `accept` header if endpoint expects a content back from response',
+      assertHeaders(
+        {
+          parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
+          responses: {
+            200: {
+              description: 'ok',
+              content: {
+                'application/xml': { schema: { type: 'array', items: {} } },
+                'text/plain': { schema: { type: 'array', items: {} } },
+              },
+            },
+          },
+        },
+        {},
+        [
+          { name: 'accept', value: 'application/xml' },
+          { name: 'a', value: 'value' },
+        ]
+      )
+    );
+
+    it(
+      'should pass `accept` header if endpoint expects a content back from response, but prioritize JSON',
       assertHeaders(
         {
           parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
@@ -428,7 +451,7 @@ describe('parameter handling', function () {
         },
         {},
         [
-          { name: 'accept', value: 'application/xml' },
+          { name: 'accept', value: 'application/json' },
           { name: 'a', value: 'value' },
         ]
       )

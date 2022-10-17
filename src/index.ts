@@ -23,7 +23,7 @@ import removeUndefinedObjects from 'remove-undefined-objects';
 import configureSecurity from './lib/configure-security';
 import formatStyle from './lib/style-formatting';
 
-const { jsonSchemaTypes } = utils;
+const { jsonSchemaTypes, matchesMimeType } = utils;
 
 export type { AuthForHAR } from './lib/configure-security';
 export type DataForHAR = {
@@ -142,12 +142,19 @@ const defaultFormDataTypes = Object.keys(jsonSchemaTypes).reduce((prev, curr) =>
 function getResponseContentType(content: MediaTypeObject) {
   const types = Object.keys(content) || [];
 
-  let type = 'application/json';
+  // If this response content has multiple types available we should always prefer the one that's
+  // JSON-compatible. If they don't have one that is we'll return the first available, otherwise
+  // if they don't have **any** repsonse content types present we'll assume it's JSON.
   if (types && types.length) {
-    type = types[0];
+    const jsonType = types.find(t => matchesMimeType.json(t));
+    if (jsonType) {
+      return jsonType;
+    }
+
+    return types[0];
   }
 
-  return type;
+  return 'application/json';
 }
 
 function isPrimitive(val: unknown) {
