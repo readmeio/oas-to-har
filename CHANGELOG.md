@@ -1,3 +1,9 @@
+## 19.2.0 (2022-10-25)
+
+* feat: ability to manuall specify an `authorization` header in formData (#131) ([9623d38](https://github.com/readmeio/oas-to-har/commit/9623d38)), closes [#131](https://github.com/readmeio/oas-to-har/issues/131)
+
+
+
 ## 19.1.0 (2022-10-17)
 
 * fix: preferring JSON response content accept headers over everything else (#130) ([41fdd11](https://github.com/readmeio/oas-to-har/commit/41fdd11)), closes [#130](https://github.com/readmeio/oas-to-har/issues/130)
