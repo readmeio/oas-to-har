@@ -392,13 +392,22 @@ export default function oasToHar(
     });
   }
 
-  // Do we have an `accept` header set up in the form, but it hasn't been added yet?
   if (formData.header) {
+    // Do we have an `accept` header set up in the form data, but it hasn't been added yet?
     const acceptHeader = Object.keys(formData.header).find(h => h.toLowerCase() === 'accept');
     if (acceptHeader && !har.headers.find(hdr => hdr.name.toLowerCase() === 'accept')) {
       har.headers.push({
         name: 'accept',
         value: String(formData.header[acceptHeader]),
+      });
+    }
+
+    // Do we have a manually-defined `authorization` header set up in the form data?
+    const authorizationHeader = Object.keys(formData.header).find(h => h.toLowerCase() === 'authorization');
+    if (authorizationHeader && !har.headers.find(hdr => hdr.name.toLowerCase() === 'authorization')) {
+      har.headers.push({
+        name: 'authorization',
+        value: String(formData.header[authorizationHeader]),
       });
     }
   }
@@ -594,7 +603,15 @@ export default function oasToHar(
           return;
         }
 
-        // If we've already added this security value then don't add it again.
+        // If this is an `authorization` header and we've already added one (maybe one was manually
+        // specified), then we shouldn't add another.
+        if (securityValue.value.name === 'authorization') {
+          if (har[securityValue.type].find(v => v.name === securityValue.value.name)) {
+            return;
+          }
+        }
+
+        // If we've already added this **specific** security value then don't add it again.
         if (
           har[securityValue.type].find(
             v => v.name === securityValue.value.name && v.value === securityValue.value.value

@@ -51,6 +51,29 @@ describe('auth handling', function () {
         },
       ]);
     });
+
+    it('should send a manually-defined auth header, overriding any supplied auth data, if `authorization` is present in the header data', function () {
+      const auth = { Basic: { pass: 'buster' } };
+
+      const oas = Oas.init(securityQuirks);
+      const har = oasToHar(
+        oas,
+        oas.operation('/anything', 'put'),
+        {
+          header: {
+            authorization: 'Bearer 1234',
+          },
+        },
+        auth
+      );
+
+      expect(har.log.entries[0].request.headers).to.deep.equal([
+        {
+          name: 'authorization',
+          value: 'Bearer 1234',
+        },
+      ]);
+    });
   });
 
   it('should work for query auth', function () {
