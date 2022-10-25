@@ -412,7 +412,7 @@ describe('parameter handling', function () {
     );
 
     it(
-      'should pass `accept` header if endpoint expects a content back from response',
+      'should pass an `accept` header if endpoint expects a content back from response',
       assertHeaders(
         {
           parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
@@ -435,7 +435,7 @@ describe('parameter handling', function () {
     );
 
     it(
-      'should pass `accept` header if endpoint expects a content back from response, but prioritize JSON',
+      'should pass an `accept` header if endpoint expects a content back from response, but prioritize JSON',
       assertHeaders(
         {
           parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
