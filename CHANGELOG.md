@@ -1,3 +1,10 @@
+## 20.0.0 (2022-10-28)
+
+* chore: bumping oas to v20 (#132) ([1477086](https://github.com/readmeio/oas-to-har/commit/1477086)), closes [#132](https://github.com/readmeio/oas-to-har/issues/132)
+* ci: running tests on node 19 ([cdb8df9](https://github.com/readmeio/oas-to-har/commit/cdb8df9))
+
+
+
 ## 19.2.0 (2022-10-25)
 
 * feat: ability to manuall specify an `authorization` header in formData (#131) ([9623d38](https://github.com/readmeio/oas-to-har/commit/9623d38)), closes [#131](https://github.com/readmeio/oas-to-har/issues/131)
