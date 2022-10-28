@@ -1,6 +1,10 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   linting:
@@ -42,6 +46,7 @@ jobs:
           - 14
           - 16
           - 18
+          - 19
 
     steps:
       - name: Checkout source
