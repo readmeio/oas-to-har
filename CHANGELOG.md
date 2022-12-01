@@ -1,3 +1,25 @@
+## <small>20.0.1 (2022-12-01)</small>
+
+* chore(deps-dev): bump @commitlint/cli from 17.1.2 to 17.2.0 (#135) ([e89f066](https://github.com/readmeio/oas-to-har/commit/e89f066)), closes [#135](https://github.com/readmeio/oas-to-har/issues/135)
+* chore(deps-dev): bump @commitlint/cli from 17.2.0 to 17.3.0 (#144) ([da01b9e](https://github.com/readmeio/oas-to-har/commit/da01b9e)), closes [#144](https://github.com/readmeio/oas-to-har/issues/144)
+* chore(deps-dev): bump @commitlint/config-conventional (#134) ([25ff766](https://github.com/readmeio/oas-to-har/commit/25ff766)), closes [#134](https://github.com/readmeio/oas-to-har/issues/134)
+* chore(deps-dev): bump @readme/eslint-config from 10.1.1 to 10.2.0 (#143) ([c16548c](https://github.com/readmeio/oas-to-har/commit/c16548c)), closes [#143](https://github.com/readmeio/oas-to-har/issues/143)
+* chore(deps-dev): bump @readme/oas-examples from 5.7.1 to 5.8.0 (#133) ([044d7fb](https://github.com/readmeio/oas-to-har/commit/044d7fb)), closes [#133](https://github.com/readmeio/oas-to-har/issues/133)
+* chore(deps-dev): bump @readme/oas-examples from 5.8.0 to 5.9.0 (#141) ([11ef57f](https://github.com/readmeio/oas-to-har/commit/11ef57f)), closes [#141](https://github.com/readmeio/oas-to-har/issues/141)
+* chore(deps-dev): bump @types/mocha from 10.0.0 to 10.0.1 (#142) ([7027b4d](https://github.com/readmeio/oas-to-har/commit/7027b4d)), closes [#142](https://github.com/readmeio/oas-to-har/issues/142)
+* chore(deps-dev): bump chai from 4.3.6 to 4.3.7 (#147) ([c1e8478](https://github.com/readmeio/oas-to-har/commit/c1e8478)), closes [#147](https://github.com/readmeio/oas-to-har/issues/147)
+* chore(deps-dev): bump eslint from 8.26.0 to 8.28.0 (#146) ([ac54a82](https://github.com/readmeio/oas-to-har/commit/ac54a82)), closes [#146](https://github.com/readmeio/oas-to-har/issues/146)
+* chore(deps-dev): bump husky from 8.0.1 to 8.0.2 (#148) ([e0a3d22](https://github.com/readmeio/oas-to-har/commit/e0a3d22)), closes [#148](https://github.com/readmeio/oas-to-har/issues/148)
+* chore(deps-dev): bump prettier from 2.7.1 to 2.8.0 (#149) ([2923fa9](https://github.com/readmeio/oas-to-har/commit/2923fa9)), closes [#149](https://github.com/readmeio/oas-to-har/issues/149)
+* chore(deps-dev): bump typescript from 4.8.4 to 4.9.3 (#140) ([283e210](https://github.com/readmeio/oas-to-har/commit/283e210)), closes [#140](https://github.com/readmeio/oas-to-har/issues/140)
+* chore(deps): bump engine.io and socket.io (#139) ([a6fd398](https://github.com/readmeio/oas-to-har/commit/a6fd398)), closes [#139](https://github.com/readmeio/oas-to-har/issues/139)
+* chore(deps): bump loader-utils from 1.4.0 to 1.4.1 (#136) ([297711e](https://github.com/readmeio/oas-to-har/commit/297711e)), closes [#136](https://github.com/readmeio/oas-to-har/issues/136)
+* chore(deps): bump loader-utils from 1.4.1 to 1.4.2 (#138) ([812e4e2](https://github.com/readmeio/oas-to-har/commit/812e4e2)), closes [#138](https://github.com/readmeio/oas-to-har/issues/138)
+* chore(deps): bump oas from 20.0.0 to 20.0.1 (#145) ([f308ff1](https://github.com/readmeio/oas-to-har/commit/f308ff1)), closes [#145](https://github.com/readmeio/oas-to-har/issues/145)
+* chore(deps): bump socket.io-parser from 4.0.4 to 4.0.5 (#137) ([cf068fa](https://github.com/readmeio/oas-to-har/commit/cf068fa)), closes [#137](https://github.com/readmeio/oas-to-har/issues/137)
+
+
+
 ## 20.0.0 (2022-10-28)
 
 * chore: bumping oas to v20 (#132) ([1477086](https://github.com/readmeio/oas-to-har/commit/1477086)), closes [#132](https://github.com/readmeio/oas-to-har/issues/132)
