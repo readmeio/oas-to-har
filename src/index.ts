@@ -26,7 +26,7 @@ import formatStyle from './lib/style-formatting';
 const { jsonSchemaTypes, matchesMimeType } = utils;
 
 export type { AuthForHAR } from './lib/configure-security';
-export type DataForHAR = {
+export interface DataForHAR {
   body?: any;
   cookie?: Record<string, any>;
   formData?: Record<string, any>; // `application/x-www-form-urlencoded` requests payloads.
@@ -37,7 +37,7 @@ export type DataForHAR = {
     selected: number;
     variables?: Record<string, unknown>;
   };
-};
+}
 
 function formatter(
   values: DataForHAR,
@@ -229,11 +229,11 @@ function encodeBodyForHAR(body: any) {
   return stringify(body);
 }
 
-export type oasToHarOptions = {
+export interface oasToHarOptions {
   // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in
   // order to funnel requests through our CORS-friendly proxy.
   proxyUrl: boolean;
-};
+}
 
 export default function oasToHar(
   oas: Oas,
