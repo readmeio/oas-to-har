@@ -1,3 +1,11 @@
+## <small>20.0.2 (2023-01-03)</small>
+
+* chore: bumping deps ([a2ac5ef](https://github.com/readmeio/oas-to-har/commit/a2ac5ef))
+* chore(deps): bump decode-uri-component from 0.2.0 to 0.2.2 (#150) ([fc5a4f7](https://github.com/readmeio/oas-to-har/commit/fc5a4f7)), closes [#150](https://github.com/readmeio/oas-to-har/issues/150)
+* ci: simplifying dep caching ([795e12b](https://github.com/readmeio/oas-to-har/commit/795e12b))
+
+
+
 ## <small>20.0.1 (2022-12-01)</small>
 
 * chore(deps-dev): bump @commitlint/cli from 17.1.2 to 17.2.0 (#135) ([e89f066](https://github.com/readmeio/oas-to-har/commit/e89f066)), closes [#135](https://github.com/readmeio/oas-to-har/issues/135)
