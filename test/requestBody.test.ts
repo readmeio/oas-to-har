@@ -6,8 +6,8 @@ import Oas from 'oas';
 
 import oasToHar from '../src';
 
-import multipartFormData from './__datasets__/multipart-form-data.json';
 import multipartFormDataArrayOfFiles from './__datasets__/multipart-form-data/array-of-files.json';
+import multipartFormData from './__datasets__/multipart-form-data.json';
 import owlbertShrubDataURL from './__datasets__/owlbert-shrub.dataurl.json';
 import owlbertDataURL from './__datasets__/owlbert.dataurl.json';
 import requestBodyRawBody from './__datasets__/requestBody-raw_body.json';
