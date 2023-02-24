@@ -759,6 +759,30 @@ describe('style formatting', function () {
         ],
       };
 
+      const arrayParamExplode = {
+        parameters: [
+          {
+            name: 'line_items',
+            in: 'query',
+            style: 'deepObject',
+            explode: true,
+            description: 'Line items of things',
+            required: true,
+            schema: {
+              items: {
+                properties: {
+                  a_string: { type: 'string' },
+                  quantity: { type: 'integer', format: 'int32' },
+                },
+                required: ['quantity'],
+                type: 'object',
+              },
+              type: 'array',
+            },
+          },
+        ],
+      };
+
       function assertDeepObjectStyle(operation, formData: DataForHAR, expected: Request['queryString']) {
         return async () => {
           const oas = createOas('/query', operation);
@@ -849,6 +873,27 @@ describe('style formatting', function () {
           { name: 'color[pound]', value: 'something%26nothing%3Dtrue' },
           { name: 'color[hash]', value: 'hash%23data' },
         ])
+      );
+
+      it.only(
+        'should support `deepObject` with arrays of objects',
+        assertDeepObjectStyle(
+          arrayParamExplode,
+          {
+            query: {
+              line_items: [
+                { a_string: 'abc', quantity: 1 },
+                { a_string: 'def', quantity: 2 },
+              ],
+            },
+          },
+          [
+            { name: 'line_items[0][a_string]', value: 'abc' },
+            { name: 'line_items[0][quantity]', value: '1' },
+            { name: 'line_items[1][a_string]', value: 'def' },
+            { name: 'line_items[1][quantity]', value: '2' },
+          ]
+        )
       );
     });
   });
