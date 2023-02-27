@@ -374,19 +374,20 @@ describe('multipart/form-data parameters', function () {
     // This breaks from the spec, but we have had requests to support arrays as if they are numerically keyed objects, and this is the easiest way
     it(
       'should support deepObject delimited multipart/form-data styles for exploded array input',
-      assertDeepObjectStyle(bodyExplode, { body: { array: arrayInput } }, [{
-        name: 'array[0]',
-        value: 'blue',
-      },
-      {
-        name: 'array[1]',
-        value: 'black',
-      },
-      {
-        name: 'array[2]',
-        value: 'brown',
-      }
-    ])
+      assertDeepObjectStyle(bodyExplode, { body: { array: arrayInput } }, [
+        {
+          name: 'array[0]',
+          value: 'blue',
+        },
+        {
+          name: 'array[1]',
+          value: 'black',
+        },
+        {
+          name: 'array[2]',
+          value: 'brown',
+        },
+      ])
     );
 
     it(
