@@ -162,7 +162,7 @@ function handleDeepObject(value: any, parameter: ParameterObject) {
 function handleExplode(value: any, parameter: ParameterObject) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  if (Array.isArray(value) && parameter.schema.type === 'array' && parameter.style === 'deepObject') {
+  if (Array.isArray(value) && parameter.schema?.type === 'array' && parameter.style === 'deepObject') {
     const newObj: Record<string, unknown> = {};
     const deepObjs = handleDeepObject(value, parameter);
     deepObjs.forEach(obj => {
@@ -207,12 +207,14 @@ function shouldExplode(parameter: ParameterObject) {
 }
 
 export default function formatStyle(value: unknown, parameter: ParameterObject) {
-  // // Deep object only works on exploded non-array objects
-  // if (parameter.style === 'deepObject' && (!value || value.constructor !== Object || parameter.explode === false)) {
-  //   console.log('here?');
-
-  //   return undefined;
-  // }
+  // Deep object only works on exploded non-array objects
+  if (
+    parameter.style === 'deepObject' &&
+    (!value || value.constructor !== Object || parameter.explode === false) &&
+    !(parameter.in === 'query' && parameter.schema)
+  ) {
+    return undefined;
+  }
 
   // This custom explode logic allows us to bubble up arrays and objects to be handled differently
   // by our HAR transformer. We need this because the `stylizeValue` function assumes we're building

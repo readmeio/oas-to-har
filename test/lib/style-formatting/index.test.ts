@@ -875,7 +875,7 @@ describe('style formatting', function () {
         ])
       );
 
-      it.only(
+      it(
         'should support `deepObject` with arrays of objects',
         assertDeepObjectStyle(
           arrayParamExplode,
