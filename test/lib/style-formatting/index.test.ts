@@ -77,6 +77,20 @@ describe('style formatting', function () {
   });
 
   describe('path parameters', function () {
+    it('default style (style=simple & explode=false)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'path',
+          },
+        ],
+      };
+      const oas = createOas('/{color}', param);
+      const har = oasToHar(oas, oas.operation('/{color}', 'get'), { path: { color: 'red' } });
+      expect(har.log.entries[0].request.url).to.equal('https://example.com/red');
+    });
+
     describe('matrix path', function () {
       const paramNoExplode = {
         parameters: [
@@ -419,6 +433,20 @@ describe('style formatting', function () {
   });
 
   describe('query parameters', function () {
+    it('default style (style=form & explode=true)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'query',
+          },
+        ],
+      };
+      const oas = createOas('/', param);
+      const har = oasToHar(oas, oas.operation('/', 'get'), { query: { color: 'red' } });
+      expect(har.log.entries[0].request.queryString).to.eql([{ name: 'color', value: 'red' }]);
+    });
+
     describe('form style', function () {
       const paramNoExplode = {
         parameters: [
@@ -913,6 +941,20 @@ describe('style formatting', function () {
   });
 
   describe('cookie parameters', function () {
+    it('default style (style=form & explode=true)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'cookie',
+          },
+        ],
+      };
+      const oas = createOas('/', param);
+      const har = oasToHar(oas, oas.operation('/', 'get'), { cookie: { color: 'red' } });
+      expect(har.log.entries[0].request.cookies).to.eql([{ name: 'color', value: 'red' }]);
+    });
+
     const paramNoExplode = {
       parameters: [
         {
@@ -1008,6 +1050,20 @@ describe('style formatting', function () {
   });
 
   describe('header parameters', function () {
+    it('default style (style=simple & explode=false)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'header',
+          },
+        ],
+      };
+      const oas = createOas('/', param);
+      const har = oasToHar(oas, oas.operation('/', 'get'), { header: { color: 'red' } });
+      expect(har.log.entries[0].request.headers).to.eql([{ name: 'color', value: 'red' }]);
+    });
+
     const paramNoExplode = {
       parameters: [
         {
