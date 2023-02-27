@@ -818,9 +818,23 @@ describe('style formatting', function () {
         assertDeepObjectStyle(paramNoExplode, { query: { color: arrayInput } }, [])
       );
 
+      // This breaks from the spec, but we have had requests to support arrays as if they are numerically keyed objects, and this is the easiest way
       it(
-        'should NOT support deepObject delimited query styles for exploded array input',
-        assertDeepObjectStyle(paramExplode, { query: { color: arrayInput } }, [])
+        'should support deepObject delimited query styles for exploded array input',
+        assertDeepObjectStyle(paramExplode, { query: { color: arrayInput } }, [
+          {
+            name: 'color',
+            value: 'blue',
+          },
+          {
+            name: 'color',
+            value: 'black',
+          },
+          {
+            name: 'color',
+            value: 'brown',
+          },
+        ])
       );
 
       it(

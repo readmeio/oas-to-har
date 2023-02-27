@@ -207,12 +207,8 @@ function shouldExplode(parameter: ParameterObject) {
 }
 
 export default function formatStyle(value: unknown, parameter: ParameterObject) {
-  // Deep object only works on exploded non-array objects
-  if (
-    parameter.style === 'deepObject' &&
-    (!value || value.constructor !== Object || parameter.explode === false) &&
-    !(parameter.in === 'query' && parameter.schema)
-  ) {
+  // Deep object style only works on objects and arrays, and only works with explode=true.
+  if (parameter.style === 'deepObject' && (!value || typeof value !== 'object' || parameter.explode === false)) {
     return undefined;
   }
 
