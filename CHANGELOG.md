@@ -1,3 +1,11 @@
+## 20.1.0 (2023-03-01)
+
+* feat: add support for arrays of objects in querystrings (#170) ([b1d6f51](https://github.com/readmeio/oas-to-har/commit/b1d6f51)), closes [#170](https://github.com/readmeio/oas-to-har/issues/170) [/github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#fixed-fields-10](https://github.com//github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md/issues/fixed-fields-10)
+* chore(deps): bump deps ([8a7cfe0](https://github.com/readmeio/oas-to-har/commit/8a7cfe0))
+* chore(deps): bump ua-parser-js from 0.7.31 to 0.7.33 (#161) ([f36cd6c](https://github.com/readmeio/oas-to-har/commit/f36cd6c)), closes [#161](https://github.com/readmeio/oas-to-har/issues/161)
+
+
+
 ## <small>20.0.2 (2023-01-03)</small>
 
 * chore: bumping deps ([a2ac5ef](https://github.com/readmeio/oas-to-har/commit/a2ac5ef))
