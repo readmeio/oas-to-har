@@ -77,6 +77,20 @@ describe('style formatting', function () {
   });
 
   describe('path parameters', function () {
+    it('default style (style=simple & explode=false)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'path',
+          },
+        ],
+      };
+      const oas = createOas('/{color}', param);
+      const har = oasToHar(oas, oas.operation('/{color}', 'get'), { path: { color: 'red' } });
+      expect(har.log.entries[0].request.url).to.equal('https://example.com/red');
+    });
+
     describe('matrix path', function () {
       const paramNoExplode = {
         parameters: [
@@ -419,6 +433,20 @@ describe('style formatting', function () {
   });
 
   describe('query parameters', function () {
+    it('default style (style=form & explode=true)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'query',
+          },
+        ],
+      };
+      const oas = createOas('/', param);
+      const har = oasToHar(oas, oas.operation('/', 'get'), { query: { color: 'red' } });
+      expect(har.log.entries[0].request.queryString).to.eql([{ name: 'color', value: 'red' }]);
+    });
+
     describe('form style', function () {
       const paramNoExplode = {
         parameters: [
@@ -759,6 +787,30 @@ describe('style formatting', function () {
         ],
       };
 
+      const arrayParamExplode = {
+        parameters: [
+          {
+            name: 'line_items',
+            in: 'query',
+            style: 'deepObject',
+            explode: true,
+            description: 'Line items of things',
+            required: true,
+            schema: {
+              items: {
+                properties: {
+                  a_string: { type: 'string' },
+                  quantity: { type: 'integer', format: 'int32' },
+                },
+                required: ['quantity'],
+                type: 'object',
+              },
+              type: 'array',
+            },
+          },
+        ],
+      };
+
       function assertDeepObjectStyle(operation, formData: DataForHAR, expected: Request['queryString']) {
         return async () => {
           const oas = createOas('/query', operation);
@@ -794,9 +846,23 @@ describe('style formatting', function () {
         assertDeepObjectStyle(paramNoExplode, { query: { color: arrayInput } }, [])
       );
 
+      // This breaks from the spec, but we have had requests to support arrays as if they are numerically keyed objects, and this is the easiest way
       it(
-        'should NOT support deepObject delimited query styles for exploded array input',
-        assertDeepObjectStyle(paramExplode, { query: { color: arrayInput } }, [])
+        'should support deepObject delimited query styles for exploded array input',
+        assertDeepObjectStyle(paramExplode, { query: { color: arrayInput } }, [
+          {
+            name: 'color',
+            value: 'blue',
+          },
+          {
+            name: 'color',
+            value: 'black',
+          },
+          {
+            name: 'color',
+            value: 'brown',
+          },
+        ])
       );
 
       it(
@@ -850,10 +916,45 @@ describe('style formatting', function () {
           { name: 'color[hash]', value: 'hash%23data' },
         ])
       );
+
+      it(
+        'should support `deepObject` with arrays of objects',
+        assertDeepObjectStyle(
+          arrayParamExplode,
+          {
+            query: {
+              line_items: [
+                { a_string: 'abc', quantity: 1 },
+                { a_string: 'def', quantity: 2 },
+              ],
+            },
+          },
+          [
+            { name: 'line_items[0][a_string]', value: 'abc' },
+            { name: 'line_items[0][quantity]', value: '1' },
+            { name: 'line_items[1][a_string]', value: 'def' },
+            { name: 'line_items[1][quantity]', value: '2' },
+          ]
+        )
+      );
     });
   });
 
   describe('cookie parameters', function () {
+    it('default style (style=form & explode=true)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'cookie',
+          },
+        ],
+      };
+      const oas = createOas('/', param);
+      const har = oasToHar(oas, oas.operation('/', 'get'), { cookie: { color: 'red' } });
+      expect(har.log.entries[0].request.cookies).to.eql([{ name: 'color', value: 'red' }]);
+    });
+
     const paramNoExplode = {
       parameters: [
         {
@@ -949,6 +1050,20 @@ describe('style formatting', function () {
   });
 
   describe('header parameters', function () {
+    it('default style (style=simple & explode=false)', function () {
+      const param = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'header',
+          },
+        ],
+      };
+      const oas = createOas('/', param);
+      const har = oasToHar(oas, oas.operation('/', 'get'), { header: { color: 'red' } });
+      expect(har.log.entries[0].request.headers).to.eql([{ name: 'color', value: 'red' }]);
+    });
+
     const paramNoExplode = {
       parameters: [
         {
