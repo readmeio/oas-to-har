@@ -160,6 +160,20 @@ function handleDeepObject(value: any, parameter: ParameterObject) {
 // Explode is handled on its own, because style-serializer doesn't return what we expect for proper
 // HAR output.
 function handleExplode(value: any, parameter: ParameterObject) {
+  // This is to handle the case of arrays of objects in the querystring
+  // which is something that's not technically in the spec but since we're
+  // using the `qs` module already, it's fairly easy for us to add support
+  // for this use case.
+  //
+  // An example URL would be something like this:
+  // https://example.com/?line_items[0][a_string]=abc&line_items[0][quantity]=1&line_items[1][a_string]=def&line_items[1][quantity]=2
+  //
+  // Some open issues discussing this here:
+  // https://github.com/OAI/OpenAPI-Specification/issues/1706
+  // https://github.com/OAI/OpenAPI-Specification/issues/1006
+  //
+  // Link to the spec for this:
+  // https://github.com/OAI/OpenAPI-Specification/blob/36a3a67264cc1c4f1eff110cea3ebfe679435108/versions/3.1.0.md#style-examples
   if (
     Array.isArray(value) &&
     (parameter.schema as SchemaObject)?.type === 'array' &&
