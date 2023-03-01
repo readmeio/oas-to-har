@@ -1,5 +1,5 @@
 import type { StylizerConfig } from './style-serializer';
-import type { ParameterObject } from 'oas/dist/rmoas.types';
+import type { ParameterObject, SchemaObject } from 'oas/dist/rmoas.types';
 
 import qs from 'qs';
 
@@ -160,9 +160,11 @@ function handleDeepObject(value: any, parameter: ParameterObject) {
 // Explode is handled on its own, because style-serializer doesn't return what we expect for proper
 // HAR output.
 function handleExplode(value: any, parameter: ParameterObject) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  if (Array.isArray(value) && parameter.schema?.type === 'array' && parameter.style === 'deepObject') {
+  if (
+    Array.isArray(value) &&
+    (parameter.schema as SchemaObject)?.type === 'array' &&
+    parameter.style === 'deepObject'
+  ) {
     const newObj: Record<string, unknown> = {};
     const deepObjs = handleDeepObject(value, parameter);
     deepObjs.forEach(obj => {
