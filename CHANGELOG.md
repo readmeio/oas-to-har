@@ -1,3 +1,10 @@
+## <small>20.1.1 (2023-03-02)</small>
+
+* chore: bumping out of date deps ([864ed47](https://github.com/readmeio/oas-to-har/commit/864ed47))
+* build: 20.1.0 release ([91e2319](https://github.com/readmeio/oas-to-har/commit/91e2319))
+
+
+
 ## 20.1.0 (2023-03-01)
 
 * feat: add support for arrays of objects in querystrings (#170) ([b1d6f51](https://github.com/readmeio/oas-to-har/commit/b1d6f51)), closes [#170](https://github.com/readmeio/oas-to-har/issues/170) [/github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#fixed-fields-10](https://github.com//github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md/issues/fixed-fields-10)
