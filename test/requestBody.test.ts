@@ -7,6 +7,7 @@ import Oas from 'oas';
 import oasToHar from '../src';
 
 import multipartFormDataArrayOfFiles from './__datasets__/multipart-form-data/array-of-files.json';
+import multipartFormDataOneOfRequestBody from './__datasets__/multipart-form-data/oneOf-requestbody.json';
 import multipartFormData from './__datasets__/multipart-form-data.json';
 import owlbertShrubDataURL from './__datasets__/owlbert-shrub.dataurl.json';
 import owlbertDataURL from './__datasets__/owlbert.dataurl.json';
@@ -472,6 +473,38 @@ describe('request body handling', function () {
                 name: 'documentFile',
                 value: owlbertDataURL,
               },
+            ],
+          });
+        });
+
+        it('should handle multipart/form-data requests where the requestBody is a `oneOf`', async function () {
+          const oas = Oas.init(multipartFormDataOneOfRequestBody);
+          await oas.dereference();
+          const operation = oas.operation('/anything', 'post');
+          const values = {
+            body: {
+              output_type: 'cutout',
+              bg_blur: 0,
+              scale: 'fit',
+              format: 'PNG',
+              bg_image: 'fef',
+            },
+          };
+
+          const har = oasToHar(oas, operation, values, {});
+
+          expect(har.log.entries[0].request.headers).toStrictEqual([
+            { name: 'content-type', value: 'multipart/form-data' },
+          ]);
+
+          expect(har.log.entries[0].request.postData).toStrictEqual({
+            mimeType: 'multipart/form-data',
+            params: [
+              { name: 'output_type', value: 'cutout' },
+              { name: 'bg_blur', value: '0' },
+              { name: 'scale', value: 'fit' },
+              { name: 'format', value: 'PNG' },
+              { name: 'bg_image', value: 'fef' },
             ],
           });
         });

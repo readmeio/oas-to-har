@@ -100,12 +100,11 @@ function formatter(
   return undefined;
 }
 
-function multipartBodyToFormatterParams(multipartBody: unknown, oasMediaTypeObject: MediaTypeObject) {
-  const schema = oasMediaTypeObject.schema as SchemaObject;
+function multipartBodyToFormatterParams(payload: unknown, oasMediaTypeObject: MediaTypeObject, schema: SchemaObject) {
   const encoding = oasMediaTypeObject.encoding;
 
-  if (typeof multipartBody === 'object' && multipartBody !== null) {
-    return Object.keys(multipartBody)
+  if (typeof payload === 'object' && payload !== null) {
+    return Object.keys(payload)
       .map(key => {
         // If we have an incoming parameter, but it's not in the schema ignore it.
         if (!schema.properties[key]) {
@@ -133,6 +132,25 @@ function multipartBodyToFormatterParams(multipartBody: unknown, oasMediaTypeObje
   // Pretty sure that we'll never have anything but an object for multipart bodies, so returning
   // empty array if we get anything else.
   return [];
+}
+
+/**
+ * Because some request body schema shapes might not always be a top-level `properties`, instead
+ * nesting it in an `oneOf` or `anyOf` we need to extract the first usable schema that we have. If
+ * we don't do this then these non-conventional request body schema payloads may not be properly
+ * represented in the HAR that we generate.
+ *
+ */
+function getSafeRequestBody(obj: any) {
+  if ('properties' in obj) {
+    return obj;
+  } else if ('oneOf' in obj) {
+    return getSafeRequestBody(obj.oneOf[0]);
+  } else if ('anyOf' in obj) {
+    return getSafeRequestBody(obj.anyOf[0]);
+  }
+
+  return {};
 }
 
 const defaultFormDataTypes = Object.keys(jsonSchemaTypes).reduce((prev, curr) => {
@@ -412,6 +430,7 @@ export default function oasToHar(
     }
   }
 
+  // const requestBody = operation.getParametersAsJSONSchema().find(p => p.type === 'body');
   let requestBody: MediaTypeObject;
   if (operation.hasRequestBody()) {
     // @ts-expect-error TODO `requestBody` coming back as `false | MediaTypeObject | [string, MediaTypeObject]` seems like a problem
@@ -452,6 +471,12 @@ export default function oasToHar(
             har.postData.mimeType = 'multipart/form-data';
             har.postData.params = [];
 
+            // Because some request body schema shapes might not always be a top-level `properties`,
+            // instead nesting it in an `oneOf` or `anyOf` we need to extract the first usable
+            // schema that we have in order to process this multipart payload.
+            const requestBodyJSONSchema = operation.getParametersAsJSONSchema().find(js => js.type === 'body');
+            const safeBodySchema = getSafeRequestBody(requestBodyJSONSchema?.schema || {});
+
             /**
              * Discover all `{ type: string, format: binary }` properties, or arrays containing the
              * same, within the request body. If there are any, then that means that we're dealing
@@ -462,8 +487,8 @@ export default function oasToHar(
              * @example `{ type: string, format: binary }`
              * @example `{ type: array, items: { type: string, format: binary } }`
              */
-            const binaryTypes = Object.keys(requestBodySchema.properties).filter(key => {
-              const propData = requestBodySchema.properties[key] as JSONSchema;
+            const binaryTypes = Object.keys(safeBodySchema.properties).filter(key => {
+              const propData = safeBodySchema.properties[key] as JSONSchema;
               if (propData.format === 'binary') {
                 return true;
               } else if (
@@ -482,37 +507,40 @@ export default function oasToHar(
             if (cleanBody !== undefined) {
               const multipartParams = multipartBodyToFormatterParams(
                 formData.body,
-                (operation.schema.requestBody as RequestBodyObject).content['multipart/form-data']
+                (operation.schema.requestBody as RequestBodyObject).content['multipart/form-data'],
+                safeBodySchema
               );
 
-              Object.keys(cleanBody).forEach(name => {
-                const param = multipartParams.find(multipartParam => multipartParam.name === name);
+              if (multipartParams.length) {
+                Object.keys(cleanBody).forEach(name => {
+                  const param = multipartParams.find(multipartParam => multipartParam.name === name);
 
-                // If we're dealing with a binary type, and the value is a valid data URL we should
-                // parse out any available filename and content type to send along with the
-                // parameter to interpreters like `fetch-har` can make sense of it and send a usable
-                // payload.
-                const addtlData: { contentType?: string; fileName?: string } = {};
+                  // If we're dealing with a binary type, and the value is a valid data URL we should
+                  // parse out any available filename and content type to send along with the
+                  // parameter to interpreters like `fetch-har` can make sense of it and send a usable
+                  // payload.
+                  const addtlData: { contentType?: string; fileName?: string } = {};
 
-                let value = formatter(formData, param, 'body', true);
-                if (!Array.isArray(value)) {
-                  value = [value];
-                }
-
-                value.forEach((val: string) => {
-                  if (binaryTypes.includes(name)) {
-                    const parsed = parseDataUrl(val);
-                    if (parsed) {
-                      addtlData.fileName = 'name' in parsed ? parsed.name : 'unknown';
-                      if ('contentType' in parsed) {
-                        addtlData.contentType = parsed.contentType;
-                      }
-                    }
+                  let value = formatter(formData, param, 'body', true);
+                  if (!Array.isArray(value)) {
+                    value = [value];
                   }
 
-                  appendHarValue(har.postData.params, name, val, addtlData);
+                  value.forEach((val: string) => {
+                    if (binaryTypes.includes(name)) {
+                      const parsed = parseDataUrl(val);
+                      if (parsed) {
+                        addtlData.fileName = 'name' in parsed ? parsed.name : 'unknown';
+                        if ('contentType' in parsed) {
+                          addtlData.contentType = parsed.contentType;
+                        }
+                      }
+                    }
+
+                    appendHarValue(har.postData.params, name, val, addtlData);
+                  });
                 });
-              });
+              }
             }
           } else {
             har.postData.mimeType = contentType;
