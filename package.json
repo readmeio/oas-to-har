@@ -29,7 +29,7 @@
     "@readme/oas-extensions": "^17.0.1",
     "oas": "^20.8.4",
     "qs": "^6.11.2",
-    "remove-undefined-objects": "^2.0.2"
+    "remove-undefined-objects": "^3.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",
