@@ -430,7 +430,6 @@ export default function oasToHar(
     }
   }
 
-  // const requestBody = operation.getParametersAsJSONSchema().find(p => p.type === 'body');
   let requestBody: MediaTypeObject;
   if (operation.hasRequestBody()) {
     // @ts-expect-error TODO `requestBody` coming back as `false | MediaTypeObject | [string, MediaTypeObject]` seems like a problem
