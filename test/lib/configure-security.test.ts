@@ -8,25 +8,25 @@ function createSecurityOAS(scheme: SecuritySchemeObject) {
   } as unknown as OASDocument;
 }
 
-describe('configure-security', function () {
-  it('should return an empty object if there is no security keys', function () {
+describe('configure-security', () => {
+  it('should return an empty object if there is no security keys', () => {
     expect(configureSecurity({} as OASDocument, {}, '')).toBeUndefined();
   });
 
-  it('should return undefined if no values', function () {
+  it('should return undefined if no values', () => {
     const spec = createSecurityOAS({ type: 'apiKey', in: 'header', name: 'key' });
 
     expect(configureSecurity(spec, {}, 'busterAuth')).toBeUndefined();
   });
 
-  it('should not return non-existent values', function () {
+  it('should not return non-existent values', () => {
     const spec = createSecurityOAS({ type: 'apiKey', in: 'header', name: 'key' });
 
     expect(configureSecurity(spec, {}, 'busterAuth')).toBeUndefined();
   });
 
-  describe('http auth support', function () {
-    describe('type=basic', function () {
+  describe('http auth support', () => {
+    describe('type=basic', () => {
       it.each([
         ['basic auth', { user: 'user', pass: 'pass' }, 'user:pass'],
         ['if a password is present but the username is undefined', { user: undefined, pass: 'pass' }, ':pass'],
@@ -49,19 +49,19 @@ describe('configure-security', function () {
         });
       });
 
-      it('should return with no header if wanted scheme is missing', function () {
+      it('should return with no header if wanted scheme is missing', () => {
         const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
         expect(configureSecurity(spec, { anotherSchemeName: { user: '', pass: '' } }, 'busterAuth')).toBe(false);
       });
 
-      it('should return with no header if user and password are blank', function () {
+      it('should return with no header if user and password are blank', () => {
         const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
         expect(configureSecurity(spec, { busterAuth: { user: '', pass: '' } }, 'busterAuth')).toBe(false);
       });
 
-      it('should return with a header if user or password are not blank', function () {
+      it('should return with a header if user or password are not blank', () => {
         const user = 'user';
         const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
@@ -75,8 +75,8 @@ describe('configure-security', function () {
       });
     });
 
-    describe('scheme `bearer`', function () {
-      it('should work for bearer', function () {
+    describe('scheme `bearer`', () => {
+      it('should work for bearer', () => {
         const apiKey = '123456';
         const spec = createSecurityOAS({ type: 'http', scheme: 'bearer' });
 
@@ -89,7 +89,7 @@ describe('configure-security', function () {
         });
       });
 
-      it('should return with no header if apiKey is blank', function () {
+      it('should return with no header if apiKey is blank', () => {
         const values = {
           auth: { test: '' },
         };
@@ -108,8 +108,8 @@ describe('configure-security', function () {
     });
   });
 
-  describe('oauth2 support', function () {
-    it('should work for oauth2', function () {
+  describe('oauth2 support', () => {
+    it('should work for oauth2', () => {
       const apiKey = '123456';
       const spec = createSecurityOAS({ type: 'oauth2', flows: {} });
 
@@ -122,16 +122,16 @@ describe('configure-security', function () {
       });
     });
 
-    it('should return with no header if apiKey is blank', function () {
+    it('should return with no header if apiKey is blank', () => {
       const spec = createSecurityOAS({ type: 'oauth2', flows: {} });
 
       expect(configureSecurity(spec, { busterAuth: '' }, 'busterAuth')).toBe(false);
     });
   });
 
-  describe('apiKey auth support', function () {
-    describe('in `query`', function () {
-      it('should work for query', function () {
+  describe('apiKey auth support', () => {
+    describe('in `query`', () => {
+      it('should work for query', () => {
         const values = { busterAuth: 'value' };
         const security: SecuritySchemeObject = { type: 'apiKey', in: 'query', name: 'key' };
         const spec = createSecurityOAS(security);
@@ -146,8 +146,8 @@ describe('configure-security', function () {
       });
     });
 
-    describe('in `header`', function () {
-      it('should work for header', function () {
+    describe('in `header`', () => {
+      it('should work for header', () => {
         const values = { busterAuth: 'value' };
         const security: SecuritySchemeObject = { type: 'apiKey', in: 'header', name: 'key' };
         const spec = createSecurityOAS(security);
@@ -161,8 +161,8 @@ describe('configure-security', function () {
         });
       });
 
-      describe('x-bearer-format', function () {
-        it('should work for bearer', function () {
+      describe('x-bearer-format', () => {
+        it('should work for bearer', () => {
           const values = { busterAuth: 'value' };
           const security: SecuritySchemeObject & { 'x-bearer-format': string } = {
             type: 'apiKey',
@@ -182,7 +182,7 @@ describe('configure-security', function () {
           });
         });
 
-        it('should work for basic', function () {
+        it('should work for basic', () => {
           const values = { busterAuth: 'value' };
           const security: SecuritySchemeObject & { 'x-bearer-format': string } = {
             type: 'apiKey',
@@ -202,7 +202,7 @@ describe('configure-security', function () {
           });
         });
 
-        it('should work for token', function () {
+        it('should work for token', () => {
           const values = { busterAuth: 'value' };
           const security: SecuritySchemeObject & { 'x-bearer-format': string } = {
             type: 'apiKey',

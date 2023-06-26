@@ -28,8 +28,8 @@ const semicolon = ';'; // %3B when encoded, which we don't want
 const equals = '='; // %3D when encoded, which we don't want
 const comma = ','; // %2C when encoded, which we don't want
 
-describe('style formatting', function () {
-  it('should not crash on uri decoding errors', async function () {
+describe('style formatting', () => {
+  it('should not crash on uri decoding errors', async () => {
     const oas = createOas('/query', {
       parameters: [
         {
@@ -54,7 +54,7 @@ describe('style formatting', function () {
     expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'width', value: '20%25' }]);
   });
 
-  it('should not crash for `explode: true` and `default: null` combinations', function () {
+  it('should not crash for `explode: true` and `default: null` combinations', () => {
     const oas = createOas('/query', {
       parameters: [
         {
@@ -75,8 +75,8 @@ describe('style formatting', function () {
     }).not.toThrow(TypeError);
   });
 
-  describe('path parameters', function () {
-    it('default style (style=simple & explode=false)', function () {
+  describe('path parameters', () => {
+    it('default style (style=simple & explode=false)', () => {
       const param = {
         parameters: [
           {
@@ -90,7 +90,7 @@ describe('style formatting', function () {
       expect(har.log.entries[0].request.url).toBe('https://example.com/red');
     });
 
-    describe('matrix path', function () {
+    describe('matrix path', () => {
       const paramNoExplode = {
         parameters: [
           {
@@ -250,7 +250,7 @@ describe('style formatting', function () {
       );
     });
 
-    describe('label path', function () {
+    describe('label path', () => {
       const paramNoExplode = {
         parameters: [
           {
@@ -340,7 +340,7 @@ describe('style formatting', function () {
       );
     });
 
-    describe('simple path', function () {
+    describe('simple path', () => {
       const paramNoExplode = {
         parameters: [
           {
@@ -431,8 +431,8 @@ describe('style formatting', function () {
     });
   });
 
-  describe('query parameters', function () {
-    it('default style (style=form & explode=true)', function () {
+  describe('query parameters', () => {
+    it('default style (style=form & explode=true)', () => {
       const param = {
         parameters: [
           {
@@ -446,7 +446,7 @@ describe('style formatting', function () {
       expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'color', value: 'red' }]);
     });
 
-    describe('form style', function () {
+    describe('form style', () => {
       const paramNoExplode = {
         parameters: [
           {
@@ -595,7 +595,7 @@ describe('style formatting', function () {
       );
     });
 
-    describe('spaceDelimited style', function () {
+    describe('spaceDelimited style', () => {
       const paramNoExplode = {
         parameters: [
           {
@@ -680,7 +680,7 @@ describe('style formatting', function () {
       );
     });
 
-    describe('pipeDelimited style', function () {
+    describe('pipeDelimited style', () => {
       const paramNoExplode = {
         parameters: [
           {
@@ -765,7 +765,7 @@ describe('style formatting', function () {
       );
     });
 
-    describe('deepObject style', function () {
+    describe('deepObject style', () => {
       const paramNoExplode = {
         parameters: [
           {
@@ -941,8 +941,8 @@ describe('style formatting', function () {
     });
   });
 
-  describe('cookie parameters', function () {
-    it('default style (style=form & explode=true)', function () {
+  describe('cookie parameters', () => {
+    it('default style (style=form & explode=true)', () => {
       const param = {
         parameters: [
           {
@@ -1050,8 +1050,8 @@ describe('style formatting', function () {
     );
   });
 
-  describe('header parameters', function () {
-    it('default style (style=simple & explode=false)', function () {
+  describe('header parameters', () => {
+    it('default style (style=simple & explode=false)', () => {
       const param = {
         parameters: [
           {
@@ -1170,7 +1170,7 @@ describe('style formatting', function () {
      *
      * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10
      */
-    describe('should ignore styling definitions on OAS-level handled headers', function () {
+    describe('should ignore styling definitions on OAS-level handled headers', () => {
       it.each([
         ['accept', 'application/json'],
         ['content-type', 'application/json'],

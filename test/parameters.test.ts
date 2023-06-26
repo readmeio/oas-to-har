@@ -12,9 +12,9 @@ import commonParameters from './__datasets__/common-parameters.json';
 
 expect.extend({ toBeAValidHAR });
 
-describe('parameter handling', function () {
-  describe('path', function () {
-    it('should pass through unknown path params', function () {
+describe('parameter handling', () => {
+  describe('path', () => {
+    it('should pass through unknown path params', () => {
       const spec = Oas.init({
         paths: {
           '/path-param/{id}': {
@@ -103,7 +103,7 @@ describe('parameter handling', function () {
     );
   });
 
-  describe('query', function () {
+  describe('query', () => {
     function assertQueryParams(operation: OperationObject, formData: DataForHAR, expected: Request['queryString']) {
       return async () => {
         const spec = Oas.init({
@@ -210,7 +210,7 @@ describe('parameter handling', function () {
       )
     );
 
-    describe('URI encoding', function () {
+    describe('URI encoding', () => {
       let spec;
 
       beforeEach(function () {
@@ -233,7 +233,7 @@ describe('parameter handling', function () {
         });
       });
 
-      it('should encode query parameters', async function () {
+      it('should encode query parameters', async () => {
         const formData = {
           query: {
             stringPound: 'something&nothing=true',
@@ -265,7 +265,7 @@ describe('parameter handling', function () {
         ]);
       });
 
-      it('should not double encode query parameters that are already encoded', async function () {
+      it('should not double encode query parameters that are already encoded', async () => {
         const formData = {
           query: {
             stringPound: encodeURIComponent('something&nothing=true'),
@@ -299,7 +299,7 @@ describe('parameter handling', function () {
     });
   });
 
-  describe('cookie', function () {
+  describe('cookie', () => {
     function assertCookies(operation: OperationObject, formData: DataForHAR, expected: Request['cookies']) {
       return async () => {
         const spec = Oas.init({
@@ -361,7 +361,7 @@ describe('parameter handling', function () {
     );
   });
 
-  describe('header', function () {
+  describe('header', () => {
     function assertHeaders(operation: OperationObject, formData: DataForHAR, expected: Request['headers']) {
       return async () => {
         const spec = Oas.init({
@@ -532,8 +532,8 @@ describe('parameter handling', function () {
     );
   });
 
-  describe('common parameters', function () {
-    it('should work for common parameters', async function () {
+  describe('common parameters', () => {
+    it('should work for common parameters', async () => {
       const spec = Oas.init(commonParameters);
       await spec.dereference();
 
@@ -557,7 +557,7 @@ describe('parameter handling', function () {
       });
     });
 
-    it('should not mutate the original operation that was passed in', function () {
+    it('should not mutate the original operation that was passed in', () => {
       const spec = Oas.init(commonParameters);
       const operation = spec.operation('/anything/{id}', 'post');
 

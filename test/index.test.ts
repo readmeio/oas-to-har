@@ -11,8 +11,8 @@ import serverVariables from './__datasets__/server-variables.json';
 
 expect.extend({ toBeAValidHAR });
 
-describe('oas-to-har', function () {
-  it('should output a HAR object if no operation information is supplied', async function () {
+describe('oas-to-har', () => {
+  it('should output a HAR object if no operation information is supplied', async () => {
     const har = oasToHar(Oas.init({}));
 
     await expect(har).toBeAValidHAR();
@@ -36,7 +36,7 @@ describe('oas-to-har', function () {
     });
   });
 
-  it('should create an Operation instance if supplied a plain object', async function () {
+  it('should create an Operation instance if supplied a plain object', async () => {
     const spec = Oas.init(petstore);
     await spec.dereference();
 
@@ -68,7 +68,7 @@ describe('oas-to-har', function () {
     });
   });
 
-  it('should accept an Operation instance as the operation schema', async function () {
+  it('should accept an Operation instance as the operation schema', async () => {
     const spec = Oas.init(petstore);
     await spec.dereference();
 
@@ -96,7 +96,7 @@ describe('oas-to-har', function () {
     });
   });
 
-  it('should return a valid HAR without an apiDefintion', async function () {
+  it('should return a valid HAR without an apiDefintion', async () => {
     const spec = Oas.init({});
     const operation = spec.operation('/pet', 'post');
     const har = oasToHar(spec, operation);
@@ -104,8 +104,8 @@ describe('oas-to-har', function () {
     await expect(har).toBeAValidHAR();
   });
 
-  describe('url', function () {
-    it('should be constructed from oas.url()', function () {
+  describe('url', () => {
+    it('should be constructed from oas.url()', () => {
       const spec = Oas.init(petstore);
       const operation = spec.operation('/pet', 'post');
       const har = oasToHar(spec, operation);
@@ -113,7 +113,7 @@ describe('oas-to-har', function () {
       expect(har.log.entries[0].request.url).toBe(`${spec.url()}/pet`);
     });
 
-    it('should replace whitespace with %20', function () {
+    it('should replace whitespace with %20', () => {
       const spec = Oas.init({
         paths: {
           '/path with spaces': {
@@ -127,7 +127,7 @@ describe('oas-to-har', function () {
       );
     });
 
-    describe('server variables', function () {
+    describe('server variables', () => {
       let variablesOas;
       let operation;
 
@@ -136,12 +136,12 @@ describe('oas-to-har', function () {
         operation = variablesOas.operation('/', 'post');
       });
 
-      it('should use defaults if not supplied', function () {
+      it('should use defaults if not supplied', () => {
         const har = oasToHar(variablesOas, operation, {});
         expect(har.log.entries[0].request.url).toBe('https://demo.example.com:443/v2/');
       });
 
-      it('should support server variables', function () {
+      it('should support server variables', () => {
         const formData = {
           server: {
             selected: 0,
@@ -153,7 +153,7 @@ describe('oas-to-har', function () {
         expect(har.log.entries[0].request.url).toBe('https://buster.example.com:8080/v2.1/');
       });
 
-      it('should support multiple/alternate servers', function () {
+      it('should support multiple/alternate servers', () => {
         const formData = {
           server: {
             selected: 1,
@@ -165,7 +165,7 @@ describe('oas-to-har', function () {
         expect(har.log.entries[0].request.url).toBe('http://buster.local/v2.1/');
       });
 
-      it('should not error if the selected server does not exist', function () {
+      it('should not error if the selected server does not exist', () => {
         const formData = {
           server: {
             selected: 3,
@@ -176,7 +176,7 @@ describe('oas-to-har', function () {
         expect(har.log.entries[0].request.url).toBe('https://example.com/');
       });
 
-      it('should fill in missing variables with their defaults', function () {
+      it('should fill in missing variables with their defaults', () => {
         const formData = {
           server: {
             selected: 0,
@@ -189,7 +189,7 @@ describe('oas-to-har', function () {
       });
     });
 
-    describe('proxy url', function () {
+    describe('proxy url', () => {
       let proxyOas;
 
       beforeEach(function () {
@@ -203,20 +203,20 @@ describe('oas-to-har', function () {
         });
       });
 
-      it('should not be prefixed with without option', function () {
+      it('should not be prefixed with without option', () => {
         const har = oasToHar(proxyOas, proxyOas.operation('/path', 'get'));
         expect(har.log.entries[0].request.url).toBe('https://example.com/path');
       });
 
-      it('should be prefixed with try.readme.io with option', function () {
+      it('should be prefixed with try.readme.io with option', () => {
         const har = oasToHar(proxyOas, proxyOas.operation('/path', 'get'), {}, {}, { proxyUrl: true });
         expect(har.log.entries[0].request.url).toBe('https://try.readme.io/https://example.com/path');
       });
     });
   });
 
-  describe('auth', function () {
-    it('should work for header', function () {
+  describe('auth', () => {
+    it('should work for header', () => {
       const spec = Oas.init({
         paths: {
           '/security': {
@@ -247,7 +247,7 @@ describe('oas-to-har', function () {
       ]);
     });
 
-    it('should work for query', function () {
+    it('should work for query', () => {
       const spec = Oas.init({
         paths: {
           '/security': {
@@ -284,7 +284,7 @@ describe('oas-to-har', function () {
       ]);
     });
 
-    it('should work for cookie', function () {
+    it('should work for cookie', () => {
       const spec = Oas.init({
         paths: {
           '/security': {
@@ -321,7 +321,7 @@ describe('oas-to-har', function () {
       ]);
     });
 
-    it('should work for multiple (||)', function () {
+    it('should work for multiple (||)', () => {
       const spec = Oas.init({
         paths: {
           '/security': {
@@ -368,7 +368,7 @@ describe('oas-to-har', function () {
       ]);
     });
 
-    it('should work for multiple (&&)', function () {
+    it('should work for multiple (&&)', () => {
       const spec = Oas.init({
         paths: {
           '/security': {
@@ -415,7 +415,7 @@ describe('oas-to-har', function () {
       ]);
     });
 
-    it('should not set non-existent values', function () {
+    it('should not set non-existent values', () => {
       const spec = Oas.init({
         paths: {
           '/security': {
@@ -440,8 +440,8 @@ describe('oas-to-har', function () {
     });
   });
 
-  describe('x-headers', function () {
-    it('should append any static headers to the request', function () {
+  describe('x-headers', () => {
+    it('should append any static headers to the request', () => {
       const spec = Oas.init({
         paths: {
           '/': {

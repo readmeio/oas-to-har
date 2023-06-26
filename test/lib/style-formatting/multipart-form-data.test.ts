@@ -71,8 +71,8 @@ function buildBody(style, explode) {
   };
 }
 
-describe('multipart/form-data parameters', function () {
-  it('should return an empty array when provided a privitive request body', async function () {
+describe('multipart/form-data parameters', () => {
+  it('should return an empty array when provided a privitive request body', async () => {
     const oas = createOas('/body', buildBody('form', false));
     const har = oasToHar(oas, oas.operation('/body', 'post'), { body: 'hello, primitive string body' });
     await expect(har).toBeAValidHAR();
@@ -80,7 +80,7 @@ describe('multipart/form-data parameters', function () {
     expect(har.log.entries[0].request.postData.params).toHaveLength(0);
   });
 
-  describe('form style', function () {
+  describe('form style', () => {
     const bodyNoExplode = buildBody('form', false);
     const bodyExplode = buildBody('form', true);
 
@@ -189,7 +189,7 @@ describe('multipart/form-data parameters', function () {
     );
   });
 
-  describe('spaceDelimited style', function () {
+  describe('spaceDelimited style', () => {
     const bodyNoExplode = buildBody('spaceDelimited', false);
     const bodyExplode = buildBody('spaceDelimited', true);
 
@@ -262,7 +262,7 @@ describe('multipart/form-data parameters', function () {
     );
   });
 
-  describe('pipeDelimited style', function () {
+  describe('pipeDelimited style', () => {
     const bodyNoExplode = buildBody('pipeDelimited', false);
     const bodyExplode = buildBody('pipeDelimited', true);
 
@@ -330,7 +330,7 @@ describe('multipart/form-data parameters', function () {
     );
   });
 
-  describe('deepObject style', function () {
+  describe('deepObject style', () => {
     const bodyNoExplode = buildBody('deepObject', false);
     const bodyExplode = buildBody('deepObject', true);
 
