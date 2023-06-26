@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import Oas from 'oas';
 
 import oasToHar from '../src';
@@ -8,12 +7,12 @@ import security from './__datasets__/security.json';
 
 const spec = Oas.init(security);
 
-describe('auth handling', function () {
-  describe('headers', function () {
-    it('should work for header auth', function () {
+describe('auth handling', () => {
+  describe('headers', () => {
+    it('should work for header auth', () => {
       expect(
         oasToHar(spec, spec.operation('/header', 'post'), {}, { auth_header: 'value' }).log.entries[0].request.headers
-      ).to.deep.equal([
+      ).toStrictEqual([
         {
           name: 'x-auth-header',
           value: 'value',
@@ -21,7 +20,7 @@ describe('auth handling', function () {
       ]);
     });
 
-    it('should not send the same auth header twice if an auth scheme can be used in multiple ways', function () {
+    it('should not send the same auth header twice if an auth scheme can be used in multiple ways', () => {
       const auth = {
         appId: '1234567890',
         accessToken: 'e229822e-f625-45eb-a963-4d197d29637b',
@@ -30,7 +29,7 @@ describe('auth handling', function () {
       const oas = Oas.init(securityQuirks);
       const har = oasToHar(oas, oas.operation('/anything', 'post'), {}, auth);
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([
+      expect(har.log.entries[0].request.headers).toStrictEqual([
         {
           name: 'Access-Token',
           value: 'e229822e-f625-45eb-a963-4d197d29637b',
@@ -38,13 +37,13 @@ describe('auth handling', function () {
       ]);
     });
 
-    it('should not send the same header twice if only one form of auth is present', function () {
+    it('should not send the same header twice if only one form of auth is present', () => {
       const auth = { Basic: { pass: 'buster' } };
 
       const oas = Oas.init(securityQuirks);
       const har = oasToHar(oas, oas.operation('/anything', 'put'), {}, auth);
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([
+      expect(har.log.entries[0].request.headers).toStrictEqual([
         {
           name: 'authorization',
           value: 'Basic OmJ1c3Rlcg==',
@@ -52,7 +51,7 @@ describe('auth handling', function () {
       ]);
     });
 
-    it('should send a manually-defined auth header, overriding any supplied auth data, if `authorization` is present in the header data', function () {
+    it('should send a manually-defined auth header, overriding any supplied auth data, if `authorization` is present in the header data', () => {
       const auth = { Basic: { pass: 'buster' } };
 
       const oas = Oas.init(securityQuirks);
@@ -67,7 +66,7 @@ describe('auth handling', function () {
         auth
       );
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([
+      expect(har.log.entries[0].request.headers).toStrictEqual([
         {
           name: 'authorization',
           value: 'Bearer 1234',
@@ -76,7 +75,7 @@ describe('auth handling', function () {
     });
   });
 
-  it('should work for query auth', function () {
+  it('should work for query auth', () => {
     expect(
       oasToHar(
         spec,
@@ -86,7 +85,7 @@ describe('auth handling', function () {
           auth_query: 'value',
         }
       ).log.entries[0].request.queryString
-    ).to.deep.equal([
+    ).toStrictEqual([
       {
         name: 'authQuery',
         value: 'value',
@@ -94,7 +93,7 @@ describe('auth handling', function () {
     ]);
   });
 
-  it('should work for cookie auth', function () {
+  it('should work for cookie auth', () => {
     expect(
       oasToHar(
         spec,
@@ -104,7 +103,7 @@ describe('auth handling', function () {
           auth_cookie: 'value',
         }
       ).log.entries[0].request.cookies
-    ).to.deep.equal([
+    ).toStrictEqual([
       {
         name: 'authCookie',
         value: 'value',
@@ -112,7 +111,7 @@ describe('auth handling', function () {
     ]);
   });
 
-  it('should work for multiple (||)', function () {
+  it('should work for multiple (||)', () => {
     expect(
       oasToHar(
         spec,
@@ -123,7 +122,7 @@ describe('auth handling', function () {
           auth_headerAlt: 'value',
         }
       ).log.entries[0].request.headers
-    ).to.deep.equal([
+    ).toStrictEqual([
       {
         name: 'x-auth-header',
         value: 'value',
@@ -135,7 +134,7 @@ describe('auth handling', function () {
     ]);
   });
 
-  it('should work for multiple (&&)', function () {
+  it('should work for multiple (&&)', () => {
     expect(
       oasToHar(
         spec,
@@ -146,7 +145,7 @@ describe('auth handling', function () {
           auth_headerAlt: 'value',
         }
       ).log.entries[0].request.headers
-    ).to.deep.equal([
+    ).toStrictEqual([
       {
         name: 'x-auth-header',
         value: 'value',
@@ -158,8 +157,8 @@ describe('auth handling', function () {
     ]);
   });
 
-  it('should not set non-existent values', function () {
+  it('should not set non-existent values', () => {
     const har = oasToHar(spec, spec.operation('/header', 'post'), {}, {});
-    expect(har.log.entries[0].request.headers).to.be.empty;
+    expect(har.log.entries[0].request.headers).toHaveLength(0);
   });
 });

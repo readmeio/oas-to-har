@@ -1,8 +1,7 @@
-/* eslint-disable mocha/no-setup-in-describe */
 import type { DataForHAR } from '../../../src';
 import type { PostDataParams } from 'har-format';
 
-import chai, { expect } from 'chai';
+import toBeAValidHAR from 'jest-expect-har';
 
 import oasToHar from '../../../src';
 import oasFixture from '../../__fixtures__/create-oas';
@@ -17,9 +16,8 @@ import {
   objectNestedObjectOfARidiculiousShape,
   objectInputEncoded,
 } from '../../__fixtures__/style-data';
-import chaiPlugins from '../../helpers/chai-plugins';
 
-chai.use(chaiPlugins);
+expect.extend({ toBeAValidHAR });
 
 const createOas = oasFixture('post');
 
@@ -77,9 +75,9 @@ describe('multipart/form-data parameters', function () {
   it('should return an empty array when provided a privitive request body', async function () {
     const oas = createOas('/body', buildBody('form', false));
     const har = oasToHar(oas, oas.operation('/body', 'post'), { body: 'hello, primitive string body' });
-    await expect(har).to.be.a.har;
+    await expect(har).toBeAValidHAR();
 
-    expect(har.log.entries[0].request.postData.params).to.be.empty;
+    expect(har.log.entries[0].request.postData.params).toHaveLength(0);
   });
 
   describe('form style', function () {
@@ -90,9 +88,9 @@ describe('multipart/form-data parameters', function () {
       return async () => {
         const oas = createOas('/body', operation);
         const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.postData.params).to.deep.equal(expected);
+        expect(har.log.entries[0].request.postData.params).toStrictEqual(expected);
       };
     }
 
@@ -199,9 +197,9 @@ describe('multipart/form-data parameters', function () {
       return async () => {
         const oas = createOas('/body', operation);
         const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.postData.params).to.deep.equal(expected);
+        expect(har.log.entries[0].request.postData.params).toStrictEqual(expected);
       };
     }
 
@@ -246,7 +244,7 @@ describe('multipart/form-data parameters', function () {
 
     // This is supposed to be supported, but the style-serializer library we use does not have
     // support. Holding off for now.
-    it.skip(
+    it.todo(
       'should support space delimited multipart/form-data styles for non exploded object input'
       /* assertSpaceDelimitedStyle(
         bodyNoExplode,
@@ -272,9 +270,9 @@ describe('multipart/form-data parameters', function () {
       return async () => {
         const oas = createOas('/body', operation);
         const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.postData.params).to.deep.equal(expected);
+        expect(har.log.entries[0].request.postData.params).toStrictEqual(expected);
       };
     }
 
@@ -319,7 +317,7 @@ describe('multipart/form-data parameters', function () {
 
     // This is supposed to be supported, but the style-seralizer library we use does not have
     // support. Holding off for now.
-    it.skip(
+    it.todo(
       'should support pipe delimited multipart/form-data styles for non exploded object input'
       // assertPipeDelimitedStyle(bodyNoExplode, { body: { color: objectInput } }, { color: 'R|100|G|200|B|150' })
     );
@@ -340,9 +338,9 @@ describe('multipart/form-data parameters', function () {
       return async () => {
         const oas = createOas('/body', operation);
         const har = oasToHar(oas, oas.operation('/body', 'post'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.postData.params).to.deep.equal(expected);
+        expect(har.log.entries[0].request.postData.params).toStrictEqual(expected);
       };
     }
 
