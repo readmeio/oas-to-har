@@ -31,10 +31,8 @@ jobs:
           - ubuntu-latest
           - windows-latest
         node:
-          - 14
           - 16
           - 18
-          - 19
           - 20
 
     steps:
