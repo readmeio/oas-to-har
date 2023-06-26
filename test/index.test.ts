@@ -2,22 +2,21 @@ import type { Operation } from 'oas';
 
 import petstore from '@readme/oas-examples/3.0/json/petstore.json';
 import * as extensions from '@readme/oas-extensions';
-import chai, { expect } from 'chai';
+import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
 
 import oasToHar from '../src';
 
 import serverVariables from './__datasets__/server-variables.json';
-import chaiPlugins from './helpers/chai-plugins';
 
-chai.use(chaiPlugins);
+expect.extend({ toBeAValidHAR });
 
 describe('oas-to-har', function () {
   it('should output a HAR object if no operation information is supplied', async function () {
     const har = oasToHar(Oas.init({}));
 
-    await expect(har).to.be.a.har;
-    expect(har).to.deep.equal({
+    await expect(har).toBeAValidHAR();
+    expect(har).toStrictEqual({
       log: {
         entries: [
           {
@@ -44,8 +43,8 @@ describe('oas-to-har', function () {
     const operation = { method: 'post', path: '/pet' };
     const har = oasToHar(spec, operation as Operation);
 
-    await expect(har).to.be.a.har;
-    expect(har).to.deep.equal({
+    await expect(har).toBeAValidHAR();
+    expect(har).toStrictEqual({
       log: {
         entries: [
           {
@@ -76,8 +75,8 @@ describe('oas-to-har', function () {
     const operation = spec.operation('/pet', 'post');
     const har = oasToHar(spec, operation);
 
-    await expect(har).to.be.a.har;
-    expect(har).to.deep.equal({
+    await expect(har).toBeAValidHAR();
+    expect(har).toStrictEqual({
       log: {
         entries: [
           {
@@ -102,7 +101,7 @@ describe('oas-to-har', function () {
     const operation = spec.operation('/pet', 'post');
     const har = oasToHar(spec, operation);
 
-    await expect(har).to.be.a.har;
+    await expect(har).toBeAValidHAR();
   });
 
   describe('url', function () {
@@ -111,7 +110,7 @@ describe('oas-to-har', function () {
       const operation = spec.operation('/pet', 'post');
       const har = oasToHar(spec, operation);
 
-      expect(har.log.entries[0].request.url).to.equal(`${spec.url()}/pet`);
+      expect(har.log.entries[0].request.url).toBe(`${spec.url()}/pet`);
     });
 
     it('should replace whitespace with %20', function () {
@@ -123,7 +122,7 @@ describe('oas-to-har', function () {
         },
       });
 
-      expect(oasToHar(spec, spec.operation('/path with spaces', 'get')).log.entries[0].request.url).to.equal(
+      expect(oasToHar(spec, spec.operation('/path with spaces', 'get')).log.entries[0].request.url).toBe(
         'https://example.com/path%20with%20spaces'
       );
     });
@@ -139,7 +138,7 @@ describe('oas-to-har', function () {
 
       it('should use defaults if not supplied', function () {
         const har = oasToHar(variablesOas, operation, {});
-        expect(har.log.entries[0].request.url).to.equal('https://demo.example.com:443/v2/');
+        expect(har.log.entries[0].request.url).toBe('https://demo.example.com:443/v2/');
       });
 
       it('should support server variables', function () {
@@ -151,7 +150,7 @@ describe('oas-to-har', function () {
         };
 
         const har = oasToHar(variablesOas, operation, formData);
-        expect(har.log.entries[0].request.url).to.equal('https://buster.example.com:8080/v2.1/');
+        expect(har.log.entries[0].request.url).toBe('https://buster.example.com:8080/v2.1/');
       });
 
       it('should support multiple/alternate servers', function () {
@@ -163,7 +162,7 @@ describe('oas-to-har', function () {
         };
 
         const har = oasToHar(variablesOas, operation, formData);
-        expect(har.log.entries[0].request.url).to.equal('http://buster.local/v2.1/');
+        expect(har.log.entries[0].request.url).toBe('http://buster.local/v2.1/');
       });
 
       it('should not error if the selected server does not exist', function () {
@@ -174,7 +173,7 @@ describe('oas-to-har', function () {
         };
 
         const har = oasToHar(variablesOas, operation, formData);
-        expect(har.log.entries[0].request.url).to.equal('https://example.com/');
+        expect(har.log.entries[0].request.url).toBe('https://example.com/');
       });
 
       it('should fill in missing variables with their defaults', function () {
@@ -186,7 +185,7 @@ describe('oas-to-har', function () {
         };
 
         const har = oasToHar(variablesOas, operation, formData);
-        expect(har.log.entries[0].request.url).to.equal('https://buster.example.com:443/v2/');
+        expect(har.log.entries[0].request.url).toBe('https://buster.example.com:443/v2/');
       });
     });
 
@@ -206,12 +205,12 @@ describe('oas-to-har', function () {
 
       it('should not be prefixed with without option', function () {
         const har = oasToHar(proxyOas, proxyOas.operation('/path', 'get'));
-        expect(har.log.entries[0].request.url).to.equal('https://example.com/path');
+        expect(har.log.entries[0].request.url).toBe('https://example.com/path');
       });
 
       it('should be prefixed with try.readme.io with option', function () {
         const har = oasToHar(proxyOas, proxyOas.operation('/path', 'get'), {}, {}, { proxyUrl: true });
-        expect(har.log.entries[0].request.url).to.equal('https://try.readme.io/https://example.com/path');
+        expect(har.log.entries[0].request.url).toBe('https://try.readme.io/https://example.com/path');
       });
     });
   });
@@ -240,7 +239,7 @@ describe('oas-to-har', function () {
       expect(
         oasToHar(spec, spec.operation('/security', 'get'), {}, { 'auth-header': 'value' }).log.entries[0].request
           .headers
-      ).to.deep.equal([
+      ).toStrictEqual([
         {
           name: 'x-auth-header',
           value: 'value',
@@ -277,7 +276,7 @@ describe('oas-to-har', function () {
             'auth-query': 'value',
           }
         ).log.entries[0].request.queryString
-      ).to.deep.equal([
+      ).toStrictEqual([
         {
           name: 'authQuery',
           value: 'value',
@@ -314,7 +313,7 @@ describe('oas-to-har', function () {
             'auth-cookie': 'value',
           }
         ).log.entries[0].request.cookies
-      ).to.deep.equal([
+      ).toStrictEqual([
         {
           name: 'authCookie',
           value: 'value',
@@ -357,7 +356,7 @@ describe('oas-to-har', function () {
             'auth-header2': 'value',
           }
         ).log.entries[0].request.headers
-      ).to.deep.equal([
+      ).toStrictEqual([
         {
           name: 'x-auth-header',
           value: 'value',
@@ -404,7 +403,7 @@ describe('oas-to-har', function () {
             'auth-header2': 'value',
           }
         ).log.entries[0].request.headers
-      ).to.deep.equal([
+      ).toStrictEqual([
         {
           name: 'x-auth-header',
           value: 'value',
@@ -437,7 +436,7 @@ describe('oas-to-har', function () {
       });
 
       const har = oasToHar(spec, spec.operation('/security', 'get'), {}, {});
-      expect(har.log.entries[0].request.headers).to.be.empty;
+      expect(har.log.entries[0].request.headers).toHaveLength(0);
     });
   });
 
@@ -457,7 +456,7 @@ describe('oas-to-har', function () {
         ],
       });
 
-      expect(oasToHar(spec, spec.operation('/', 'post')).log.entries[0].request.headers).to.deep.equal([
+      expect(oasToHar(spec, spec.operation('/', 'post')).log.entries[0].request.headers).toStrictEqual([
         { name: 'x-api-key', value: '123456' },
       ]);
     });

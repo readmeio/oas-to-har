@@ -1,7 +1,5 @@
 import type { OASDocument, SecuritySchemeObject } from 'oas/dist/rmoas.types';
 
-import { expect } from 'chai';
-
 import configureSecurity from '../../src/lib/configure-security';
 
 function createSecurityOAS(scheme: SecuritySchemeObject) {
@@ -12,73 +10,62 @@ function createSecurityOAS(scheme: SecuritySchemeObject) {
 
 describe('configure-security', function () {
   it('should return an empty object if there is no security keys', function () {
-    expect(configureSecurity({} as OASDocument, {}, '')).to.be.undefined;
+    expect(configureSecurity({} as OASDocument, {}, '')).toBeUndefined();
   });
 
   it('should return undefined if no values', function () {
     const spec = createSecurityOAS({ type: 'apiKey', in: 'header', name: 'key' });
 
-    expect(configureSecurity(spec, {}, 'busterAuth')).to.be.undefined;
+    expect(configureSecurity(spec, {}, 'busterAuth')).toBeUndefined();
   });
 
   it('should not return non-existent values', function () {
     const spec = createSecurityOAS({ type: 'apiKey', in: 'header', name: 'key' });
 
-    expect(configureSecurity(spec, {}, 'busterAuth')).to.be.undefined;
+    expect(configureSecurity(spec, {}, 'busterAuth')).toBeUndefined();
   });
 
   describe('http auth support', function () {
     describe('type=basic', function () {
-      // eslint-disable-next-line mocha/no-setup-in-describe
-      [
-        ['should work for basic type', { user: 'user', pass: 'pass' }, 'user:pass'],
-        [
-          'should work if a password is present but the username is undefined',
-          { user: undefined, pass: 'pass' },
-          ':pass',
-        ],
-        ['should work if a password is present but the username is null', { user: null, pass: 'pass' }, ':pass'],
-        [
-          'should work if a password is present but the username is an empty string',
-          { user: '', pass: 'pass' },
-          ':pass',
-        ],
-        ['should work if a username is present but the pass is undefined', { user: 'user', pass: undefined }, 'user:'],
-        ['should work if a username is present but the pass is null', { user: 'user', pass: null }, 'user:'],
-        ['should work if a username is present but the pass is an empty string', { user: 'user', pass: '' }, 'user:'],
-      ].forEach(([_, auth, expected]: [string, { user: string; pass: string }, string]) => {
-        it(_, function () {
-          const user = auth.user;
-          const pass = auth.pass;
-          const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
+      it.each([
+        ['basic auth', { user: 'user', pass: 'pass' }, 'user:pass'],
+        ['if a password is present but the username is undefined', { user: undefined, pass: 'pass' }, ':pass'],
+        ['if a password is present but the username is null', { user: null, pass: 'pass' }, ':pass'],
+        ['if a password is present but the username is an empty string', { user: '', pass: 'pass' }, ':pass'],
+        ['if a username is present but the pass is undefined', { user: 'user', pass: undefined }, 'user:'],
+        ['if a username is present but the pass is null', { user: 'user', pass: null }, 'user:'],
+        ['if a username is present but the pass is an empty string', { user: 'user', pass: '' }, 'user:'],
+      ])('should handle %s', (_, auth, expected) => {
+        const user = auth.user;
+        const pass = auth.pass;
+        const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
-          expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).to.deep.equal({
-            type: 'headers',
-            value: {
-              name: 'authorization',
-              value: `Basic ${Buffer.from(expected).toString('base64')}`,
-            },
-          });
+        expect(configureSecurity(spec, { busterAuth: { user, pass } }, 'busterAuth')).toStrictEqual({
+          type: 'headers',
+          value: {
+            name: 'authorization',
+            value: `Basic ${Buffer.from(expected).toString('base64')}`,
+          },
         });
       });
 
       it('should return with no header if wanted scheme is missing', function () {
         const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
-        expect(configureSecurity(spec, { anotherSchemeName: { user: '', pass: '' } }, 'busterAuth')).to.be.false;
+        expect(configureSecurity(spec, { anotherSchemeName: { user: '', pass: '' } }, 'busterAuth')).toBe(false);
       });
 
       it('should return with no header if user and password are blank', function () {
         const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
-        expect(configureSecurity(spec, { busterAuth: { user: '', pass: '' } }, 'busterAuth')).to.be.false;
+        expect(configureSecurity(spec, { busterAuth: { user: '', pass: '' } }, 'busterAuth')).toBe(false);
       });
 
       it('should return with a header if user or password are not blank', function () {
         const user = 'user';
         const spec = createSecurityOAS({ type: 'http', scheme: 'basic' });
 
-        expect(configureSecurity(spec, { busterAuth: { user, pass: '' } }, 'busterAuth')).to.deep.equal({
+        expect(configureSecurity(spec, { busterAuth: { user, pass: '' } }, 'busterAuth')).toStrictEqual({
           type: 'headers',
           value: {
             name: 'authorization',
@@ -93,7 +80,7 @@ describe('configure-security', function () {
         const apiKey = '123456';
         const spec = createSecurityOAS({ type: 'http', scheme: 'bearer' });
 
-        expect(configureSecurity(spec, { busterAuth: apiKey }, 'busterAuth')).to.deep.equal({
+        expect(configureSecurity(spec, { busterAuth: apiKey }, 'busterAuth')).toStrictEqual({
           type: 'headers',
           value: {
             name: 'authorization',
@@ -116,7 +103,7 @@ describe('configure-security', function () {
             values,
             'busterAuth'
           )
-        ).to.be.false;
+        ).toBe(false);
       });
     });
   });
@@ -126,7 +113,7 @@ describe('configure-security', function () {
       const apiKey = '123456';
       const spec = createSecurityOAS({ type: 'oauth2', flows: {} });
 
-      expect(configureSecurity(spec, { busterAuth: apiKey }, 'busterAuth')).to.deep.equal({
+      expect(configureSecurity(spec, { busterAuth: apiKey }, 'busterAuth')).toStrictEqual({
         type: 'headers',
         value: {
           name: 'authorization',
@@ -138,7 +125,7 @@ describe('configure-security', function () {
     it('should return with no header if apiKey is blank', function () {
       const spec = createSecurityOAS({ type: 'oauth2', flows: {} });
 
-      expect(configureSecurity(spec, { busterAuth: '' }, 'busterAuth')).to.be.false;
+      expect(configureSecurity(spec, { busterAuth: '' }, 'busterAuth')).toBe(false);
     });
   });
 
@@ -149,7 +136,7 @@ describe('configure-security', function () {
         const security: SecuritySchemeObject = { type: 'apiKey', in: 'query', name: 'key' };
         const spec = createSecurityOAS(security);
 
-        expect(configureSecurity(spec, values, 'busterAuth')).to.deep.equal({
+        expect(configureSecurity(spec, values, 'busterAuth')).toStrictEqual({
           type: 'queryString',
           value: {
             name: security.name,
@@ -165,7 +152,7 @@ describe('configure-security', function () {
         const security: SecuritySchemeObject = { type: 'apiKey', in: 'header', name: 'key' };
         const spec = createSecurityOAS(security);
 
-        expect(configureSecurity(spec, values, 'busterAuth')).to.deep.equal({
+        expect(configureSecurity(spec, values, 'busterAuth')).toStrictEqual({
           type: 'headers',
           value: {
             name: security.name,
@@ -186,7 +173,7 @@ describe('configure-security', function () {
 
           const spec = createSecurityOAS(security);
 
-          expect(configureSecurity(spec, values, 'busterAuth')).to.deep.equal({
+          expect(configureSecurity(spec, values, 'busterAuth')).toStrictEqual({
             type: 'headers',
             value: {
               name: security.name,
@@ -206,7 +193,7 @@ describe('configure-security', function () {
 
           const spec = createSecurityOAS(security);
 
-          expect(configureSecurity(spec, values, 'busterAuth')).to.deep.equal({
+          expect(configureSecurity(spec, values, 'busterAuth')).toStrictEqual({
             type: 'headers',
             value: {
               name: security.name,
@@ -226,7 +213,7 @@ describe('configure-security', function () {
 
           const spec = createSecurityOAS(security);
 
-          expect(configureSecurity(spec, values, 'busterAuth')).to.deep.equal({
+          expect(configureSecurity(spec, values, 'busterAuth')).toStrictEqual({
             type: 'headers',
             value: {
               name: security.name,

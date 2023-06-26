@@ -1,16 +1,16 @@
+/* eslint-disable jest/expect-expect */
 import type { DataForHAR } from '../src';
 import type { Request } from 'har-format';
 import type { OperationObject } from 'oas/dist/rmoas.types';
 
-import chai, { expect } from 'chai';
+import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
 
 import oasToHar from '../src';
 
 import commonParameters from './__datasets__/common-parameters.json';
-import chaiPlugins from './helpers/chai-plugins';
 
-chai.use(chaiPlugins);
+expect.extend({ toBeAValidHAR });
 
 describe('parameter handling', function () {
   describe('path', function () {
@@ -32,11 +32,11 @@ describe('parameter handling', function () {
         },
       });
 
-      expect(oasToHar(spec, spec.operation('/path-param/{id}', 'get')).log.entries[0].request.url).to.equal(
+      expect(oasToHar(spec, spec.operation('/path-param/{id}', 'get')).log.entries[0].request.url).toBe(
         'https://example.com/path-param/id'
       );
 
-      expect(oasToHar(spec, spec.operation('/path-param/{id}', 'post')).log.entries[0].request.url).to.equal(
+      expect(oasToHar(spec, spec.operation('/path-param/{id}', 'post')).log.entries[0].request.url).toBe(
         'https://example.com/path-param/id'
       );
     });
@@ -52,9 +52,9 @@ describe('parameter handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/path-param/{id}', 'get'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.url).to.equal(expected);
+        expect(har.log.entries[0].request.url).toBe(expected);
       };
     }
 
@@ -115,9 +115,9 @@ describe('parameter handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/query', 'get'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.queryString).to.deep.equal(expected);
+        expect(har.log.entries[0].request.queryString).toStrictEqual(expected);
       };
     }
 
@@ -251,9 +251,9 @@ describe('parameter handling', function () {
         const operation = spec.operation('/anything', 'get');
 
         const har = oasToHar(spec, operation, formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.queryString).to.deep.equal([
+        expect(har.log.entries[0].request.queryString).toStrictEqual([
           { name: 'stringPound', value: 'something%26nothing%3Dtrue' },
           { name: 'stringHash', value: 'hash%23data' },
           { name: 'stringArray', value: 'where%5B4%5D%3D10' },
@@ -283,9 +283,9 @@ describe('parameter handling', function () {
         const operation = spec.operation('/anything', 'get');
 
         const har = oasToHar(spec, operation, formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.queryString).to.deep.equal([
+        expect(har.log.entries[0].request.queryString).toStrictEqual([
           { name: 'stringPound', value: 'something%26nothing%3Dtrue' },
           { name: 'stringHash', value: 'hash%23data' },
           { name: 'stringArray', value: 'where%5B4%5D%3D10' },
@@ -311,9 +311,9 @@ describe('parameter handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/cookie', 'get'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.cookies).to.deep.equal(expected);
+        expect(har.log.entries[0].request.cookies).toStrictEqual(expected);
       };
     }
 
@@ -373,9 +373,9 @@ describe('parameter handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/header', 'post'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.headers).to.deep.equal(expected);
+        expect(har.log.entries[0].request.headers).toStrictEqual(expected);
       };
     }
 
@@ -544,8 +544,8 @@ describe('parameter handling', function () {
         cookie: { authtoken: 'password' },
       });
 
-      await expect(har).to.be.a.har;
-      expect(har.log.entries[0].request).to.deep.equal({
+      await expect(har).toBeAValidHAR();
+      expect(har.log.entries[0].request).toStrictEqual({
         bodySize: 0,
         cookies: [{ name: 'authtoken', value: 'password' }],
         headers: [{ name: 'x-extra-id', value: 'abcd' }],
@@ -570,7 +570,7 @@ describe('parameter handling', function () {
         cookie: { authtoken: 'password' },
       });
 
-      expect(operation.schema.parameters).to.have.length(existingCount);
+      expect(operation.schema.parameters).toHaveLength(existingCount);
     });
   });
 });

@@ -1,7 +1,7 @@
 import fileUploads from '@readme/oas-examples/3.0/json/file-uploads.json';
 import schemaTypes from '@readme/oas-examples/3.0/json/schema-types.json';
 import * as extensions from '@readme/oas-extensions';
-import chai, { expect } from 'chai';
+import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
 
 import oasToHar from '../src';
@@ -11,9 +11,8 @@ import multipartFormData from './__datasets__/multipart-form-data.json';
 import owlbertShrubDataURL from './__datasets__/owlbert-shrub.dataurl.json';
 import owlbertDataURL from './__datasets__/owlbert.dataurl.json';
 import requestBodyRawBody from './__datasets__/requestBody-raw_body.json';
-import chaiPlugins from './helpers/chai-plugins';
 
-chai.use(chaiPlugins);
+expect.extend({ toBeAValidHAR });
 
 describe('request body handling', function () {
   describe('`body` data handling', function () {
@@ -34,7 +33,7 @@ describe('request body handling', function () {
         },
       });
 
-      expect(oasToHar(spec, spec.operation('/requestBody', 'post')).log.entries[0].request.postData).to.be.undefined;
+      expect(oasToHar(spec, spec.operation('/requestBody', 'post')).log.entries[0].request.postData).toBeUndefined();
     });
 
     it('should not add on empty unrequired values', function () {
@@ -61,7 +60,7 @@ describe('request body handling', function () {
         },
       });
 
-      expect(oasToHar(spec, spec.operation('/requestBody', 'post')).log.entries[0].request.postData).to.be.undefined;
+      expect(oasToHar(spec, spec.operation('/requestBody', 'post')).log.entries[0].request.postData).toBeUndefined();
     });
 
     it('should pass in value if one is set and prioritise provided values', function () {
@@ -91,7 +90,7 @@ describe('request body handling', function () {
 
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: 'test' } });
 
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 'test' }));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: 'test' }));
     });
 
     it('should support a null-assigned property', function () {
@@ -121,7 +120,7 @@ describe('request body handling', function () {
 
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { foo: null } });
 
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ foo: null }));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ foo: null }));
     });
 
     it('should return nothing for undefined body property', function () {
@@ -150,7 +149,7 @@ describe('request body handling', function () {
 
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: undefined } });
 
-      expect(har.log.entries[0].request.postData.text).to.be.undefined;
+      expect(har.log.entries[0].request.postData.text).toBeUndefined();
     });
 
     it('should work for schemas that require a lookup', function () {
@@ -179,7 +178,7 @@ describe('request body handling', function () {
 
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: 123 } });
 
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 123 }));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: 123 }));
     });
 
     it('should work for top level primitives', function () {
@@ -225,13 +224,13 @@ describe('request body handling', function () {
       });
 
       let har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: 'string' });
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify('string'));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify('string'));
 
       har = oasToHar(spec, spec.operation('/requestBody', 'put'), { body: 123 });
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify(123));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify(123));
 
       har = oasToHar(spec, spec.operation('/requestBody', 'patch'), { body: true });
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify(true));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify(true));
     });
 
     it('should work for top level falsy primitives', function () {
@@ -277,13 +276,13 @@ describe('request body handling', function () {
       });
 
       let har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: '' });
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify(''));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify(''));
 
       har = oasToHar(spec, spec.operation('/requestBody', 'put'), { body: 0 });
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify(0));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify(0));
 
       har = oasToHar(spec, spec.operation('/requestBody', 'patch'), { body: false });
-      expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify(false));
+      expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify(false));
     });
 
     it('should not include objects with undefined sub properties', function () {
@@ -327,7 +326,7 @@ describe('request body handling', function () {
         body: { a: { b: undefined, c: { d: undefined } } },
       });
 
-      expect(har.log.entries[0].request.postData.text).to.be.undefined;
+      expect(har.log.entries[0].request.postData.text).toBeUndefined();
     });
 
     // When we first render the form, `formData.body` is `undefined` until something is typed into
@@ -358,7 +357,7 @@ describe('request body handling', function () {
       });
 
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: undefined });
-      expect(har.log.entries[0].request.postData).to.be.undefined;
+      expect(har.log.entries[0].request.postData).toBeUndefined();
     });
 
     describe('raw payloads', function () {
@@ -369,7 +368,7 @@ describe('request body handling', function () {
           body: JSON.stringify({ pug: 'buster' }),
         });
 
-        expect(har.log.entries[0].request.postData.text).to.equal('{"pug":"buster"}');
+        expect(har.log.entries[0].request.postData.text).toBe('{"pug":"buster"}');
       });
 
       it('should support raw XML payloads', function () {
@@ -395,7 +394,7 @@ describe('request body handling', function () {
           body: '<xml>some content</xml>',
         });
 
-        expect(har.log.entries[0].request.postData.text).to.equal('<xml>some content</xml>');
+        expect(har.log.entries[0].request.postData.text).toBe('<xml>some content</xml>');
       });
     });
 
@@ -404,49 +403,49 @@ describe('request body handling', function () {
         const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/primitive', 'post'), { body: { RAW_BODY: 'test' } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal('test');
+        expect(har.log.entries[0].request.postData.text).toBe('test');
       });
 
       it('should return empty for falsy RAW_BODY primitives', function () {
         const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/primitive', 'post'), { body: { RAW_BODY: '' } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal('');
+        expect(har.log.entries[0].request.postData.text).toBe('');
       });
 
       it('should work for RAW_BODY json', function () {
         const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/json', 'post'), { body: { RAW_BODY: '{ "a": 1 }' } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 1 }));
+        expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: 1 }));
       });
 
       it('should work for RAW_BODY xml', function () {
         const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/xml', 'post'), { body: { RAW_BODY: '<xml>' } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal('<xml>');
+        expect(har.log.entries[0].request.postData.text).toBe('<xml>');
       });
 
       it('should work for RAW_BODY objects', function () {
         const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: { a: 'test' } } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: 'test' }));
+        expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: 'test' }));
       });
 
       it('should work for RAW_BODY objects (but data is a primitive somehow)', function () {
         const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: 'test' } });
 
-        expect(har.log.entries[0].request.postData.text).to.equal('test');
+        expect(har.log.entries[0].request.postData.text).toBe('test');
       });
 
       it('should return empty for RAW_BODY objects', function () {
         const spec = Oas.init(requestBodyRawBody);
         const har = oasToHar(spec, spec.operation('/objects', 'post'), { body: { RAW_BODY: {} } });
 
-        expect(har.log.entries[0].request.postData.text).to.be.undefined;
+        expect(har.log.entries[0].request.postData.text).toBeUndefined();
       });
     });
 
@@ -458,11 +457,11 @@ describe('request body handling', function () {
             body: { orderId: 12345, userId: 67890, documentFile: owlbertDataURL },
           });
 
-          expect(har.log.entries[0].request.headers).to.deep.equal([
+          expect(har.log.entries[0].request.headers).toStrictEqual([
             { name: 'content-type', value: 'multipart/form-data' },
           ]);
 
-          expect(har.log.entries[0].request.postData).to.deep.equal({
+          expect(har.log.entries[0].request.postData).toStrictEqual({
             mimeType: 'multipart/form-data',
             params: [
               { name: 'orderId', value: '12345' },
@@ -489,11 +488,11 @@ describe('request body handling', function () {
             body: { orderId: 12345, userId: 67890, documentFile: specialcharacters },
           });
 
-          expect(har.log.entries[0].request.headers).to.deep.equal([
+          expect(har.log.entries[0].request.headers).toStrictEqual([
             { name: 'content-type', value: 'multipart/form-data' },
           ]);
 
-          expect(har.log.entries[0].request.postData).to.deep.equal({
+          expect(har.log.entries[0].request.postData).toStrictEqual({
             mimeType: 'multipart/form-data',
             params: [
               { name: 'orderId', value: '12345' },
@@ -516,7 +515,7 @@ describe('request body handling', function () {
             },
           });
 
-          expect(har.log.entries[0].request.postData).to.deep.equal({
+          expect(har.log.entries[0].request.postData).toStrictEqual({
             mimeType: 'multipart/form-data',
             params: [
               {
@@ -543,7 +542,7 @@ describe('request body handling', function () {
             },
           });
 
-          expect(har.log.entries[0].request.postData).to.deep.equal({
+          expect(har.log.entries[0].request.postData).toStrictEqual({
             mimeType: 'multipart/form-data',
             params: [
               {
@@ -564,7 +563,7 @@ describe('request body handling', function () {
             },
           });
 
-          expect(har.log.entries[0].request.postData).to.deep.equal({
+          expect(har.log.entries[0].request.postData).toStrictEqual({
             mimeType: 'multipart/form-data',
             params: [
               {
@@ -600,7 +599,7 @@ describe('request body handling', function () {
           });
 
           const har = oasToHar(spec, spec.operation('/image', 'post'), { body: owlbertDataURL });
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
           /**
            * The `postData` contents here should be the data URL of the image for a couple reasons:
@@ -618,8 +617,8 @@ describe('request body handling', function () {
            * It's less than ideal, and code snippets for these kinds of operations are going to be
            * extremely ugly, but there isn't anything we can do about it.
            */
-          expect(har.log.entries[0].request.postData.mimeType).to.equal('image/png');
-          expect(har.log.entries[0].request.postData.text).to.equal(`${owlbertDataURL}`);
+          expect(har.log.entries[0].request.postData.mimeType).toBe('image/png');
+          expect(har.log.entries[0].request.postData.text).toBe(`${owlbertDataURL}`);
         });
       });
     });
@@ -655,7 +654,7 @@ describe('request body handling', function () {
         await spec.dereference();
 
         const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: '{ "b": 1 }' } });
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: JSON.parse('{ "b": 1 }') }));
+        expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: JSON.parse('{ "b": 1 }') }));
       });
 
       it('should leave invalid JSON as strings', function () {
@@ -685,7 +684,7 @@ describe('request body handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: '{ "b": invalid json' } });
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: '{ "b": invalid json' }));
+        expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: '{ "b": invalid json' }));
       });
 
       it('should parse valid arbitrary JSON request bodies', function () {
@@ -709,7 +708,7 @@ describe('request body handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: '{ "a": { "b": "valid json" } }' });
-        expect(har.log.entries[0].request.postData.text).to.equal('{"a":{"b":"valid json"}}');
+        expect(har.log.entries[0].request.postData.text).toBe('{"a":{"b":"valid json"}}');
       });
 
       it('should parse invalid arbitrary JSON request bodies as strings', function () {
@@ -733,7 +732,7 @@ describe('request body handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: '{ "a": { "b": "valid json } }' });
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify('{ "a": { "b": "valid json } }'));
+        expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify('{ "a": { "b": "valid json } }'));
       });
 
       it('should parse valid JSON as an object', function () {
@@ -763,7 +762,7 @@ describe('request body handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: '{ "b": "valid json" }' } });
-        expect(har.log.entries[0].request.postData.text).to.equal(
+        expect(har.log.entries[0].request.postData.text).toBe(
           JSON.stringify({ a: JSON.parse('{ "b": "valid json" }') })
         );
       });
@@ -802,7 +801,7 @@ describe('request body handling', function () {
           body: { a: '{ "z": "valid json" }', b: 'invalid json' },
         });
 
-        expect(har.log.entries[0].request.postData.text).to.equal(
+        expect(har.log.entries[0].request.postData.text).toBe(
           JSON.stringify({ a: { z: 'valid json' }, b: 'invalid json' })
         );
       });
@@ -841,9 +840,7 @@ describe('request body handling', function () {
           body: { a: '{ "z": "valid json" }', b: undefined },
         });
 
-        expect(har.log.entries[0].request.postData.text).to.equal(
-          JSON.stringify({ a: { z: 'valid json' }, b: undefined })
-        );
+        expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: { z: 'valid json' }, b: undefined }));
       });
 
       it('should leave user specified empty object JSON alone', function () {
@@ -873,7 +870,7 @@ describe('request body handling', function () {
         });
 
         const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: '{}' } });
-        expect(har.log.entries[0].request.postData.text).to.equal(JSON.stringify({ a: {} }));
+        expect(har.log.entries[0].request.postData.text).toBe(JSON.stringify({ a: {} }));
       });
     });
   });
@@ -903,7 +900,7 @@ describe('request body handling', function () {
         },
       });
 
-      expect(oasToHar(spec, spec.operation('/requestBody', 'post')).log.entries[0].request.postData).to.be.undefined;
+      expect(oasToHar(spec, spec.operation('/requestBody', 'post')).log.entries[0].request.postData).toBeUndefined();
     });
 
     it('should not add undefined formData into postData', function () {
@@ -937,7 +934,7 @@ describe('request body handling', function () {
         formData: { foo: undefined, bar: undefined },
       });
 
-      expect(har.log.entries[0].request.postData).to.be.undefined;
+      expect(har.log.entries[0].request.postData).toBeUndefined();
     });
 
     it('should pass in value if one is set and prioritise provided values', function () {
@@ -966,7 +963,7 @@ describe('request body handling', function () {
       });
 
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { formData: { a: 'test', b: [1, 2, 3] } });
-      expect(har.log.entries[0].request.postData.params).to.deep.equal([
+      expect(har.log.entries[0].request.postData.params).toStrictEqual([
         { name: 'a', value: 'test' },
         { name: 'b', value: '1,2,3' },
       ]);
@@ -983,7 +980,7 @@ describe('request body handling', function () {
       };
 
       const har = oasToHar(spec, operation, { formData });
-      expect(har.log.entries[0].request.postData.params).to.deep.equal([
+      expect(har.log.entries[0].request.postData.params).toStrictEqual([
         { name: 'id', value: 12345 },
         { name: 'Request', value: '{"MerchantId":"buster"}' },
       ]);
@@ -991,7 +988,6 @@ describe('request body handling', function () {
   });
 
   describe('`content-type` and `accept` header', function () {
-    // eslint-disable-next-line mocha/no-setup-in-describe
     const spec = Oas.init({
       paths: {
         '/requestBody': {
@@ -1019,28 +1015,28 @@ describe('request body handling', function () {
 
     it('should be sent through if there are no body values but there is a requestBody', async function () {
       let har = oasToHar(spec, spec.operation('/requestBody', 'post'), {});
-      await expect(har).to.be.a.har;
+      await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'content-type', value: 'application/json' }]);
 
       har = oasToHar(spec, spec.operation('/requestBody', 'post'), { query: { a: 1 } });
-      await expect(har).to.be.a.har;
+      await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'content-type', value: 'application/json' }]);
     });
 
     it('should be sent through if there are any body values', async function () {
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: 'test' } });
-      await expect(har).to.be.a.har;
+      await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'content-type', value: 'application/json' }]);
     });
 
     it('should be sent through if there are any formData values', async function () {
       const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { formData: { a: 'test' } });
-      await expect(har).to.be.a.har;
+      await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'content-type', value: 'application/json' }]);
     });
 
     it('should fetch the type from the first `requestBody.content` and first `responseBody.content` object', async function () {
@@ -1070,10 +1066,10 @@ describe('request body handling', function () {
       });
 
       const har = oasToHar(contentSpec, contentSpec.operation('/requestBody', 'post'), { body: { a: 'test' } });
-      await expect(har).to.be.a.har;
+      await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'text/xml' }]);
-      expect(har.log.entries[0].request.postData.mimeType).to.equal('text/xml');
+      expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'content-type', value: 'text/xml' }]);
+      expect(har.log.entries[0].request.postData.mimeType).toBe('text/xml');
     });
 
     // Whether this is right or wrong, i'm not sure but this is what readme currently does
@@ -1116,9 +1112,9 @@ describe('request body handling', function () {
       });
 
       const har = oasToHar(contentSpec, contentSpec.operation('/requestBody', 'post'), { body: { a: 'test' } });
-      await expect(har).to.be.a.har;
+      await expect(har).toBeAValidHAR();
 
-      expect(har.log.entries[0].request.headers).to.deep.equal([{ name: 'content-type', value: 'application/json' }]);
+      expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'content-type', value: 'application/json' }]);
     });
 
     it("should only add a `content-type` if one isn't already present", async function () {
@@ -1151,16 +1147,16 @@ describe('request body handling', function () {
       });
 
       const har = oasToHar(contentSpec, contentSpec.operation('/requestBody', 'post'), { body: { a: 'test' } });
-      await expect(har).to.be.a.har;
+      await expect(har).toBeAValidHAR();
 
       // `content-type: application/json` would normally appear here if there were no
       // `x-readme.headers`, but since there is we should default to that so as to we don't double
       // up on `content-type` headers.
-      expect(har.log.entries[0].request.headers).to.deep.equal([
+      expect(har.log.entries[0].request.headers).toStrictEqual([
         { name: 'content-type', value: 'multipart/form-data' },
       ]);
 
-      expect(har.log.entries[0].request.postData.mimeType).to.equal('multipart/form-data');
+      expect(har.log.entries[0].request.postData.mimeType).toBe('multipart/form-data');
     });
   });
 });

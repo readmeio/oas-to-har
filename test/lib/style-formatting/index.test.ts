@@ -1,7 +1,7 @@
 import type { DataForHAR } from '../../../src';
 import type { Request } from 'har-format';
 
-import chai, { expect } from 'chai';
+import toBeAValidHAR from 'jest-expect-har';
 
 import oasToHar from '../../../src';
 import oasFixture from '../../__fixtures__/create-oas';
@@ -19,9 +19,8 @@ import {
   objectInputEncoded,
   undefinedObjectInput,
 } from '../../__fixtures__/style-data';
-import chaiPlugins from '../../helpers/chai-plugins';
 
-chai.use(chaiPlugins);
+expect.extend({ toBeAValidHAR });
 
 const createOas = oasFixture('get');
 
@@ -43,16 +42,16 @@ describe('style formatting', function () {
     // `decodeURIComponent('20%')` will throw an exception that we don't want to crash the library.
     let formData = { query: { width: '20%' } };
     let har = oasToHar(oas, oas.operation('/query', 'get'), formData);
-    await expect(har).to.be.a.har;
+    await expect(har).toBeAValidHAR();
 
-    expect(har.log.entries[0].request.queryString).to.deep.equal([{ name: 'width', value: '20%25' }]);
+    expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'width', value: '20%25' }]);
 
     // However if `20%` has been encoded we should still be able to determine that because it'll decode properly.
     formData = { query: { width: encodeURIComponent('20%') } };
     har = oasToHar(oas, oas.operation('/query', 'get'), formData);
-    await expect(har).to.be.a.har;
+    await expect(har).toBeAValidHAR();
 
-    expect(har.log.entries[0].request.queryString).to.deep.equal([{ name: 'width', value: '20%25' }]);
+    expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'width', value: '20%25' }]);
   });
 
   it('should not crash for `explode: true` and `default: null` combinations', function () {
@@ -73,7 +72,7 @@ describe('style formatting', function () {
 
     expect(() => {
       oasToHar(oas, oas.operation('/query', 'get'), { query: { pet_id: null } });
-    }).not.to.throw(TypeError);
+    }).not.toThrow(TypeError);
   });
 
   describe('path parameters', function () {
@@ -88,7 +87,7 @@ describe('style formatting', function () {
       };
       const oas = createOas('/{color}', param);
       const har = oasToHar(oas, oas.operation('/{color}', 'get'), { path: { color: 'red' } });
-      expect(har.log.entries[0].request.url).to.equal('https://example.com/red');
+      expect(har.log.entries[0].request.url).toBe('https://example.com/red');
     });
 
     describe('matrix path', function () {
@@ -118,9 +117,9 @@ describe('style formatting', function () {
         return async () => {
           const oas = createOas('/style-path/{color}', operation);
           const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
-          expect(har.log.entries[0].request.url).to.equal(expected);
+          expect(har.log.entries[0].request.url).toBe(expected);
         };
       }
 
@@ -278,9 +277,9 @@ describe('style formatting', function () {
         return async () => {
           const oas = createOas('/style-path/{color}', operation);
           const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
-          expect(har.log.entries[0].request.url).to.equal(expected);
+          expect(har.log.entries[0].request.url).toBe(expected);
         };
       }
 
@@ -368,9 +367,9 @@ describe('style formatting', function () {
         return async () => {
           const oas = createOas('/style-path/{color}', operation);
           const har = oasToHar(oas, oas.operation('/style-path/{color}', 'get'), formData);
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
-          expect(har.log.entries[0].request.url).to.equal(expected);
+          expect(har.log.entries[0].request.url).toBe(expected);
         };
       }
 
@@ -444,7 +443,7 @@ describe('style formatting', function () {
       };
       const oas = createOas('/', param);
       const har = oasToHar(oas, oas.operation('/', 'get'), { query: { color: 'red' } });
-      expect(har.log.entries[0].request.queryString).to.eql([{ name: 'color', value: 'red' }]);
+      expect(har.log.entries[0].request.queryString).toStrictEqual([{ name: 'color', value: 'red' }]);
     });
 
     describe('form style', function () {
@@ -485,9 +484,9 @@ describe('style formatting', function () {
         return async () => {
           const oas = createOas('/query', operation);
           const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
-          expect(har.log.entries[0].request.queryString).to.deep.equal(expected);
+          expect(har.log.entries[0].request.queryString).toStrictEqual(expected);
         };
       }
 
@@ -495,6 +494,7 @@ describe('style formatting', function () {
         'should support form delimited query styles for non exploded empty input',
         assertFormStyle(paramNoExplode, { query: { color: emptyInput } }, [{ name: 'color', value: '' }])
       );
+
       it(
         'should support form delimited query styles for exploded empty input',
         assertFormStyle(paramExplode, { query: { color: emptyInput } }, [{ name: 'color', value: '' }])
@@ -622,9 +622,9 @@ describe('style formatting', function () {
         return async () => {
           const oas = createOas('/query', operation);
           const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
-          expect(har.log.entries[0].request.queryString).to.deep.equal(expected);
+          expect(har.log.entries[0].request.queryString).toStrictEqual(expected);
         };
       }
 
@@ -707,9 +707,9 @@ describe('style formatting', function () {
         return async () => {
           const oas = createOas('/query', operation);
           const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
-          expect(har.log.entries[0].request.queryString).to.deep.equal(expected);
+          expect(har.log.entries[0].request.queryString).toStrictEqual(expected);
         };
       }
 
@@ -739,6 +739,7 @@ describe('style formatting', function () {
           { name: 'color', value: 'blue|black|brown' },
         ])
       );
+
       it(
         'should support pipe delimited query styles for non exploded array input and NOT encode already encoded values',
         assertPipeDelimitedStyle(paramNoExplode, { query: { color: arrayInputEncoded } }, [
@@ -815,9 +816,9 @@ describe('style formatting', function () {
         return async () => {
           const oas = createOas('/query', operation);
           const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
-          await expect(har).to.be.a.har;
+          await expect(har).toBeAValidHAR();
 
-          expect(har.log.entries[0].request.queryString).to.deep.equal(expected);
+          expect(har.log.entries[0].request.queryString).toStrictEqual(expected);
         };
       }
 
@@ -952,7 +953,7 @@ describe('style formatting', function () {
       };
       const oas = createOas('/', param);
       const har = oasToHar(oas, oas.operation('/', 'get'), { cookie: { color: 'red' } });
-      expect(har.log.entries[0].request.cookies).to.eql([{ name: 'color', value: 'red' }]);
+      expect(har.log.entries[0].request.cookies).toStrictEqual([{ name: 'color', value: 'red' }]);
     });
 
     const paramNoExplode = {
@@ -981,9 +982,9 @@ describe('style formatting', function () {
       return async () => {
         const oas = createOas('/cookies', operation);
         const har = oasToHar(oas, oas.operation('/cookies', 'get'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.cookies).to.deep.equal(expected);
+        expect(har.log.entries[0].request.cookies).toStrictEqual(expected);
       };
     }
 
@@ -1061,7 +1062,7 @@ describe('style formatting', function () {
       };
       const oas = createOas('/', param);
       const har = oasToHar(oas, oas.operation('/', 'get'), { header: { color: 'red' } });
-      expect(har.log.entries[0].request.headers).to.eql([{ name: 'color', value: 'red' }]);
+      expect(har.log.entries[0].request.headers).toStrictEqual([{ name: 'color', value: 'red' }]);
     });
 
     const paramNoExplode = {
@@ -1090,9 +1091,9 @@ describe('style formatting', function () {
       return async () => {
         const oas = createOas('/header', operation);
         const har = oasToHar(oas, oas.operation('/header', 'get'), formData);
-        await expect(har).to.be.a.har;
+        await expect(har).toBeAValidHAR();
 
-        expect(har.log.entries[0].request.headers).to.deep.equal(expected);
+        expect(har.log.entries[0].request.headers).toStrictEqual(expected);
       };
     }
 
@@ -1170,31 +1171,28 @@ describe('style formatting', function () {
      * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#fixed-fields-10
      */
     describe('should ignore styling definitions on OAS-level handled headers', function () {
-      // eslint-disable-next-line mocha/no-setup-in-describe
-      [
+      it.each([
         ['accept', 'application/json'],
         ['content-type', 'application/json'],
         ['authorization', 'scheme d9b23eb/0df'],
-      ].forEach(([headerName, value]) => {
-        it(headerName, async function () {
-          const oas = createOas('/header', {
-            parameters: [
-              {
-                name: headerName,
-                in: 'header',
-                style: 'simple',
-                explode: false,
-              },
-            ],
-          });
-
-          const formData = { header: { [headerName]: value } };
-
-          const har = oasToHar(oas, oas.operation('/header', 'get'), formData);
-          await expect(har).to.be.a.har;
-
-          expect(har.log.entries[0].request.headers).to.deep.equal([{ name: headerName, value }]);
+      ])('%s', async (headerName, value) => {
+        const oas = createOas('/header', {
+          parameters: [
+            {
+              name: headerName,
+              in: 'header',
+              style: 'simple',
+              explode: false,
+            },
+          ],
         });
+
+        const formData = { header: { [headerName]: value } };
+
+        const har = oasToHar(oas, oas.operation('/header', 'get'), formData);
+        await expect(har).toBeAValidHAR();
+
+        expect(har.log.entries[0].request.headers).toStrictEqual([{ name: headerName, value }]);
       });
     });
   });
