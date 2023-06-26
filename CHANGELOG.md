@@ -1,3 +1,9 @@
+## <small>21.0.1 (2023-06-26)</small>
+
+* fix: exclude `.vscode/` from npm releases ([437a36a](https://github.com/readmeio/oas-to-har/commit/437a36a))
+
+
+
 ## 21.0.0 (2023-06-26)
 
 * fix: quirk with multipart/form-data schema payloads being handled as `text` (#212) ([aac989f](https://github.com/readmeio/oas-to-har/commit/aac989f)), closes [#212](https://github.com/readmeio/oas-to-har/issues/212)
