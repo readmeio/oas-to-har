@@ -1,3 +1,18 @@
+## 21.0.0 (2023-06-26)
+
+* fix: quirk with multipart/form-data schema payloads being handled as `text` (#212) ([aac989f](https://github.com/readmeio/oas-to-har/commit/aac989f)), closes [#212](https://github.com/readmeio/oas-to-har/issues/212)
+* feat: dropping support for node 14 (#211) ([30e9e2f](https://github.com/readmeio/oas-to-har/commit/30e9e2f)), closes [#211](https://github.com/readmeio/oas-to-har/issues/211)
+* chore(deps-dev): bump typescript from 4.9.5 to 5.0.4 (#186) ([df15481](https://github.com/readmeio/oas-to-har/commit/df15481)), closes [#186](https://github.com/readmeio/oas-to-har/issues/186)
+* chore(deps-dev): bumping out of date deps ([fb710c7](https://github.com/readmeio/oas-to-har/commit/fb710c7))
+* chore(deps): bump socket.io-parser from 4.2.1 to 4.2.3 (#193) ([f4c55ba](https://github.com/readmeio/oas-to-har/commit/f4c55ba)), closes [#193](https://github.com/readmeio/oas-to-har/issues/193)
+* chore(deps): bumping out of date deps ([92f7623](https://github.com/readmeio/oas-to-har/commit/92f7623))
+* chore(deps): bumping out of date deps ([b1a1e85](https://github.com/readmeio/oas-to-har/commit/b1a1e85))
+* chore(deps): bumping out of date deps ([7f63b39](https://github.com/readmeio/oas-to-har/commit/7f63b39))
+* refactor: moving our test suite back to jest (#202) ([ee3eb98](https://github.com/readmeio/oas-to-har/commit/ee3eb98)), closes [#202](https://github.com/readmeio/oas-to-har/issues/202)
+* ci: run tests against node 20 ([b3353df](https://github.com/readmeio/oas-to-har/commit/b3353df))
+
+
+
 ## <small>20.1.1 (2023-03-02)</small>
 
 * chore: bumping out of date deps ([864ed47](https://github.com/readmeio/oas-to-har/commit/864ed47))
