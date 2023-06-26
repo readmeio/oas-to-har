@@ -180,8 +180,8 @@ function appendHarValue(
   name: string,
   value: any,
   addtlData: {
-    fileName?: string;
     contentType?: string;
+    fileName?: string;
   } = {}
 ) {
   if (typeof value === 'undefined') return;
@@ -492,7 +492,7 @@ export default function oasToHar(
                 // parse out any available filename and content type to send along with the
                 // parameter to interpreters like `fetch-har` can make sense of it and send a usable
                 // payload.
-                const addtlData: { fileName?: string; contentType?: string } = {};
+                const addtlData: { contentType?: string; fileName?: string } = {};
 
                 let value = formatter(formData, param, 'body', true);
                 if (!Array.isArray(value)) {

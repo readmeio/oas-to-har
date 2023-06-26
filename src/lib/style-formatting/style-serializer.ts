@@ -29,13 +29,13 @@ function isObject(value: unknown) {
 }
 
 export interface StylizerConfig {
-  location: 'body' | 'query';
-  key: string;
-  value: any;
-  style: 'deepObject' | 'form' | 'label' | 'matrix' | 'pipeDelimited' | 'simple' | 'spaceDelimited';
-  explode: boolean;
   escape: boolean | 'unsafe';
+  explode: boolean;
   isAllowedReserved?: boolean;
+  key: string;
+  location: 'body' | 'query';
+  style: 'deepObject' | 'form' | 'label' | 'matrix' | 'pipeDelimited' | 'simple' | 'spaceDelimited';
+  value: any;
 }
 
 export default function stylize(config: StylizerConfig) {
@@ -61,8 +61,8 @@ export function encodeDisallowedCharacters(
     isAllowedReserved,
   }: {
     escape?: boolean | 'unsafe';
-    returnIfEncoded?: boolean;
     isAllowedReserved?: boolean;
+    returnIfEncoded?: boolean;
   } = {},
   parse: boolean
 ) {
