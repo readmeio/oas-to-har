@@ -480,8 +480,7 @@ export default function oasToHar(
             // Because some request body schema shapes might not always be a top-level `properties`,
             // instead nesting it in an `oneOf` or `anyOf` we need to extract the first usable
             // schema that we have in order to process this multipart payload.
-            const requestBodyJSONSchema = operation.getParametersAsJSONSchema().find(js => js.type === 'body');
-            const safeBodySchema = getSafeRequestBody(requestBodyJSONSchema?.schema || {});
+            const safeBodySchema = getSafeRequestBody(requestBodySchema);
 
             /**
              * Discover all `{ type: string, format: binary }` properties, or arrays containing the
@@ -490,6 +489,7 @@ export default function oasToHar(
              * `postData.params` and supply filenames and content types for the files (if they're
              * available).
              *
+             * @todo It'd be nice to replace this with `getTypedFormatsInSchema` instead.
              * @example `{ type: string, format: binary }`
              * @example `{ type: array, items: { type: string, format: binary } }`
              */
