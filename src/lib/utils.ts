@@ -29,7 +29,7 @@ export function getTypedFormatsInSchema(
   opts: {
     parentIsArray?: boolean;
     parentKey?: string;
-    payload: any;
+    payload: unknown;
   }
 ): boolean | string | (string | boolean)[] {
   try {
