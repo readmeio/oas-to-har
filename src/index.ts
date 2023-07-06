@@ -2,6 +2,7 @@ import type { AuthForHAR } from './lib/configure-security';
 import type { Extensions } from '@readme/oas-extensions';
 import type { PostDataParams, Request } from 'har-format';
 import type Oas from 'oas';
+import type { SchemaWrapper } from 'oas/dist/operation/get-parameters-as-json-schema';
 import type {
   HttpMethods,
   JSONSchema,
@@ -16,12 +17,14 @@ import type {
 
 import { parse as parseDataUrl } from '@readme/data-urls';
 import * as extensions from '@readme/oas-extensions';
+import { get as lodashGet, set as lodashSet } from 'lodash'; // eslint-disable-line no-restricted-imports
 import { Operation, utils } from 'oas';
 import { isRef } from 'oas/dist/rmoas.types';
 import removeUndefinedObjects from 'remove-undefined-objects';
 
 import configureSecurity from './lib/configure-security';
 import formatStyle from './lib/style-formatting';
+import { getTypedFormatsInSchema, hasSchemaType } from './lib/utils';
 
 const { jsonSchemaTypes, matchesMimeType } = utils;
 
@@ -430,10 +433,14 @@ export default function oasToHar(
     }
   }
 
-  let requestBody: MediaTypeObject;
+  let requestBody: SchemaWrapper;
   if (operation.hasRequestBody()) {
-    // @ts-expect-error TODO `requestBody` coming back as `false | MediaTypeObject | [string, MediaTypeObject]` seems like a problem
-    [, requestBody] = operation.getRequestBody();
+    requestBody = operation.getParametersAsJSONSchema().find(payload => {
+      // `formData` is used in our API Explorer for `application/x-www-form-urlencoded` endpoints
+      // and if you have an operation with that, it will only ever have a `formData`. `body` is
+      // used for all other payload shapes.
+      return payload.type === (operation.isFormUrlEncoded() ? 'formData' : 'body');
+    });
   }
 
   if (requestBody && requestBody.schema && Object.keys(requestBody.schema).length) {
@@ -544,16 +551,12 @@ export default function oasToHar(
           } else {
             har.postData.mimeType = contentType;
 
-            /**
-             * Handle arbitrary JSON input via a string.
-             *
-             * In OAS you usually find this in an `application/json` content type with a schema
-             * `type=string, format=json`. In the UI this is represented by an arbitrary text input.
-             *
-             * This ensures we remove any newlines or tabs and use a clean JSON block in the
-             * example.
-             */
-            if ((requestBody.schema as SchemaObject).type === 'string') {
+            if (
+              hasSchemaType(requestBody.schema, 'string') ||
+              hasSchemaType(requestBody.schema, 'integer') ||
+              hasSchemaType(requestBody.schema, 'number') ||
+              hasSchemaType(requestBody.schema, 'boolean')
+            ) {
               har.postData.text = JSON.stringify(JSON.parse(cleanBody));
             } else {
               /**
@@ -564,16 +567,13 @@ export default function oasToHar(
                * of actual objects. We also only want values that the user has entered, so we drop
                * any `undefined` `cleanBody` keys.
                */
-              const jsonTypes = Object.keys(requestBodySchema.properties).filter(key => {
-                const propData = requestBodySchema.properties[key] as JSONSchema;
-                return propData.format === 'json' && cleanBody[key] !== undefined;
-              });
+              const jsonTypes = getTypedFormatsInSchema('json', requestBodySchema.properties, { payload: cleanBody });
 
-              if (jsonTypes.length) {
+              if (Array.isArray(jsonTypes) && jsonTypes.length) {
                 try {
-                  jsonTypes.forEach(prop => {
+                  jsonTypes.forEach((prop: string) => {
                     try {
-                      cleanBody[prop] = JSON.parse(cleanBody[prop]);
+                      lodashSet(cleanBody, prop, JSON.parse(lodashGet(cleanBody, prop)));
                     } catch (e) {
                       // leave the prop as a string value
                     }
