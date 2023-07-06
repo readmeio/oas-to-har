@@ -39,7 +39,7 @@ export function getTypedFormatsInSchema(
         if (parentData !== undefined && Array.isArray(parentData)) {
           return Object.keys(parentData)
             .map(pdk => {
-              const currentKey = [opts.parentKey, pdk /* , key */].join('.');
+              const currentKey = [opts.parentKey, pdk].join('.');
               if (lodashGet(opts.payload, currentKey) !== undefined) {
                 return currentKey;
               }
