@@ -17,6 +17,46 @@ export function hasSchemaType(
   return schema.type === discriminator;
 }
 
+interface Options {
+  parentIsArray?: boolean;
+  parentKey?: string;
+  payload: unknown;
+}
+
+function getSubschemas(schema: any, opts: Options) {
+  let subSchemaDataSize = 0;
+  if (opts.parentIsArray) {
+    // If we don't have data for this parent schema in our body payload then we
+    // shouldn't bother spidering further into the schema looking for more `format`s
+    // for data that definitely doesn't exist.
+    const parentData = lodashGet(opts.payload, opts.parentKey);
+    if (parentData === undefined || !Array.isArray(parentData)) {
+      return false;
+    }
+
+    subSchemaDataSize = parentData.length;
+  }
+
+  let subschemas: any[] = [];
+  if (subSchemaDataSize > 0) {
+    for (let idx = 0; idx < subSchemaDataSize; idx += 1) {
+      subschemas = subschemas.concat(
+        Object.entries(schema).map(([key, subschema]: [string, JSONSchema]) => ({
+          key: opts.parentKey ? [opts.parentKey, idx, key].join('.') : key,
+          schema: subschema,
+        }))
+      );
+    }
+  } else {
+    subschemas = Object.entries(schema).map(([key, subschema]: [string, JSONSchema]) => ({
+      key: opts.parentKey ? [opts.parentKey, key].join('.') : key,
+      schema: subschema,
+    }));
+  }
+
+  return subschemas;
+}
+
 /**
  * With a supplied JSON Schema object, spider through it for any schemas that may contain specific
  * kind of `format` that also happen to be within the current `requestBody` payload that we're
@@ -26,11 +66,7 @@ export function hasSchemaType(
 export function getTypedFormatsInSchema(
   format: 'json' | 'binary',
   schema: any,
-  opts: {
-    parentIsArray?: boolean;
-    parentKey?: string;
-    payload: unknown;
-  }
+  opts: Options
 ): boolean | string | (string | boolean)[] {
   try {
     if (schema?.format === format) {
@@ -60,34 +96,9 @@ export function getTypedFormatsInSchema(
       return false;
     }
 
-    let subSchemaDataSize = 0;
-    if (opts.parentIsArray) {
-      // If we don't have data for this parent schema in our body payload then we
-      // shouldn't bother spidering further into the schema looking for more `format`s
-      // for data that definitely doesn't exist.
-      const parentData = lodashGet(opts.payload, opts.parentKey);
-      if (parentData === undefined || !Array.isArray(parentData)) {
-        return false;
-      }
-
-      subSchemaDataSize = parentData.length;
-    }
-
-    let subschemas: any[] = [];
-    if (subSchemaDataSize > 0) {
-      for (let idx = 0; idx < subSchemaDataSize; idx += 1) {
-        subschemas = subschemas.concat(
-          Object.entries(schema).map(([key, subschema]: [string, JSONSchema]) => ({
-            key: opts.parentKey ? [opts.parentKey, idx, key].join('.') : key,
-            schema: subschema,
-          }))
-        );
-      }
-    } else {
-      subschemas = Object.entries(schema).map(([key, subschema]: [string, JSONSchema]) => ({
-        key: opts.parentKey ? [opts.parentKey, key].join('.') : key,
-        schema: subschema,
-      }));
+    const subschemas = getSubschemas(schema, opts);
+    if (!subschemas) {
+      return false;
     }
 
     return subschemas

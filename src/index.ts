@@ -435,9 +435,12 @@ export default function oasToHar(
 
   let requestBody: SchemaWrapper;
   if (operation.hasRequestBody()) {
-    requestBody = operation
-      .getParametersAsJSONSchema()
-      .find(p => p.type === (operation.isFormUrlEncoded() ? 'formData' : 'body'));
+    requestBody = operation.getParametersAsJSONSchema().find(payload => {
+      // `formData` is used in our API Explorer for `application/x-www-form-urlencoded` endpoints
+      // and if you have an operation with that, it will only ever have a `formData`. `body` is
+      // used for all other payload shapes.
+      return payload.type === (operation.isFormUrlEncoded() ? 'formData' : 'body');
+    });
   }
 
   if (requestBody && requestBody.schema && Object.keys(requestBody.schema).length) {
