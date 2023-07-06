@@ -657,6 +657,83 @@ describe('request body handling', () => {
     });
 
     describe('format: `json`', () => {
+      it('should handle deeply nested `json` formatted schemas', () => {
+        const spec = Oas.init({
+          paths: {
+            '/anything': {
+              post: {
+                requestBody: {
+                  required: true,
+                  content: {
+                    'application/json': {
+                      schema: {
+                        type: 'object',
+                        properties: {
+                          root: {
+                            type: 'string',
+                            format: 'json',
+                          },
+                          obj: {
+                            type: 'object',
+                            properties: {
+                              jsonProp: {
+                                type: 'string',
+                                format: 'json',
+                              },
+                            },
+                          },
+                          arr: {
+                            type: 'array',
+                            items: {
+                              type: 'string',
+                              format: 'json',
+                            },
+                          },
+                          arrOfObjects: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                arrProp: {
+                                  type: 'string',
+                                  format: 'json',
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const har = oasToHar(spec, spec.operation('/anything', 'post'), {
+          body: {
+            root: '{"im.json": 1234}',
+            obj: {
+              jsonProp: '{"buster": true}',
+            },
+            arr: ['{"buster": true}'],
+            arrOfObjects: [{ arrProp: '{"buster": true}' }, { arrProp: 'not json' }],
+          },
+        });
+
+        expect(har.log.entries[0].request.postData.text).toBe(
+          JSON.stringify({
+            root: { 'im.json': 1234 },
+            obj: {
+              jsonProp: { buster: true },
+            },
+            arr: [{ buster: true }],
+            arrOfObjects: [{ arrProp: { buster: true } }, { arrProp: 'not json' }],
+          })
+        );
+      });
+
       it('should work for refs that require a lookup', async () => {
         const spec = Oas.init({
           paths: {
