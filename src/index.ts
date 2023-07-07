@@ -24,7 +24,7 @@ import removeUndefinedObjects from 'remove-undefined-objects';
 
 import configureSecurity from './lib/configure-security';
 import formatStyle from './lib/style-formatting';
-import { getTypedFormatsInSchema, hasSchemaType } from './lib/utils';
+import { getSafeRequestBody, getTypedFormatsInSchema, hasSchemaType } from './lib/utils';
 
 const { jsonSchemaTypes, matchesMimeType } = utils;
 
@@ -135,25 +135,6 @@ function multipartBodyToFormatterParams(payload: unknown, oasMediaTypeObject: Me
   // Pretty sure that we'll never have anything but an object for multipart bodies, so returning
   // empty array if we get anything else.
   return [];
-}
-
-/**
- * Because some request body schema shapes might not always be a top-level `properties`, instead
- * nesting it in an `oneOf` or `anyOf` we need to extract the first usable schema that we have. If
- * we don't do this then these non-conventional request body schema payloads may not be properly
- * represented in the HAR that we generate.
- *
- */
-function getSafeRequestBody(obj: any) {
-  if ('properties' in obj) {
-    return obj;
-  } else if ('oneOf' in obj) {
-    return getSafeRequestBody(obj.oneOf[0]);
-  } else if ('anyOf' in obj) {
-    return getSafeRequestBody(obj.anyOf[0]);
-  }
-
-  return {};
 }
 
 const defaultFormDataTypes = Object.keys(jsonSchemaTypes).reduce((prev, curr) => {
