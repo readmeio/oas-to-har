@@ -17,6 +17,23 @@ export function hasSchemaType(
   return schema.type === discriminator;
 }
 
+/**
+ * Because some request body schema shapes might not always be a top-level `properties`, instead
+ * nesting it in an `oneOf` or `anyOf` we need to extract the first usable schema that we have. If
+ * we don't do this then these non-conventional request body schema payloads may not be properly
+ * represented in the HAR that we generate.
+ *
+ */
+export function getSafeRequestBody(obj: any) {
+  if ('oneOf' in obj) {
+    return getSafeRequestBody(obj.oneOf[0]);
+  } else if ('anyOf' in obj) {
+    return getSafeRequestBody(obj.anyOf[0]);
+  }
+
+  return obj;
+}
+
 interface Options {
   parentIsArray?: boolean;
   parentKey?: string;
@@ -43,14 +60,14 @@ function getSubschemas(schema: any, opts: Options) {
       subschemas = subschemas.concat(
         Object.entries(schema).map(([key, subschema]: [string, JSONSchema]) => ({
           key: opts.parentKey ? [opts.parentKey, idx, key].join('.') : key,
-          schema: subschema,
+          schema: getSafeRequestBody(subschema),
         }))
       );
     }
   } else {
     subschemas = Object.entries(schema).map(([key, subschema]: [string, JSONSchema]) => ({
       key: opts.parentKey ? [opts.parentKey, key].join('.') : key,
-      schema: subschema,
+      schema: getSafeRequestBody(subschema),
     }));
   }
 

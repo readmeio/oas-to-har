@@ -6,6 +6,7 @@ import Oas from 'oas';
 
 import oasToHar from '../src';
 
+import deeplyNestedJsonFormats from './__datasets__/deeply-nested-json-formats.json';
 import multipartFormDataArrayOfFiles from './__datasets__/multipart-form-data/array-of-files.json';
 import multipartFormDataOneOfRequestBody from './__datasets__/multipart-form-data/oneOf-requestbody.json';
 import multipartFormData from './__datasets__/multipart-form-data.json';
@@ -657,6 +658,27 @@ describe('request body handling', () => {
     });
 
     describe('format: `json`', () => {
+      it('should handle deeply nested `json` formatted schemas within a `oneOf`', async () => {
+        const spec = Oas.init(deeplyNestedJsonFormats);
+        await spec.dereference();
+
+        const har = oasToHar(spec, spec.operation('/anything', 'post'), {
+          body: {
+            destination: {
+              service_account_key: JSON.stringify({ buster: true }),
+            },
+          },
+        });
+
+        expect(har.log.entries[0].request.postData.text).toStrictEqual(
+          JSON.stringify({
+            destination: {
+              service_account_key: { buster: true },
+            },
+          })
+        );
+      });
+
       it('should handle deeply nested `json` formatted schemas', () => {
         const spec = Oas.init({
           paths: {
