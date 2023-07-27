@@ -890,7 +890,7 @@ describe('style formatting', () => {
         ])
       );
 
-      it.only(
+      it(
         'should support deepObject delimited query styles for implicit exploded object input',
         assertDeepObjectStyle(paramImplicitExplode, { query: { color: objectInput } }, [
           { name: 'color[R]', value: '100' },
