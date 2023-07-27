@@ -215,7 +215,11 @@ function handleExplode(value: any, parameter: ParameterObject) {
 
 function shouldExplode(parameter: ParameterObject) {
   return (
-    (parameter.explode || (parameter.explode !== false && parameter.style === 'form')) &&
+    (parameter.explode ||
+      (parameter.explode !== false && parameter.style === 'form') ||
+      // style: deepObject && explode: false doesn't exist so explode it always
+      // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples
+      parameter.style === 'deepObject') &&
     // header and path doesn't explode into separate parameters like query and cookie do
     parameter.in !== 'header' &&
     parameter.in !== 'path'

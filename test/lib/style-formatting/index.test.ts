@@ -788,6 +788,16 @@ describe('style formatting', () => {
         ],
       };
 
+      const paramImplicitExplode = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'query',
+            style: 'deepObject',
+          },
+        ],
+      };
+
       const arrayParamExplode = {
         parameters: [
           {
@@ -874,6 +884,15 @@ describe('style formatting', () => {
       it(
         'should support deepObject delimited query styles for exploded object input',
         assertDeepObjectStyle(paramExplode, { query: { color: objectInput } }, [
+          { name: 'color[R]', value: '100' },
+          { name: 'color[G]', value: '200' },
+          { name: 'color[B]', value: '150' },
+        ])
+      );
+
+      it(
+        'should support deepObject delimited query styles for implicit exploded object input',
+        assertDeepObjectStyle(paramImplicitExplode, { query: { color: objectInput } }, [
           { name: 'color[R]', value: '100' },
           { name: 'color[G]', value: '200' },
           { name: 'color[B]', value: '150' },
