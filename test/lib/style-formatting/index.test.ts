@@ -2,6 +2,7 @@ import type { DataForHAR } from '../../../src';
 import type { Request } from 'har-format';
 
 import toBeAValidHAR from 'jest-expect-har';
+import Oas from 'oas';
 
 import oasToHar from '../../../src';
 import oasFixture from '../../__fixtures__/create-oas';
@@ -23,6 +24,13 @@ import {
 expect.extend({ toBeAValidHAR });
 
 const createOas = oasFixture('get');
+
+let style: Oas;
+
+beforeAll(async () => {
+  style = await import('@readme/oas-examples/3.0/json/podium.reduced.json').then(r => r.default).then(Oas.init);
+  await style.dereference();
+});
 
 const semicolon = ';'; // %3B when encoded, which we don't want
 const equals = '='; // %3D when encoded, which we don't want
@@ -788,6 +796,16 @@ describe('style formatting', () => {
         ],
       };
 
+      const paramImplicitExplode = {
+        parameters: [
+          {
+            name: 'color',
+            in: 'query',
+            style: 'deepObject',
+          },
+        ],
+      };
+
       const arrayParamExplode = {
         parameters: [
           {
@@ -818,13 +836,22 @@ describe('style formatting', () => {
           const har = oasToHar(oas, oas.operation('/query', 'get'), formData);
           await expect(har).toBeAValidHAR();
 
+          console.log('har', har.log.entries[0]);
+          console.log('oas', oas);
+
           expect(har.log.entries[0].request.queryString).toStrictEqual(expected);
         };
       }
 
+      it('console.log', () => {
+        const har = oasToHar(style, style.operation('/v4/reviews', 'get'), { query: { createdAt: { gt: 'test' } }})
+
+        console.log('har', har.log.entries[0].request);
+      });
+
       it(
         'should NOT support deepObject delimited query styles for non exploded empty input',
-        assertDeepObjectStyle(paramNoExplode, { query: { color: emptyInput } }, [])
+        assertDeepObjectStyle(paramNoExplode, { query: { color: 'emptyInput' } }, [])
       );
 
       it(
@@ -874,6 +901,15 @@ describe('style formatting', () => {
       it(
         'should support deepObject delimited query styles for exploded object input',
         assertDeepObjectStyle(paramExplode, { query: { color: objectInput } }, [
+          { name: 'color[R]', value: '100' },
+          { name: 'color[G]', value: '200' },
+          { name: 'color[B]', value: '150' },
+        ])
+      );
+
+      it.only(
+        'should support deepObject delimited query styles for implicit exploded object input',
+        assertDeepObjectStyle(paramImplicitExplode, { query: { color: objectInput } }, [
           { name: 'color[R]', value: '100' },
           { name: 'color[G]', value: '200' },
           { name: 'color[B]', value: '150' },
