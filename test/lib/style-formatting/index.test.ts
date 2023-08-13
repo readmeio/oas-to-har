@@ -2,6 +2,7 @@ import type { DataForHAR } from '../../../src';
 import type { Request } from 'har-format';
 
 import toBeAValidHAR from 'jest-expect-har';
+import { describe, it, expect } from 'vitest';
 
 import oasToHar from '../../../src';
 import oasFixture from '../../__fixtures__/create-oas';
@@ -128,8 +129,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramNoExplode,
           { path: { color: emptyInput } },
-          `https://example.com/style-path/${semicolon}color`
-        )
+          `https://example.com/style-path/${semicolon}color`,
+        ),
       );
 
       it(
@@ -137,8 +138,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramExplode,
           { path: { color: emptyInput } },
-          `https://example.com/style-path/${semicolon}color`
-        )
+          `https://example.com/style-path/${semicolon}color`,
+        ),
       );
 
       it(
@@ -146,8 +147,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramNoExplode,
           { path: { color: undefinedInput } },
-          `https://example.com/style-path/${semicolon}color`
-        )
+          `https://example.com/style-path/${semicolon}color`,
+        ),
       );
 
       it(
@@ -155,8 +156,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramExplode,
           { path: { color: undefinedInput } },
-          `https://example.com/style-path/${semicolon}color`
-        )
+          `https://example.com/style-path/${semicolon}color`,
+        ),
       );
 
       it(
@@ -164,8 +165,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramNoExplode,
           { path: { color: undefinedArrayInput } },
-          `https://example.com/style-path/${semicolon}color`
-        )
+          `https://example.com/style-path/${semicolon}color`,
+        ),
       );
 
       it(
@@ -173,8 +174,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramExplode,
           { path: { color: undefinedArrayInput } },
-          `https://example.com/style-path/${semicolon}color`
-        )
+          `https://example.com/style-path/${semicolon}color`,
+        ),
       );
 
       it(
@@ -182,8 +183,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramNoExplode,
           { path: { color: undefinedObjectInput } },
-          `https://example.com/style-path/${semicolon}color${equals}R${comma}`
-        )
+          `https://example.com/style-path/${semicolon}color${equals}R${comma}`,
+        ),
       );
 
       it(
@@ -191,8 +192,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramExplode,
           { path: { color: undefinedObjectInput } },
-          `https://example.com/style-path/${semicolon}R${equals}`
-        )
+          `https://example.com/style-path/${semicolon}R${equals}`,
+        ),
       );
 
       it(
@@ -200,8 +201,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramNoExplode,
           { path: { color: stringInput } },
-          `https://example.com/style-path/${semicolon}color${equals}blue`
-        )
+          `https://example.com/style-path/${semicolon}color${equals}blue`,
+        ),
       );
 
       it(
@@ -209,8 +210,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramExplode,
           { path: { color: stringInput } },
-          `https://example.com/style-path/${semicolon}color${equals}blue`
-        )
+          `https://example.com/style-path/${semicolon}color${equals}blue`,
+        ),
       );
 
       it(
@@ -218,8 +219,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramNoExplode,
           { path: { color: arrayInput } },
-          `https://example.com/style-path/${semicolon}color${equals}blue${comma}black${comma}brown`
-        )
+          `https://example.com/style-path/${semicolon}color${equals}blue${comma}black${comma}brown`,
+        ),
       );
 
       it(
@@ -227,8 +228,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramExplode,
           { path: { color: arrayInput } },
-          `https://example.com/style-path/${semicolon}color${equals}blue${semicolon}color${equals}black${semicolon}color${equals}brown`
-        )
+          `https://example.com/style-path/${semicolon}color${equals}blue${semicolon}color${equals}black${semicolon}color${equals}brown`,
+        ),
       );
 
       it(
@@ -236,8 +237,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramNoExplode,
           { path: { color: objectInput } },
-          `https://example.com/style-path/${semicolon}color${equals}R${comma}100${comma}G${comma}200${comma}B${comma}150`
-        )
+          `https://example.com/style-path/${semicolon}color${equals}R${comma}100${comma}G${comma}200${comma}B${comma}150`,
+        ),
       );
 
       it(
@@ -245,8 +246,8 @@ describe('style formatting', () => {
         assertMatrixPath(
           paramExplode,
           { path: { color: objectInput } },
-          `https://example.com/style-path/${semicolon}R${equals}100${semicolon}G${equals}200${semicolon}B${equals}150`
-        )
+          `https://example.com/style-path/${semicolon}R${equals}100${semicolon}G${equals}200${semicolon}B${equals}150`,
+        ),
       );
     });
 
@@ -285,22 +286,22 @@ describe('style formatting', () => {
 
       it(
         'should support label path styles non exploded empty input',
-        assertLabelPath(paramNoExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/.')
+        assertLabelPath(paramNoExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/.'),
       );
 
       it(
         'should support label path styles styles for exploded empty input',
-        assertLabelPath(paramExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/.')
+        assertLabelPath(paramExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/.'),
       );
 
       it(
         'should support label path styles styles for non exploded string input',
-        assertLabelPath(paramNoExplode, { path: { color: stringInput } }, 'https://example.com/style-path/.blue')
+        assertLabelPath(paramNoExplode, { path: { color: stringInput } }, 'https://example.com/style-path/.blue'),
       );
 
       it(
         'should support label path styles styles for exploded string input',
-        assertLabelPath(paramExplode, { path: { color: stringInput } }, 'https://example.com/style-path/.blue')
+        assertLabelPath(paramExplode, { path: { color: stringInput } }, 'https://example.com/style-path/.blue'),
       );
 
       it(
@@ -308,8 +309,8 @@ describe('style formatting', () => {
         assertLabelPath(
           paramNoExplode,
           { path: { color: arrayInput } },
-          'https://example.com/style-path/.blue.black.brown'
-        )
+          'https://example.com/style-path/.blue.black.brown',
+        ),
       );
 
       it(
@@ -317,8 +318,8 @@ describe('style formatting', () => {
         assertLabelPath(
           paramExplode,
           { path: { color: arrayInput } },
-          'https://example.com/style-path/.blue.black.brown'
-        )
+          'https://example.com/style-path/.blue.black.brown',
+        ),
       );
 
       it(
@@ -326,8 +327,8 @@ describe('style formatting', () => {
         assertLabelPath(
           paramNoExplode,
           { path: { color: objectInput } },
-          'https://example.com/style-path/.R.100.G.200.B.150'
-        )
+          'https://example.com/style-path/.R.100.G.200.B.150',
+        ),
       );
 
       it(
@@ -335,8 +336,8 @@ describe('style formatting', () => {
         assertLabelPath(
           paramExplode,
           { path: { color: objectInput } },
-          `https://example.com/style-path/.R${equals}100.G${equals}200.B${equals}150`
-        )
+          `https://example.com/style-path/.R${equals}100.G${equals}200.B${equals}150`,
+        ),
       );
     });
 
@@ -375,22 +376,22 @@ describe('style formatting', () => {
 
       it(
         'should NOT support simple path styles non exploded empty input',
-        assertSimplePath(paramNoExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/')
+        assertSimplePath(paramNoExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/'),
       );
 
       it(
         'should NOT support simple path styles styles for exploded empty input',
-        assertSimplePath(paramExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/')
+        assertSimplePath(paramExplode, { path: { color: emptyInput } }, 'https://example.com/style-path/'),
       );
 
       it(
         'should support simple path styles styles for non exploded string input',
-        assertSimplePath(paramNoExplode, { path: { color: stringInput } }, 'https://example.com/style-path/blue')
+        assertSimplePath(paramNoExplode, { path: { color: stringInput } }, 'https://example.com/style-path/blue'),
       );
 
       it(
         'should support simple path styles styles for exploded string input',
-        assertSimplePath(paramExplode, { path: { color: stringInput } }, 'https://example.com/style-path/blue')
+        assertSimplePath(paramExplode, { path: { color: stringInput } }, 'https://example.com/style-path/blue'),
       );
 
       it(
@@ -398,8 +399,8 @@ describe('style formatting', () => {
         assertSimplePath(
           paramNoExplode,
           { path: { color: arrayInput } },
-          `https://example.com/style-path/blue${comma}black${comma}brown`
-        )
+          `https://example.com/style-path/blue${comma}black${comma}brown`,
+        ),
       );
 
       it(
@@ -407,8 +408,8 @@ describe('style formatting', () => {
         assertSimplePath(
           paramExplode,
           { path: { color: arrayInput } },
-          `https://example.com/style-path/blue${comma}black${comma}brown`
-        )
+          `https://example.com/style-path/blue${comma}black${comma}brown`,
+        ),
       );
 
       it(
@@ -416,8 +417,8 @@ describe('style formatting', () => {
         assertSimplePath(
           paramNoExplode,
           { path: { color: objectInput } },
-          `https://example.com/style-path/R${comma}100${comma}G${comma}200${comma}B${comma}150`
-        )
+          `https://example.com/style-path/R${comma}100${comma}G${comma}200${comma}B${comma}150`,
+        ),
       );
 
       it(
@@ -425,8 +426,8 @@ describe('style formatting', () => {
         assertSimplePath(
           paramExplode,
           { path: { color: objectInput } },
-          `https://example.com/style-path/R${equals}100${comma}G${equals}200${comma}B${equals}150`
-        )
+          `https://example.com/style-path/R${equals}100${comma}G${equals}200${comma}B${equals}150`,
+        ),
       );
     });
   });
@@ -492,50 +493,50 @@ describe('style formatting', () => {
 
       it(
         'should support form delimited query styles for non exploded empty input',
-        assertFormStyle(paramNoExplode, { query: { color: emptyInput } }, [{ name: 'color', value: '' }])
+        assertFormStyle(paramNoExplode, { query: { color: emptyInput } }, [{ name: 'color', value: '' }]),
       );
 
       it(
         'should support form delimited query styles for exploded empty input',
-        assertFormStyle(paramExplode, { query: { color: emptyInput } }, [{ name: 'color', value: '' }])
+        assertFormStyle(paramExplode, { query: { color: emptyInput } }, [{ name: 'color', value: '' }]),
       );
 
       it(
         'should support form delimited query styles for non exploded string input',
-        assertFormStyle(paramNoExplode, { query: { color: stringInput } }, [{ name: 'color', value: 'blue' }])
+        assertFormStyle(paramNoExplode, { query: { color: stringInput } }, [{ name: 'color', value: 'blue' }]),
       );
 
       it(
         'should support form delimited query styles for non exploded string input and NOT encode already encoded values',
         assertFormStyle(paramNoExplode, { query: { color: stringInputEncoded } }, [
           { name: 'color', value: 'something%26nothing%3Dtrue' },
-        ])
+        ]),
       );
 
       it(
         'should support form delimited query styles for exploded string input',
-        assertFormStyle(paramExplode, { query: { color: stringInput } }, [{ name: 'color', value: 'blue' }])
+        assertFormStyle(paramExplode, { query: { color: stringInput } }, [{ name: 'color', value: 'blue' }]),
       );
 
       it(
         'should support form delimited query styles for exploded string input and NOT encode already encoded values',
         assertFormStyle(paramExplode, { query: { color: stringInputEncoded } }, [
           { name: 'color', value: 'something%26nothing%3Dtrue' },
-        ])
+        ]),
       );
 
       it(
         'should support form delimited query styles for non exploded array input',
         assertFormStyle(paramNoExplode, { query: { color: arrayInput } }, [
           { name: 'color', value: 'blue,black,brown' },
-        ])
+        ]),
       );
 
       it(
         'should support form delimited query styles for non exploded array input and NOT encode already encoded values',
         assertFormStyle(paramNoExplode, { query: { color: arrayInputEncoded } }, [
           { name: 'color', value: 'something%26nothing%3Dtrue,hash%23data' },
-        ])
+        ]),
       );
 
       it(
@@ -544,7 +545,7 @@ describe('style formatting', () => {
           { name: 'color', value: 'blue' },
           { name: 'color', value: 'black' },
           { name: 'color', value: 'brown' },
-        ])
+        ]),
       );
 
       it(
@@ -552,21 +553,21 @@ describe('style formatting', () => {
         assertFormStyle(paramExplode, { query: { color: arrayInputEncoded } }, [
           { name: 'color', value: 'something%26nothing%3Dtrue' },
           { name: 'color', value: 'hash%23data' },
-        ])
+        ]),
       );
 
       it(
         'should support form delimited query styles for non exploded object input',
         assertFormStyle(paramNoExplode, { query: { color: objectInput } }, [
           { name: 'color', value: 'R,100,G,200,B,150' },
-        ])
+        ]),
       );
 
       it(
         'should support form delimited query styles for non exploded object input and NOT encode already encoded values',
         assertFormStyle(paramNoExplode, { query: { color: objectInputEncoded } }, [
           { name: 'color', value: 'pound,something%26nothing%3Dtrue,hash,hash%23data' },
-        ])
+        ]),
       );
 
       it(
@@ -575,7 +576,7 @@ describe('style formatting', () => {
           { name: 'R', value: '100' },
           { name: 'G', value: '200' },
           { name: 'B', value: '150' },
-        ])
+        ]),
       );
 
       it(
@@ -583,7 +584,7 @@ describe('style formatting', () => {
         assertFormStyle(paramExplode, { query: { color: objectInputEncoded } }, [
           { name: 'pound', value: 'something%26nothing%3Dtrue' },
           { name: 'hash', value: 'hash%23data' },
-        ])
+        ]),
       );
 
       it(
@@ -591,7 +592,7 @@ describe('style formatting', () => {
         assertFormStyle(paramReserved, { query: { color: objectInputEncoded } }, [
           { name: 'pound', value: 'something&nothing=true' },
           { name: 'hash', value: 'hash#data' },
-        ])
+        ]),
       );
     });
 
@@ -630,53 +631,53 @@ describe('style formatting', () => {
 
       it(
         'should NOT support space delimited query styles for non exploded empty input',
-        assertSpaceDelimitedStyle(paramNoExplode, { query: { color: emptyInput } }, [])
+        assertSpaceDelimitedStyle(paramNoExplode, { query: { color: emptyInput } }, []),
       );
 
       it(
         'should NOT support space delimited query styles for exploded empty input',
-        assertSpaceDelimitedStyle(paramExplode, { query: { color: emptyInput } }, [])
+        assertSpaceDelimitedStyle(paramExplode, { query: { color: emptyInput } }, []),
       );
 
       it(
         'should NOT support space delimited query styles for non exploded string input',
-        assertSpaceDelimitedStyle(paramNoExplode, { query: { color: stringInput } }, [])
+        assertSpaceDelimitedStyle(paramNoExplode, { query: { color: stringInput } }, []),
       );
 
       it(
         'should NOT support space delimited query styles for exploded string input',
-        assertSpaceDelimitedStyle(paramExplode, { query: { color: stringInput } }, [])
+        assertSpaceDelimitedStyle(paramExplode, { query: { color: stringInput } }, []),
       );
 
       it(
         'should support space delimited query styles for non exploded array input',
         assertSpaceDelimitedStyle(paramNoExplode, { query: { color: arrayInput } }, [
           { name: 'color', value: 'blue black brown' },
-        ])
+        ]),
       );
 
       it(
         'should support space delimited query styles for non exploded array input and NOT encode already encoded values',
         assertSpaceDelimitedStyle(paramNoExplode, { query: { color: arrayInputEncoded } }, [
           { name: 'color', value: 'something%26nothing%3Dtrue hash%23data' },
-        ])
+        ]),
       );
 
       it(
         'should NOT support space delimited query styles for exploded array input',
-        assertSpaceDelimitedStyle(paramExplode, { query: { color: arrayInput } }, [])
+        assertSpaceDelimitedStyle(paramExplode, { query: { color: arrayInput } }, []),
       );
 
       it(
         'should support space delimited query styles for non exploded object input',
         assertSpaceDelimitedStyle(paramNoExplode, { query: { color: objectInput } }, [
           { name: 'color', value: 'R 100 G 200 B 150' },
-        ])
+        ]),
       );
 
       it(
         'should NOT support space delimited query styles for exploded object input',
-        assertSpaceDelimitedStyle(paramExplode, { query: { color: objectInput } }, [])
+        assertSpaceDelimitedStyle(paramExplode, { query: { color: objectInput } }, []),
       );
     });
 
@@ -715,53 +716,53 @@ describe('style formatting', () => {
 
       it(
         'should NOT support pipe delimited query styles for non exploded empty input',
-        assertPipeDelimitedStyle(paramNoExplode, { query: { color: emptyInput } }, [])
+        assertPipeDelimitedStyle(paramNoExplode, { query: { color: emptyInput } }, []),
       );
 
       it(
         'should NOT support pipe delimited query styles for exploded empty input',
-        assertPipeDelimitedStyle(paramExplode, { query: { color: emptyInput } }, [])
+        assertPipeDelimitedStyle(paramExplode, { query: { color: emptyInput } }, []),
       );
 
       it(
         'should NOT support pipe delimited query styles for non exploded string input',
-        assertPipeDelimitedStyle(paramNoExplode, { query: { color: stringInput } }, [])
+        assertPipeDelimitedStyle(paramNoExplode, { query: { color: stringInput } }, []),
       );
 
       it(
         'should NOT support pipe delimited query styles for exploded string input',
-        assertPipeDelimitedStyle(paramExplode, { query: { color: stringInput } }, [])
+        assertPipeDelimitedStyle(paramExplode, { query: { color: stringInput } }, []),
       );
 
       it(
         'should support pipe delimited query styles for non exploded array input',
         assertPipeDelimitedStyle(paramNoExplode, { query: { color: arrayInput } }, [
           { name: 'color', value: 'blue|black|brown' },
-        ])
+        ]),
       );
 
       it(
         'should support pipe delimited query styles for non exploded array input and NOT encode already encoded values',
         assertPipeDelimitedStyle(paramNoExplode, { query: { color: arrayInputEncoded } }, [
           { name: 'color', value: 'something%26nothing%3Dtrue|hash%23data' },
-        ])
+        ]),
       );
 
       it(
         'should NOT support pipe delimited query styles for exploded array input',
-        assertPipeDelimitedStyle(paramExplode, { query: { color: arrayInput } }, [])
+        assertPipeDelimitedStyle(paramExplode, { query: { color: arrayInput } }, []),
       );
 
       it(
         'should support pipe delimited query styles for non exploded object input',
         assertPipeDelimitedStyle(paramNoExplode, { query: { color: objectInput } }, [
           { name: 'color', value: 'R|100|G|200|B|150' },
-        ])
+        ]),
       );
 
       it(
         'should NOT support pipe delimited query styles for exploded object input',
-        assertPipeDelimitedStyle(paramExplode, { query: { color: objectInput } }, [])
+        assertPipeDelimitedStyle(paramExplode, { query: { color: objectInput } }, []),
       );
     });
 
@@ -834,27 +835,27 @@ describe('style formatting', () => {
 
       it(
         'should NOT support deepObject delimited query styles for non exploded empty input',
-        assertDeepObjectStyle(paramNoExplode, { query: { color: emptyInput } }, [])
+        assertDeepObjectStyle(paramNoExplode, { query: { color: emptyInput } }, []),
       );
 
       it(
         'should NOT support deepObject delimited query styles for exploded empty input',
-        assertDeepObjectStyle(paramExplode, { query: { color: emptyInput } }, [])
+        assertDeepObjectStyle(paramExplode, { query: { color: emptyInput } }, []),
       );
 
       it(
         'should NOT support deepObject delimited query styles for non exploded string input',
-        assertDeepObjectStyle(paramNoExplode, { query: { color: stringInput } }, [])
+        assertDeepObjectStyle(paramNoExplode, { query: { color: stringInput } }, []),
       );
 
       it(
         'should NOT support deepObject delimited query styles for exploded string input',
-        assertDeepObjectStyle(paramExplode, { query: { color: stringInput } }, [])
+        assertDeepObjectStyle(paramExplode, { query: { color: stringInput } }, []),
       );
 
       it(
         'should NOT support deepObject delimited query styles for non exploded array input',
-        assertDeepObjectStyle(paramNoExplode, { query: { color: arrayInput } }, [])
+        assertDeepObjectStyle(paramNoExplode, { query: { color: arrayInput } }, []),
       );
 
       // This breaks from the spec, but we have had requests to support arrays as if they are numerically keyed objects, and this is the easiest way
@@ -873,12 +874,12 @@ describe('style formatting', () => {
             name: 'color',
             value: 'brown',
           },
-        ])
+        ]),
       );
 
       it(
         'should NOT support deepObject delimited query styles for non exploded object input',
-        assertDeepObjectStyle(paramNoExplode, { query: { color: objectInput } }, [])
+        assertDeepObjectStyle(paramNoExplode, { query: { color: objectInput } }, []),
       );
 
       it(
@@ -887,7 +888,7 @@ describe('style formatting', () => {
           { name: 'color[R]', value: '100' },
           { name: 'color[G]', value: '200' },
           { name: 'color[B]', value: '150' },
-        ])
+        ]),
       );
 
       it(
@@ -896,12 +897,12 @@ describe('style formatting', () => {
           { name: 'color[R]', value: '100' },
           { name: 'color[G]', value: '200' },
           { name: 'color[B]', value: '150' },
-        ])
+        ]),
       );
 
       it(
         'should NOT support deepObject delimited query styles for non exploded nested object input',
-        assertDeepObjectStyle(paramNoExplode, { query: { color: objectNestedObject } }, [])
+        assertDeepObjectStyle(paramNoExplode, { query: { color: objectNestedObject } }, []),
       );
 
       it(
@@ -911,7 +912,7 @@ describe('style formatting', () => {
           { name: 'color[child][name]', value: 'childName' },
           { name: 'color[child][age]', value: 'null' },
           { name: 'color[child][metadata][name]', value: 'meta' },
-        ])
+        ]),
       );
 
       it(
@@ -926,7 +927,7 @@ describe('style formatting', () => {
           { name: 'color[pets][0][name]', value: 'buster' },
           { name: 'color[pets][0][age]', value: 'null' },
           { name: 'color[pets][0][metadata][isOld]', value: 'true' },
-        ])
+        ]),
       );
 
       it(
@@ -934,7 +935,7 @@ describe('style formatting', () => {
         assertDeepObjectStyle(paramExplode, { query: { color: objectInputEncoded } }, [
           { name: 'color[pound]', value: 'something%26nothing%3Dtrue' },
           { name: 'color[hash]', value: 'hash%23data' },
-        ])
+        ]),
       );
 
       it(
@@ -954,8 +955,8 @@ describe('style formatting', () => {
             { name: 'line_items[0][quantity]', value: '1' },
             { name: 'line_items[1][a_string]', value: 'def' },
             { name: 'line_items[1][quantity]', value: '2' },
-          ]
-        )
+          ],
+        ),
       );
     });
   });
@@ -1009,12 +1010,12 @@ describe('style formatting', () => {
 
     it(
       'should support form delimited cookie styles for non exploded empty input',
-      assertCookies(paramNoExplode, { cookie: { color: emptyInput } }, [{ name: 'color', value: '' }])
+      assertCookies(paramNoExplode, { cookie: { color: emptyInput } }, [{ name: 'color', value: '' }]),
     );
 
     it(
       'should support form delimited cookie styles for exploded empty input',
-      assertCookies(paramExplode, { cookie: { color: emptyInput } }, [{ name: 'color', value: '' }])
+      assertCookies(paramExplode, { cookie: { color: emptyInput } }, [{ name: 'color', value: '' }]),
     );
 
     it(
@@ -1031,18 +1032,18 @@ describe('style formatting', () => {
           ],
         },
         { cookie: { color: stringInput } },
-        [{ name: 'color', value: 'blue' }]
-      )
+        [{ name: 'color', value: 'blue' }],
+      ),
     );
 
     it(
       'should support form delimited cookie styles for exploded string input',
-      assertCookies(paramExplode, { cookie: { color: stringInput } }, [{ name: 'color', value: 'blue' }])
+      assertCookies(paramExplode, { cookie: { color: stringInput } }, [{ name: 'color', value: 'blue' }]),
     );
 
     it(
       'should support form delimited cookie styles for non exploded array input',
-      assertCookies(paramNoExplode, { cookie: { color: arrayInput } }, [{ name: 'color', value: 'blue,black,brown' }])
+      assertCookies(paramNoExplode, { cookie: { color: arrayInput } }, [{ name: 'color', value: 'blue,black,brown' }]),
     );
 
     it(
@@ -1051,12 +1052,14 @@ describe('style formatting', () => {
         { name: 'color', value: 'blue' },
         { name: 'color', value: 'black' },
         { name: 'color', value: 'brown' },
-      ])
+      ]),
     );
 
     it(
       'should support form delimited cookie styles for non exploded object input',
-      assertCookies(paramNoExplode, { cookie: { color: objectInput } }, [{ name: 'color', value: 'R,100,G,200,B,150' }])
+      assertCookies(paramNoExplode, { cookie: { color: objectInput } }, [
+        { name: 'color', value: 'R,100,G,200,B,150' },
+      ]),
     );
 
     it(
@@ -1065,7 +1068,7 @@ describe('style formatting', () => {
         { name: 'R', value: '100' },
         { name: 'G', value: '200' },
         { name: 'B', value: '150' },
-      ])
+      ]),
     );
   });
 
@@ -1118,27 +1121,27 @@ describe('style formatting', () => {
 
     it(
       'should NOT support simple header styles for non exploded empty input',
-      assertHeaders(paramNoExplode, { header: { color: emptyInput } }, [])
+      assertHeaders(paramNoExplode, { header: { color: emptyInput } }, []),
     );
 
     it(
       'should NOT support simple header styles for exploded empty input',
-      assertHeaders(paramExplode, { header: { color: emptyInput } }, [])
+      assertHeaders(paramExplode, { header: { color: emptyInput } }, []),
     );
 
     it(
       'should support simple header styles for non exploded string input',
-      assertHeaders(paramNoExplode, { header: { color: stringInput } }, [{ name: 'color', value: 'blue' }])
+      assertHeaders(paramNoExplode, { header: { color: stringInput } }, [{ name: 'color', value: 'blue' }]),
     );
 
     it(
       'should support simple header styles for exploded string input',
-      assertHeaders(paramExplode, { header: { color: stringInput } }, [{ name: 'color', value: 'blue' }])
+      assertHeaders(paramExplode, { header: { color: stringInput } }, [{ name: 'color', value: 'blue' }]),
     );
 
     it(
       'should support simple header styles for non exploded arrays',
-      assertHeaders(paramNoExplode, { header: { color: arrayInput } }, [{ name: 'color', value: 'blue,black,brown' }])
+      assertHeaders(paramNoExplode, { header: { color: arrayInput } }, [{ name: 'color', value: 'blue,black,brown' }]),
     );
 
     it(
@@ -1154,13 +1157,15 @@ describe('style formatting', () => {
          *
          * @see {@link https://swagger.io/docs/specification/serialization/#header}
          * */
-        [{ name: 'color', value: 'blue,black,brown' }]
-      )
+        [{ name: 'color', value: 'blue,black,brown' }],
+      ),
     );
 
     it(
       'should support simple header styles for non exploded objects',
-      assertHeaders(paramNoExplode, { header: { color: objectInput } }, [{ name: 'color', value: 'R,100,G,200,B,150' }])
+      assertHeaders(paramNoExplode, { header: { color: objectInput } }, [
+        { name: 'color', value: 'R,100,G,200,B,150' },
+      ]),
     );
 
     it(
@@ -1176,8 +1181,8 @@ describe('style formatting', () => {
          *
          * @see {@link https://swagger.io/docs/specification/serialization/#header}
          */
-        [{ name: 'color', value: 'R=100,G=200,B=150' }]
-      )
+        [{ name: 'color', value: 'R=100,G=200,B=150' }],
+      ),
     );
 
     /**

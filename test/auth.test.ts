@@ -1,4 +1,5 @@
 import Oas from 'oas';
+import { describe, it, expect } from 'vitest';
 
 import oasToHar from '../src';
 
@@ -11,7 +12,7 @@ describe('auth handling', () => {
   describe('headers', () => {
     it('should work for header auth', () => {
       expect(
-        oasToHar(spec, spec.operation('/header', 'post'), {}, { auth_header: 'value' }).log.entries[0].request.headers
+        oasToHar(spec, spec.operation('/header', 'post'), {}, { auth_header: 'value' }).log.entries[0].request.headers,
       ).toStrictEqual([
         {
           name: 'x-auth-header',
@@ -63,7 +64,7 @@ describe('auth handling', () => {
             authorization: 'Bearer 1234',
           },
         },
-        auth
+        auth,
       );
 
       expect(har.log.entries[0].request.headers).toStrictEqual([
@@ -83,8 +84,8 @@ describe('auth handling', () => {
         {},
         {
           auth_query: 'value',
-        }
-      ).log.entries[0].request.queryString
+        },
+      ).log.entries[0].request.queryString,
     ).toStrictEqual([
       {
         name: 'authQuery',
@@ -101,8 +102,8 @@ describe('auth handling', () => {
         {},
         {
           auth_cookie: 'value',
-        }
-      ).log.entries[0].request.cookies
+        },
+      ).log.entries[0].request.cookies,
     ).toStrictEqual([
       {
         name: 'authCookie',
@@ -120,8 +121,8 @@ describe('auth handling', () => {
         {
           auth_header: 'value',
           auth_headerAlt: 'value',
-        }
-      ).log.entries[0].request.headers
+        },
+      ).log.entries[0].request.headers,
     ).toStrictEqual([
       {
         name: 'x-auth-header',
@@ -143,8 +144,8 @@ describe('auth handling', () => {
         {
           auth_header: 'value',
           auth_headerAlt: 'value',
-        }
-      ).log.entries[0].request.headers
+        },
+      ).log.entries[0].request.headers,
     ).toStrictEqual([
       {
         name: 'x-auth-header',

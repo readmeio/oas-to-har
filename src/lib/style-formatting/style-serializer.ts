@@ -64,7 +64,7 @@ export function encodeDisallowedCharacters(
     isAllowedReserved?: boolean;
     returnIfEncoded?: boolean;
   } = {},
-  parse: boolean
+  parse: boolean,
 ) {
   if (typeof str === 'number') {
     str = (str as number).toString();

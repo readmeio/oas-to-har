@@ -1,10 +1,10 @@
-/* eslint-disable jest/expect-expect */
 import type { DataForHAR } from '../src';
 import type { Request } from 'har-format';
 import type { OperationObject } from 'oas/dist/rmoas.types';
 
 import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
+import { describe, beforeEach, it, expect } from 'vitest';
 
 import oasToHar from '../src';
 
@@ -33,11 +33,11 @@ describe('parameter handling', () => {
       });
 
       expect(oasToHar(spec, spec.operation('/path-param/{id}', 'get')).log.entries[0].request.url).toBe(
-        'https://example.com/path-param/id'
+        'https://example.com/path-param/id',
       );
 
       expect(oasToHar(spec, spec.operation('/path-param/{id}', 'post')).log.entries[0].request.url).toBe(
-        'https://example.com/path-param/id'
+        'https://example.com/path-param/id',
       );
     });
 
@@ -65,8 +65,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'path', required: true }],
         },
         {},
-        'https://example.com/path-param/id'
-      )
+        'https://example.com/path-param/id',
+      ),
     );
 
     it(
@@ -76,8 +76,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'path', required: true, schema: { default: '123' } }],
         },
         {},
-        'https://example.com/path-param/123'
-      )
+        'https://example.com/path-param/123',
+      ),
     );
 
     it(
@@ -87,8 +87,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'path', required: true }],
         },
         { path: { id: '456' } },
-        'https://example.com/path-param/456'
-      )
+        'https://example.com/path-param/456',
+      ),
     );
 
     it(
@@ -98,8 +98,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'path', required: true }],
         },
         { path: { id: 0 } },
-        'https://example.com/path-param/0'
-      )
+        'https://example.com/path-param/0',
+      ),
     );
   });
 
@@ -123,12 +123,12 @@ describe('parameter handling', () => {
 
     it(
       'should not add on empty unrequired values',
-      assertQueryParams({ parameters: [{ name: 'a', in: 'query' }] }, {}, [])
+      assertQueryParams({ parameters: [{ name: 'a', in: 'query' }] }, {}, []),
     );
 
     it(
       'should not add the parameter name as a value if required but missing',
-      assertQueryParams({ parameters: [{ name: 'a', in: 'query', required: true }] }, {}, [])
+      assertQueryParams({ parameters: [{ name: 'a', in: 'query', required: true }] }, {}, []),
     );
 
     it(
@@ -138,8 +138,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'a', in: 'query', required: true, schema: { default: 'value' } }],
         },
         {},
-        [{ name: 'a', value: 'value' }]
-      )
+        [{ name: 'a', value: 'value' }],
+      ),
     );
 
     it(
@@ -149,8 +149,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'a', in: 'query', required: true, schema: { default: 'value' } }],
         },
         { query: { a: 'test' } },
-        [{ name: 'a', value: 'test' }]
-      )
+        [{ name: 'a', value: 'test' }],
+      ),
     );
 
     it(
@@ -160,8 +160,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'query' }],
         },
         { query: { id: 0 } },
-        [{ name: 'id', value: '0' }]
-      )
+        [{ name: 'id', value: '0' }],
+      ),
     );
 
     it(
@@ -171,8 +171,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'query' }],
         },
         { query: { id: [null, null] } },
-        [{ name: 'id', value: '&id=' }]
-      )
+        [{ name: 'id', value: '&id=' }],
+      ),
     );
 
     it(
@@ -182,8 +182,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'query' }],
         },
         { query: { id: null } },
-        [{ name: 'id', value: 'null' }]
-      )
+        [{ name: 'id', value: 'null' }],
+      ),
     );
 
     it(
@@ -206,8 +206,8 @@ describe('parameter handling', () => {
           ],
         },
         { query: {} },
-        [{ name: 'id', value: '&id=' }]
-      )
+        [{ name: 'id', value: '&id=' }],
+      ),
     );
 
     describe('URI encoding', () => {
@@ -319,12 +319,12 @@ describe('parameter handling', () => {
 
     it(
       'should not add on empty unrequired values',
-      assertCookies({ parameters: [{ name: 'a', in: 'cookie' }] }, {}, [])
+      assertCookies({ parameters: [{ name: 'a', in: 'cookie' }] }, {}, []),
     );
 
     it(
       'should not add the parameter name as a value if required but missing',
-      assertCookies({ parameters: [{ name: 'a', in: 'cookie', required: true }] }, {}, [])
+      assertCookies({ parameters: [{ name: 'a', in: 'cookie', required: true }] }, {}, []),
     );
 
     it(
@@ -334,8 +334,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'a', in: 'cookie', required: true, schema: { default: 'value' } }],
         },
         {},
-        [{ name: 'a', value: 'value' }]
-      )
+        [{ name: 'a', value: 'value' }],
+      ),
     );
 
     it(
@@ -345,8 +345,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'a', in: 'cookie', required: true, schema: { default: 'value' } }],
         },
         { cookie: { a: 'test' } },
-        [{ name: 'a', value: 'test' }]
-      )
+        [{ name: 'a', value: 'test' }],
+      ),
     );
 
     it(
@@ -356,8 +356,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'cookie' }],
         },
         { cookie: { id: 0 } },
-        [{ name: 'id', value: '0' }]
-      )
+        [{ name: 'id', value: '0' }],
+      ),
     );
   });
 
@@ -381,12 +381,12 @@ describe('parameter handling', () => {
 
     it(
       'should not add on empty unrequired values',
-      assertHeaders({ parameters: [{ name: 'a', in: 'header' }] }, {}, [])
+      assertHeaders({ parameters: [{ name: 'a', in: 'header' }] }, {}, []),
     );
 
     it(
       'should not add the parameter name as a value if required but missing',
-      assertHeaders({ parameters: [{ name: 'a', in: 'header', required: true }] }, {}, [])
+      assertHeaders({ parameters: [{ name: 'a', in: 'header', required: true }] }, {}, []),
     );
 
     it(
@@ -396,8 +396,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
         },
         {},
-        [{ name: 'a', value: 'value' }]
-      )
+        [{ name: 'a', value: 'value' }],
+      ),
     );
 
     it(
@@ -407,8 +407,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'a', in: 'header', required: true, schema: { default: 'value' } }],
         },
         { header: { a: 'test' } },
-        [{ name: 'a', value: 'test' }]
-      )
+        [{ name: 'a', value: 'test' }],
+      ),
     );
 
     it(
@@ -430,8 +430,8 @@ describe('parameter handling', () => {
         [
           { name: 'accept', value: 'application/xml' },
           { name: 'a', value: 'value' },
-        ]
-      )
+        ],
+      ),
     );
 
     it(
@@ -453,8 +453,8 @@ describe('parameter handling', () => {
         [
           { name: 'accept', value: 'application/json' },
           { name: 'a', value: 'value' },
-        ]
-      )
+        ],
+      ),
     );
 
     it(
@@ -477,8 +477,8 @@ describe('parameter handling', () => {
           },
         },
         {},
-        [{ name: 'accept', value: 'application/xml' }]
-      )
+        [{ name: 'accept', value: 'application/xml' }],
+      ),
     );
 
     it(
@@ -497,8 +497,8 @@ describe('parameter handling', () => {
           },
         },
         { header: { accept: 'application/xml' } },
-        [{ name: 'accept', value: 'application/xml' }]
-      )
+        [{ name: 'accept', value: 'application/xml' }],
+      ),
     );
 
     it(
@@ -516,8 +516,8 @@ describe('parameter handling', () => {
           },
         },
         { header: { accept: 'application/xml' } },
-        [{ name: 'accept', value: 'application/xml' }]
-      )
+        [{ name: 'accept', value: 'application/xml' }],
+      ),
     );
 
     it(
@@ -527,8 +527,8 @@ describe('parameter handling', () => {
           parameters: [{ name: 'id', in: 'header' }],
         },
         { header: { id: 0 } },
-        [{ name: 'id', value: '0' }]
-      )
+        [{ name: 'id', value: '0' }],
+      ),
     );
   });
 

@@ -2,6 +2,7 @@ import type { DataForHAR } from '../../../src';
 import type { PostDataParams } from 'har-format';
 
 import toBeAValidHAR from 'jest-expect-har';
+import { describe, it, expect } from 'vitest';
 
 import oasToHar from '../../../src';
 import oasFixture from '../../__fixtures__/create-oas';
@@ -96,48 +97,48 @@ describe('multipart/form-data parameters', () => {
 
     it(
       'should support form delimited multipart/form-data styles for non exploded empty input',
-      assertFormStyle(bodyNoExplode, { body: { primitive: emptyInput } }, [{ name: 'primitive', value: '' }])
+      assertFormStyle(bodyNoExplode, { body: { primitive: emptyInput } }, [{ name: 'primitive', value: '' }]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for exploded empty input',
-      assertFormStyle(bodyExplode, { body: { primitive: emptyInput } }, [{ name: 'primitive', value: '' }])
+      assertFormStyle(bodyExplode, { body: { primitive: emptyInput } }, [{ name: 'primitive', value: '' }]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for non exploded string input',
-      assertFormStyle(bodyNoExplode, { body: { primitive: stringInput } }, [{ name: 'primitive', value: 'blue' }])
+      assertFormStyle(bodyNoExplode, { body: { primitive: stringInput } }, [{ name: 'primitive', value: 'blue' }]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for non exploded string input and NOT encode already encoded values',
       assertFormStyle(bodyNoExplode, { body: { primitive: stringInputEncoded } }, [
         { name: 'primitive', value: 'something%26nothing%3Dtrue' },
-      ])
+      ]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for exploded string input',
-      assertFormStyle(bodyExplode, { body: { primitive: stringInput } }, [{ name: 'primitive', value: 'blue' }])
+      assertFormStyle(bodyExplode, { body: { primitive: stringInput } }, [{ name: 'primitive', value: 'blue' }]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for exploded string input and NOT encode already encoded values',
       assertFormStyle(bodyExplode, { body: { primitive: stringInputEncoded } }, [
         { name: 'primitive', value: 'something%26nothing%3Dtrue' },
-      ])
+      ]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for non exploded array input',
-      assertFormStyle(bodyNoExplode, { body: { array: arrayInput } }, [{ name: 'array', value: 'blue,black,brown' }])
+      assertFormStyle(bodyNoExplode, { body: { array: arrayInput } }, [{ name: 'array', value: 'blue,black,brown' }]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for non exploded array input and NOT encode already encoded values',
       assertFormStyle(bodyNoExplode, { body: { array: arrayInputEncoded } }, [
         { name: 'array', value: 'something%26nothing%3Dtrue,hash%23data' },
-      ])
+      ]),
     );
 
     it(
@@ -146,7 +147,7 @@ describe('multipart/form-data parameters', () => {
         { name: 'array', value: 'blue' },
         { name: 'array', value: 'black' },
         { name: 'array', value: 'brown' },
-      ])
+      ]),
     );
 
     it(
@@ -154,21 +155,21 @@ describe('multipart/form-data parameters', () => {
       assertFormStyle(bodyExplode, { body: { array: arrayInputEncoded } }, [
         { name: 'array', value: 'something%26nothing%3Dtrue' },
         { name: 'array', value: 'hash%23data' },
-      ])
+      ]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for non exploded object input',
       assertFormStyle(bodyNoExplode, { body: { object: objectInput } }, [
         { name: 'object', value: 'R,100,G,200,B,150' },
-      ])
+      ]),
     );
 
     it(
       'should support form delimited multipart/form-data styles for non exploded object input and NOT encode already encoded values',
       assertFormStyle(bodyNoExplode, { body: { object: objectInputEncoded } }, [
         { name: 'object', value: 'pound,something%26nothing%3Dtrue,hash,hash%23data' },
-      ])
+      ]),
     );
 
     it(
@@ -177,7 +178,7 @@ describe('multipart/form-data parameters', () => {
         { name: 'R', value: '100' },
         { name: 'G', value: '200' },
         { name: 'B', value: '150' },
-      ])
+      ]),
     );
 
     it(
@@ -185,7 +186,7 @@ describe('multipart/form-data parameters', () => {
       assertFormStyle(bodyExplode, { body: { object: objectInputEncoded } }, [
         { name: 'pound', value: 'something%26nothing%3Dtrue' },
         { name: 'hash', value: 'hash%23data' },
-      ])
+      ]),
     );
   });
 
@@ -205,47 +206,47 @@ describe('multipart/form-data parameters', () => {
 
     it(
       'should NOT support space delimited multipart/form-data styles for non exploded empty input',
-      assertSpaceDelimitedStyle(bodyNoExplode, { body: { primitive: emptyInput } }, [])
+      assertSpaceDelimitedStyle(bodyNoExplode, { body: { primitive: emptyInput } }, []),
     );
 
     it(
       'should NOT support space delimited multipart/form-data styles for exploded empty input',
-      assertSpaceDelimitedStyle(bodyExplode, { body: { primitive: emptyInput } }, [])
+      assertSpaceDelimitedStyle(bodyExplode, { body: { primitive: emptyInput } }, []),
     );
 
     it(
       'should NOT support space delimited multipart/form-data styles for non exploded string input',
-      assertSpaceDelimitedStyle(bodyNoExplode, { body: { primitive: stringInput } }, [])
+      assertSpaceDelimitedStyle(bodyNoExplode, { body: { primitive: stringInput } }, []),
     );
 
     it(
       'should NOT support space delimited multipart/form-data styles for exploded string input',
-      assertSpaceDelimitedStyle(bodyExplode, { body: { primitive: stringInput } }, [])
+      assertSpaceDelimitedStyle(bodyExplode, { body: { primitive: stringInput } }, []),
     );
 
     it(
       'should support space delimited multipart/form-data styles for non exploded array input',
       assertSpaceDelimitedStyle(bodyNoExplode, { body: { array: arrayInput } }, [
         { name: 'array', value: 'blue black brown' },
-      ])
+      ]),
     );
 
     it(
       'should support space delimited multipart/form-data styles for non exploded array input and NOT encode already encoded values',
       assertSpaceDelimitedStyle(bodyNoExplode, { body: { array: arrayInputEncoded } }, [
         { name: 'array', value: 'something%26nothing%3Dtrue hash%23data' },
-      ])
+      ]),
     );
 
     it(
       'should NOT support space delimited multipart/form-data styles for exploded array input',
-      assertSpaceDelimitedStyle(bodyExplode, { body: { array: arrayInput } }, [])
+      assertSpaceDelimitedStyle(bodyExplode, { body: { array: arrayInput } }, []),
     );
 
     // This is supposed to be supported, but the style-serializer library we use does not have
     // support. Holding off for now.
     it.todo(
-      'should support space delimited multipart/form-data styles for non exploded object input'
+      'should support space delimited multipart/form-data styles for non exploded object input',
       /* assertSpaceDelimitedStyle(
         bodyNoExplode,
         { body: { object: objectInput } },
@@ -258,7 +259,7 @@ describe('multipart/form-data parameters', () => {
     // support. Holding off for now.
     it.skip(
       'should NOT support space delimited multipart/form-data styles for exploded object input',
-      assertSpaceDelimitedStyle(bodyExplode, { body: { object: objectInput } }, [])
+      assertSpaceDelimitedStyle(bodyExplode, { body: { object: objectInput } }, []),
     );
   });
 
@@ -278,47 +279,47 @@ describe('multipart/form-data parameters', () => {
 
     it(
       'should NOT support pipe delimited multipart/form-data styles for non exploded empty input',
-      assertPipeDelimitedStyle(bodyNoExplode, { body: { primitive: emptyInput } }, [])
+      assertPipeDelimitedStyle(bodyNoExplode, { body: { primitive: emptyInput } }, []),
     );
 
     it(
       'should NOT support pipe delimited multipart/form-data styles for exploded empty input',
-      assertPipeDelimitedStyle(bodyExplode, { body: { primitive: emptyInput } }, [])
+      assertPipeDelimitedStyle(bodyExplode, { body: { primitive: emptyInput } }, []),
     );
 
     it(
       'should NOT support pipe delimited multipart/form-data styles for non exploded string input',
-      assertPipeDelimitedStyle(bodyNoExplode, { body: { primitive: stringInput } }, [])
+      assertPipeDelimitedStyle(bodyNoExplode, { body: { primitive: stringInput } }, []),
     );
 
     it(
       'should NOT support pipe delimited multipart/form-data styles for exploded string input',
-      assertPipeDelimitedStyle(bodyExplode, { body: { primitive: stringInput } }, [])
+      assertPipeDelimitedStyle(bodyExplode, { body: { primitive: stringInput } }, []),
     );
 
     it(
       'should support pipe delimited multipart/form-data styles for non exploded array input',
       assertPipeDelimitedStyle(bodyNoExplode, { body: { array: arrayInput } }, [
         { name: 'array', value: 'blue|black|brown' },
-      ])
+      ]),
     );
 
     it(
       'should support pipe delimited multipart/form-data styles for non exploded array input and NOT encode already encoded values',
       assertPipeDelimitedStyle(bodyNoExplode, { body: { array: arrayInputEncoded } }, [
         { name: 'array', value: 'something%26nothing%3Dtrue|hash%23data' },
-      ])
+      ]),
     );
 
     it(
       'should NOT support pipe delimited multipart/form-data styles for exploded array input',
-      assertPipeDelimitedStyle(bodyExplode, { body: { array: arrayInput } }, [])
+      assertPipeDelimitedStyle(bodyExplode, { body: { array: arrayInput } }, []),
     );
 
     // This is supposed to be supported, but the style-seralizer library we use does not have
     // support. Holding off for now.
     it.todo(
-      'should support pipe delimited multipart/form-data styles for non exploded object input'
+      'should support pipe delimited multipart/form-data styles for non exploded object input',
       // assertPipeDelimitedStyle(bodyNoExplode, { body: { color: objectInput } }, { color: 'R|100|G|200|B|150' })
     );
 
@@ -326,7 +327,7 @@ describe('multipart/form-data parameters', () => {
     // support. Holding off for now.
     it.skip(
       'should NOT support pipe delimited multipart/form-data styles for exploded object input',
-      assertPipeDelimitedStyle(bodyExplode, { body: { color: objectInput } }, [])
+      assertPipeDelimitedStyle(bodyExplode, { body: { color: objectInput } }, []),
     );
   });
 
@@ -346,27 +347,27 @@ describe('multipart/form-data parameters', () => {
 
     it(
       'should NOT support deepObject delimited multipart/form-data styles for non exploded empty input',
-      assertDeepObjectStyle(bodyNoExplode, { body: { primitive: emptyInput } }, [])
+      assertDeepObjectStyle(bodyNoExplode, { body: { primitive: emptyInput } }, []),
     );
 
     it(
       'should NOT support deepObject delimited multipart/form-data styles for exploded empty input',
-      assertDeepObjectStyle(bodyExplode, { body: { primitive: emptyInput } }, [])
+      assertDeepObjectStyle(bodyExplode, { body: { primitive: emptyInput } }, []),
     );
 
     it(
       'should NOT support deepObject delimited multipart/form-data styles for non exploded string input',
-      assertDeepObjectStyle(bodyNoExplode, { body: { primitive: stringInput } }, [])
+      assertDeepObjectStyle(bodyNoExplode, { body: { primitive: stringInput } }, []),
     );
 
     it(
       'should NOT support deepObject delimited multipart/form-data styles for exploded string input',
-      assertDeepObjectStyle(bodyExplode, { body: { primitive: stringInput } }, [])
+      assertDeepObjectStyle(bodyExplode, { body: { primitive: stringInput } }, []),
     );
 
     it(
       'should NOT support deepObject delimited multipart/form-data styles for non exploded array input',
-      assertDeepObjectStyle(bodyNoExplode, { body: { array: arrayInput } }, [])
+      assertDeepObjectStyle(bodyNoExplode, { body: { array: arrayInput } }, []),
     );
 
     // This breaks from the spec, but we have had requests to support arrays as if they are numerically keyed objects, and this is the easiest way
@@ -385,12 +386,12 @@ describe('multipart/form-data parameters', () => {
           name: 'array[2]',
           value: 'brown',
         },
-      ])
+      ]),
     );
 
     it(
       'should NOT support deepObject delimited multipart/form-data styles for non exploded object input',
-      assertDeepObjectStyle(bodyNoExplode, { body: { object: objectInput } }, [])
+      assertDeepObjectStyle(bodyNoExplode, { body: { object: objectInput } }, []),
     );
 
     it(
@@ -399,7 +400,7 @@ describe('multipart/form-data parameters', () => {
         { name: 'object[R]', value: '100' },
         { name: 'object[G]', value: '200' },
         { name: 'object[B]', value: '150' },
-      ])
+      ]),
     );
 
     it(
@@ -407,7 +408,7 @@ describe('multipart/form-data parameters', () => {
       assertDeepObjectStyle(bodyExplode, { body: { object: objectInputEncoded } }, [
         { name: 'object[pound]', value: 'something%26nothing%3Dtrue' },
         { name: 'object[hash]', value: 'hash%23data' },
-      ])
+      ]),
     );
 
     it(
@@ -417,7 +418,7 @@ describe('multipart/form-data parameters', () => {
         { name: 'object[child][name]', value: 'childName' },
         { name: 'object[child][age]', value: 'null' },
         { name: 'object[child][metadata][name]', value: 'meta' },
-      ])
+      ]),
     );
 
     it(
@@ -432,7 +433,7 @@ describe('multipart/form-data parameters', () => {
         { name: 'object[pets][0][name]', value: 'buster' },
         { name: 'object[pets][0][age]', value: 'null' },
         { name: 'object[pets][0][metadata][isOld]', value: 'true' },
-      ])
+      ]),
     );
   });
 });

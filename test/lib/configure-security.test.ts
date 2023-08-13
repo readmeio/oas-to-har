@@ -1,5 +1,7 @@
 import type { OASDocument, SecuritySchemeObject } from 'oas/dist/rmoas.types';
 
+import { describe, it, expect } from 'vitest';
+
 import configureSecurity from '../../src/lib/configure-security';
 
 function createSecurityOAS(scheme: SecuritySchemeObject) {
@@ -101,8 +103,8 @@ describe('configure-security', () => {
             spec,
             // @ts-expect-error Testing a failure case here
             values,
-            'busterAuth'
-          )
+            'busterAuth',
+          ),
         ).toBe(false);
       });
     });
