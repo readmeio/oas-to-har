@@ -1,9 +1,7 @@
 .github/
 .husky/
-.nyc_output/
 .vscode/
 coverage/
 test/
 .eslint*
 .prettier*
-jest*

@@ -3,6 +3,7 @@ import schemaTypes from '@readme/oas-examples/3.0/json/schema-types.json';
 import * as extensions from '@readme/oas-extensions';
 import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
+import { describe, it, expect } from 'vitest';
 
 import oasToHar from '../src';
 
@@ -514,7 +515,7 @@ describe('request body handling', () => {
           // Doing this manually for now until when/if https://github.com/data-uri/datauri/pull/29 is accepted.
           const specialcharacters = owlbertDataURL.replace(
             'name=owlbert.png;',
-            `name=${encodeURIComponent('owlbert (1).png')};`
+            `name=${encodeURIComponent('owlbert (1).png')};`,
           );
 
           const fixture = Oas.init(multipartFormData);
@@ -675,7 +676,7 @@ describe('request body handling', () => {
             destination: {
               service_account_key: { buster: true },
             },
-          })
+          }),
         );
       });
 
@@ -752,7 +753,7 @@ describe('request body handling', () => {
             },
             arr: [{ buster: true }],
             arrOfObjects: [{ arrProp: { buster: true } }, { arrProp: 'not json' }],
-          })
+          }),
         );
       });
 
@@ -895,7 +896,7 @@ describe('request body handling', () => {
 
         const har = oasToHar(spec, spec.operation('/requestBody', 'post'), { body: { a: '{ "b": "valid json" }' } });
         expect(har.log.entries[0].request.postData.text).toBe(
-          JSON.stringify({ a: JSON.parse('{ "b": "valid json" }') })
+          JSON.stringify({ a: JSON.parse('{ "b": "valid json" }') }),
         );
       });
 
@@ -934,7 +935,7 @@ describe('request body handling', () => {
         });
 
         expect(har.log.entries[0].request.postData.text).toBe(
-          JSON.stringify({ a: { z: 'valid json' }, b: 'invalid json' })
+          JSON.stringify({ a: { z: 'valid json' }, b: 'invalid json' }),
         );
       });
 

@@ -8,7 +8,7 @@ import { get as lodashGet } from 'lodash'; // eslint-disable-line no-restricted-
  */
 export function hasSchemaType(
   schema: SchemaObject,
-  discriminator: 'array' | 'object' | 'string' | 'number' | 'boolean' | 'integer' | 'null'
+  discriminator: 'array' | 'object' | 'string' | 'number' | 'boolean' | 'integer' | 'null',
 ) {
   if (Array.isArray(schema.type)) {
     return schema.type.includes(discriminator);
@@ -61,7 +61,7 @@ function getSubschemas(schema: any, opts: Options) {
         Object.entries(schema).map(([key, subschema]: [string, JSONSchema]) => ({
           key: opts.parentKey ? [opts.parentKey, idx, key].join('.') : key,
           schema: getSafeRequestBody(subschema),
-        }))
+        })),
       );
     }
   } else {
@@ -83,7 +83,7 @@ function getSubschemas(schema: any, opts: Options) {
 export function getTypedFormatsInSchema(
   format: 'json' | 'binary',
   schema: any,
-  opts: Options
+  opts: Options,
 ): boolean | string | (string | boolean)[] {
   try {
     if (schema?.format === format) {

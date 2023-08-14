@@ -1,21 +1,3 @@
 {
-  "extends": "@readme/eslint-config/testing",
-  "rules": {
-    "jest/expect-expect": [
-      "error", {
-        "assertFunctionNames": [
-          "assertCookies",
-          "assertDeepObjectStyle",
-          "assertFormStyle",
-          "assertHeaders",
-          "assertLabelPath",
-          "assertMatrixPath",
-          "assertPipeDelimitedStyle",
-          "assertSimplePath",
-          "assertSpaceDelimitedStyle",
-          "expect"
-        ]
-      }
-    ]
-  },
+  "extends": "@readme/eslint-config/testing/vitest"
 }

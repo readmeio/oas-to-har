@@ -46,7 +46,7 @@ function formatter(
   values: DataForHAR,
   param: ParameterObject,
   type: 'body' | 'cookie' | 'header' | 'path' | 'query',
-  onlyIfExists = false
+  onlyIfExists = false,
 ) {
   if (param.style) {
     const value = values[type][param.name];
@@ -184,7 +184,7 @@ function appendHarValue(
   addtlData: {
     contentType?: string;
     fileName?: string;
-  } = {}
+  } = {},
 ) {
   if (typeof value === 'undefined') return;
 
@@ -246,7 +246,7 @@ export default function oasToHar(
     // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in
     // order to funnel requests through our CORS-friendly proxy.
     proxyUrl: false,
-  }
+  },
 ) {
   let operation: Operation;
   if (!operationSchema || typeof operationSchema.getParameters !== 'function') {
@@ -263,7 +263,7 @@ export default function oasToHar(
       oas as unknown as OASDocument,
       operationSchema?.path || '',
       operationSchema?.method || ('' as HttpMethods),
-      (operationSchema as unknown as OperationObject) || { path: '', method: '' }
+      (operationSchema as unknown as OperationObject) || { path: '', method: '' },
     );
   } else {
     operation = operationSchema;
@@ -495,7 +495,7 @@ export default function oasToHar(
               const multipartParams = multipartBodyToFormatterParams(
                 formData.body,
                 (operation.schema.requestBody as RequestBodyObject).content['multipart/form-data'],
-                safeBodySchema
+                safeBodySchema,
               );
 
               if (multipartParams.length) {
@@ -622,7 +622,7 @@ export default function oasToHar(
         // If we've already added this **specific** security value then don't add it again.
         if (
           har[securityValue.type].find(
-            v => v.name === securityValue.value.name && v.value === securityValue.value.value
+            v => v.name === securityValue.value.name && v.value === securityValue.value.value,
           )
         ) {
           return;

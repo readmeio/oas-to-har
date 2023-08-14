@@ -4,6 +4,7 @@ import petstore from '@readme/oas-examples/3.0/json/petstore.json';
 import * as extensions from '@readme/oas-extensions';
 import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
+import { describe, beforeEach, it, expect } from 'vitest';
 
 import oasToHar from '../src';
 
@@ -123,7 +124,7 @@ describe('oas-to-har', () => {
       });
 
       expect(oasToHar(spec, spec.operation('/path with spaces', 'get')).log.entries[0].request.url).toBe(
-        'https://example.com/path%20with%20spaces'
+        'https://example.com/path%20with%20spaces',
       );
     });
 
@@ -238,7 +239,7 @@ describe('oas-to-har', () => {
 
       expect(
         oasToHar(spec, spec.operation('/security', 'get'), {}, { 'auth-header': 'value' }).log.entries[0].request
-          .headers
+          .headers,
       ).toStrictEqual([
         {
           name: 'x-auth-header',
@@ -274,8 +275,8 @@ describe('oas-to-har', () => {
           {},
           {
             'auth-query': 'value',
-          }
-        ).log.entries[0].request.queryString
+          },
+        ).log.entries[0].request.queryString,
       ).toStrictEqual([
         {
           name: 'authQuery',
@@ -311,8 +312,8 @@ describe('oas-to-har', () => {
           {},
           {
             'auth-cookie': 'value',
-          }
-        ).log.entries[0].request.cookies
+          },
+        ).log.entries[0].request.cookies,
       ).toStrictEqual([
         {
           name: 'authCookie',
@@ -354,8 +355,8 @@ describe('oas-to-har', () => {
           {
             'auth-header': 'value',
             'auth-header2': 'value',
-          }
-        ).log.entries[0].request.headers
+          },
+        ).log.entries[0].request.headers,
       ).toStrictEqual([
         {
           name: 'x-auth-header',
@@ -401,8 +402,8 @@ describe('oas-to-har', () => {
           {
             'auth-header': 'value',
             'auth-header2': 'value',
-          }
-        ).log.entries[0].request.headers
+          },
+        ).log.entries[0].request.headers,
       ).toStrictEqual([
         {
           name: 'x-auth-header',
