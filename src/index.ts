@@ -16,7 +16,7 @@ import type {
 } from 'oas/dist/rmoas.types';
 
 import { parse as parseDataUrl } from '@readme/data-urls';
-import * as extensions from '@readme/oas-extensions';
+import { getExtension, PROXY_ENABLED, HEADERS } from '@readme/oas-extensions';
 import { get as lodashGet, set as lodashSet } from 'lodash'; // eslint-disable-line no-restricted-imports
 import { Operation, utils } from 'oas';
 import { isRef } from 'oas/dist/rmoas.types';
@@ -300,7 +300,7 @@ export default function oasToHar(
   };
 
   if (opts.proxyUrl) {
-    if (extensions.getExtension(extensions.PROXY_ENABLED, oas, operation)) {
+    if (getExtension(PROXY_ENABLED, oas, operation)) {
       har.url = `https://try.readme.io/${har.url}`;
     }
   }
@@ -379,7 +379,7 @@ export default function oasToHar(
   }
 
   // Are there `x-headers` static headers configured for this OAS?
-  const userDefinedHeaders = extensions.getExtension(extensions.HEADERS, oas, operation) as Extensions['headers'];
+  const userDefinedHeaders = getExtension(HEADERS, oas, operation) as Extensions['headers'];
   if (userDefinedHeaders) {
     userDefinedHeaders.forEach(header => {
       if (typeof header.key === 'string' && header.key.toLowerCase() === 'content-type') {
