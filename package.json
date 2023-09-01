@@ -44,7 +44,7 @@
     "lodash": "^4.17.21",
     "oas": "^20.10.3",
     "qs": "^6.11.2",
-    "remove-undefined-objects": "^3.0.0"
+    "remove-undefined-objects": "^4.0.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",
