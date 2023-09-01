@@ -5,10 +5,12 @@
     "declaration": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
-    "lib": ["dom", "ESNext"],
+    "lib": ["DOM", "ES2020"],
     "noImplicitAny": true,
     "outDir": "dist/",
-    "skipLibCheck": true
+    "target": "ES2020",
+    "skipLibCheck": true,
+    "moduleResolution": "node"
   },
   "include": ["./src/**/*"]
 }
