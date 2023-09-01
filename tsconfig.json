@@ -6,11 +6,11 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "lib": ["DOM", "ES2020"],
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "outDir": "dist/",
-    "target": "ES2020",
     "skipLibCheck": true,
-    "moduleResolution": "node"
+    "target": "ES2020",
   },
   "include": ["./src/**/*"]
 }
