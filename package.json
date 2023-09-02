@@ -14,10 +14,10 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
-    "./targets": {
-      "types": "./dist/targets.d.ts",
-      "require": "./dist/targets.js",
-      "import": "./dist/targets.mjs"
+    "./lib/configure-security": {
+      "types": "./dist/lib/configure-security.d.ts",
+      "require": "./dist/lib/configure-security.js",
+      "import": "./dist/lib/configure-security.mjs"
     },
     "./package.json": "./package.json"
   },

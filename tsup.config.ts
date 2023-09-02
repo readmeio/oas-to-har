@@ -9,7 +9,7 @@ export default defineConfig((options: Options) => ({
   cjsInterop: true,
   clean: true,
   dts: true,
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/lib/configure-security.ts'],
   format: ['esm', 'cjs'],
   minify: false,
   shims: true,
