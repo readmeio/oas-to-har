@@ -1,6 +1,6 @@
 import type { DataForHAR } from '../src';
 import type { Request } from 'har-format';
-import type { OperationObject } from 'oas/dist/rmoas.types';
+import type { OperationObject } from 'oas/rmoas.types';
 
 import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';

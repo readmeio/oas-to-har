@@ -1,6 +1,6 @@
-import type { OASDocument, SecuritySchemeObject } from 'oas/dist/rmoas.types';
+import type { OASDocument, SecuritySchemeObject } from 'oas/rmoas.types';
 
-import { isRef } from 'oas/dist/rmoas.types'; // eslint-disable-line import/no-unresolved
+import { isRef } from 'oas/rmoas.types';
 
 export type AuthForHAR = Record<string, string | number | { pass?: string; user?: string }>;
 
