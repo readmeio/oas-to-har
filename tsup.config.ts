@@ -10,7 +10,6 @@ export default defineConfig((options: Options) => ({
   dts: true,
   entry: ['src/index.ts', 'src/lib/configure-security.ts'],
   format: ['esm', 'cjs'],
-  minify: false,
   shims: true,
   silent: !options.watch,
   sourcemap: true,
