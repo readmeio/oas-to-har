@@ -2,7 +2,7 @@ import type { AuthForHAR } from './lib/configure-security';
 import type { Extensions } from '@readme/oas-extensions';
 import type { PostDataParams, Request } from 'har-format';
 import type Oas from 'oas';
-import type { SchemaWrapper } from 'oas/dist/operation/get-parameters-as-json-schema';
+import type { SchemaWrapper } from 'oas/operation/get-parameters-as-json-schema';
 import type {
   HttpMethods,
   JSONSchema,
@@ -13,13 +13,13 @@ import type {
   RequestBodyObject,
   ResponseObject,
   SchemaObject,
-} from 'oas/dist/rmoas.types';
+} from 'oas/rmoas.types';
 
 import { parse as parseDataUrl } from '@readme/data-urls';
 import { getExtension, PROXY_ENABLED, HEADERS } from '@readme/oas-extensions';
 import { get as lodashGet, set as lodashSet } from 'lodash'; // eslint-disable-line no-restricted-imports
 import { Operation, utils } from 'oas';
-import { isRef } from 'oas/dist/rmoas.types';
+import { isRef } from 'oas/rmoas.types';
 import removeUndefinedObjects from 'remove-undefined-objects';
 
 import configureSecurity from './lib/configure-security';

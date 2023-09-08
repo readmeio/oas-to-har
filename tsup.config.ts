@@ -1,19 +1,15 @@
-import type { Options } from 'tsup';
-
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from 'tsup';
 
-export default defineConfig((options: Options) => ({
+export default defineConfig(options => ({
   ...options,
-  entry: ['src/index.ts'],
-  treeshake: true,
-  format: ['esm', 'cjs'],
-  silent: !options.watch,
-  minify: false,
-  dts: true,
-  sourcemap: true,
-  clean: true,
-  splitting: true,
-  shims: true,
+
   cjsInterop: true,
+  dts: true,
+  entry: ['src/index.ts', 'src/lib/configure-security.ts'],
+  format: ['esm', 'cjs'],
+  shims: true,
+  silent: !options.watch,
+  sourcemap: true,
+  treeshake: true,
 }));

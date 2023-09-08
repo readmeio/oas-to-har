@@ -14,10 +14,10 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
-    "./targets": {
-      "types": "./dist/targets.d.ts",
-      "require": "./dist/targets.js",
-      "import": "./dist/targets.mjs"
+    "./lib/configure-security": {
+      "types": "./dist/lib/configure-security.d.ts",
+      "require": "./dist/lib/configure-security.js",
+      "import": "./dist/lib/configure-security.mjs"
     },
     "./package.json": "./package.json"
   },
@@ -39,12 +39,12 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "@readme/data-urls": "^1.0.1",
-    "@readme/oas-extensions": "^18.0.0",
+    "@readme/data-urls": "^2.0.0",
+    "@readme/oas-extensions": "^18.0.1",
     "lodash": "^4.17.21",
-    "oas": "^20.10.3",
+    "oas": "^21.0.2",
     "qs": "^6.11.2",
-    "remove-undefined-objects": "^3.0.0"
+    "remove-undefined-objects": "^4.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.7.1",

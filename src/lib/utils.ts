@@ -1,4 +1,4 @@
-import type { JSONSchema, SchemaObject } from 'oas/dist/rmoas.types';
+import type { JSONSchema, SchemaObject } from 'oas/rmoas.types';
 
 import { get as lodashGet } from 'lodash'; // eslint-disable-line no-restricted-imports
 
