@@ -1,27 +1,25 @@
 {
   "name": "@readme/oas-to-har",
   "description": "Utility to transform an OAS operation into a HAR representation",
-  "version": "23.0.0",
+  "version": "23.0.1",
   "author": "Jon Ursenbach <jon@ursenba.ch>",
   "license": "ISC",
   "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
     },
     "./lib/configure-security": {
-      "types": "./dist/lib/configure-security.d.ts",
-      "require": "./dist/lib/configure-security.js",
-      "import": "./dist/lib/configure-security.mjs"
+      "require": "./dist/lib/configure-security.cjs",
+      "import": "./dist/lib/configure-security.js"
     },
     "./package.json": "./package.json"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.cts",
   "engines": {
     "node": ">=18"
   },
