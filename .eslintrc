@@ -10,7 +10,6 @@
 
     "unicorn/prefer-node-protocol": "error",
 
-    "you-dont-need-lodash-underscore/get": "off",
-    "you-dont-need-lodash-underscore/set": "off"
+    "you-dont-need-lodash-underscore/get": "off"
   }
 }
