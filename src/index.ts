@@ -1,4 +1,4 @@
-import type { AuthForHAR, DataForHAR, oasToHarOptions } from './lib/types';
+import type { AuthForHAR, DataForHAR, oasToHarOptions } from './lib/types.js';
 import type { Extensions } from '@readme/oas-extensions';
 import type { PostDataParams, Request } from 'har-format';
 import type Oas from 'oas';
@@ -17,15 +17,15 @@ import type {
 
 import { parse as parseDataUrl } from '@readme/data-urls';
 import { getExtension, PROXY_ENABLED, HEADERS } from '@readme/oas-extensions';
-import lodashGet from 'lodash/get';
-import lodashSet from 'lodash/set';
+import lodashGet from 'lodash/get.js';
+import lodashSet from 'lodash/set.js';
 import { Operation, utils } from 'oas';
 import { isRef } from 'oas/rmoas.types';
 import removeUndefinedObjects from 'remove-undefined-objects';
 
-import configureSecurity from './lib/configure-security';
-import formatStyle from './lib/style-formatting';
-import { getSafeRequestBody, getTypedFormatsInSchema, hasSchemaType } from './lib/utils';
+import configureSecurity from './lib/configure-security.js';
+import formatStyle from './lib/style-formatting/index.js';
+import { getSafeRequestBody, getTypedFormatsInSchema, hasSchemaType } from './lib/utils.js';
 
 const { jsonSchemaTypes, matchesMimeType } = utils;
 

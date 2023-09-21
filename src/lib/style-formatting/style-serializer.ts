@@ -29,7 +29,6 @@ function isObject(value: unknown) {
 
 export function encodeDisallowedCharacters(
   str: string,
-  // eslint-disable-next-line @typescript-eslint/default-param-last
   {
     escape,
     returnIfEncoded = false,
@@ -39,7 +38,7 @@ export function encodeDisallowedCharacters(
     isAllowedReserved?: boolean;
     returnIfEncoded?: boolean;
   } = {},
-  parse: boolean,
+  parse?: boolean,
 ) {
   if (typeof str === 'number') {
     str = (str as number).toString();
