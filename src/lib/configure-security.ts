@@ -1,4 +1,4 @@
-import type { AuthForHAR } from './types';
+import type { AuthForHAR } from './types.js';
 import type { OASDocument, SecuritySchemeObject } from 'oas/rmoas.types';
 
 import { isRef } from 'oas/rmoas.types';

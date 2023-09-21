@@ -1,11 +1,11 @@
-import type { DataForHAR } from '../../../src';
+import type { DataForHAR } from '../../../src/index.js';
 import type { PostDataParams } from 'har-format';
 
 import toBeAValidHAR from 'jest-expect-har';
 import { describe, it, expect } from 'vitest';
 
-import oasToHar from '../../../src';
-import oasFixture from '../../__fixtures__/create-oas';
+import oasToHar from '../../../src/index.js';
+import oasFixture from '../../__fixtures__/create-oas.js';
 import {
   emptyInput,
   stringInput,
@@ -16,7 +16,7 @@ import {
   objectNestedObject,
   objectNestedObjectOfARidiculiousShape,
   objectInputEncoded,
-} from '../../__fixtures__/style-data';
+} from '../../__fixtures__/style-data.js';
 
 expect.extend({ toBeAValidHAR });
 

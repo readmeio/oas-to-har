@@ -1,7 +1,7 @@
 import Oas from 'oas';
 import { describe, it, expect } from 'vitest';
 
-import oasToHar from '../src';
+import oasToHar from '../src/index.js';
 
 import securityQuirks from './__datasets__/security-quirks.json';
 import security from './__datasets__/security.json';

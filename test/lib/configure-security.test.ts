@@ -2,7 +2,7 @@ import type { OASDocument, SecuritySchemeObject } from 'oas/rmoas.types';
 
 import { describe, it, expect } from 'vitest';
 
-import configureSecurity from '../../src/lib/configure-security';
+import configureSecurity from '../../src/lib/configure-security.js';
 
 function createSecurityOAS(scheme: SecuritySchemeObject) {
   return {

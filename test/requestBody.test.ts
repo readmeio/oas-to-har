@@ -5,7 +5,7 @@ import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
 import { describe, it, expect } from 'vitest';
 
-import oasToHar from '../src';
+import oasToHar from '../src/index.js';
 
 import deeplyNestedJsonFormats from './__datasets__/deeply-nested-json-formats.json';
 import multipartFormDataArrayOfFiles from './__datasets__/multipart-form-data/array-of-files.json';

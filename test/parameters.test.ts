@@ -1,4 +1,4 @@
-import type { DataForHAR } from '../src';
+import type { DataForHAR } from '../src/index.js';
 import type { Request } from 'har-format';
 import type { OperationObject } from 'oas/rmoas.types';
 
@@ -6,7 +6,7 @@ import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
 import { describe, beforeEach, it, expect } from 'vitest';
 
-import oasToHar from '../src';
+import oasToHar from '../src/index.js';
 
 import commonParameters from './__datasets__/common-parameters.json';
 

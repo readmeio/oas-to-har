@@ -6,7 +6,7 @@ import toBeAValidHAR from 'jest-expect-har';
 import Oas from 'oas';
 import { describe, beforeEach, it, expect } from 'vitest';
 
-import oasToHar from '../src';
+import oasToHar from '../src/index.js';
 
 import serverVariables from './__datasets__/server-variables.json';
 
