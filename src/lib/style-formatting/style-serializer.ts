@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable import/no-import-module-exports */
 /* eslint-disable no-param-reassign */
 import type { Merge } from 'type-fest';
 
@@ -26,30 +25,6 @@ function isURIEncoded(value: string) {
 
 function isObject(value: unknown) {
   return typeof value === 'object' && value !== null;
-}
-
-export interface StylizerConfig {
-  escape: boolean | 'unsafe';
-  explode: boolean;
-  isAllowedReserved?: boolean;
-  key: string;
-  location: 'body' | 'query';
-  style: 'deepObject' | 'form' | 'label' | 'matrix' | 'pipeDelimited' | 'simple' | 'spaceDelimited';
-  value: any;
-}
-
-export default function stylize(config: StylizerConfig) {
-  const { value } = config;
-
-  if (Array.isArray(value)) {
-    return encodeArray(config);
-  }
-
-  if (isObject(value)) {
-    return encodeObject(config);
-  }
-
-  return encodePrimitive(config);
 }
 
 export function encodeDisallowedCharacters(
@@ -112,6 +87,30 @@ export function encodeDisallowedCharacters(
     .join('');
 }
 
+export interface StylizerConfig {
+  escape: boolean | 'unsafe';
+  explode: boolean;
+  isAllowedReserved?: boolean;
+  key: string;
+  location: 'body' | 'query';
+  style: 'deepObject' | 'form' | 'label' | 'matrix' | 'pipeDelimited' | 'simple' | 'spaceDelimited';
+  value: any;
+}
+
+export default function stylize(config: StylizerConfig) {
+  const { value } = config;
+
+  if (Array.isArray(value)) {
+    return encodeArray(config);
+  }
+
+  if (isObject(value)) {
+    return encodeObject(config);
+  }
+
+  return encodePrimitive(config);
+}
+
 /**
  * @see {@link https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#style-examples}
  */
@@ -125,7 +124,7 @@ function encodeArray({
   isAllowedReserved = false,
 }: Merge<StylizerConfig, { value: string[] }>) {
   const valueEncoder = (str: string) =>
-    module.exports.encodeDisallowedCharacters(str, {
+    encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query',
       isAllowedReserved,
@@ -197,7 +196,7 @@ function encodeArray({
  */
 function encodeObject({ location, key, value, style, explode, escape, isAllowedReserved = false }: StylizerConfig) {
   const valueEncoder = (str: string) =>
-    module.exports.encodeDisallowedCharacters(str, {
+    encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query',
       isAllowedReserved,
@@ -322,7 +321,7 @@ function encodeObject({ location, key, value, style, explode, escape, isAllowedR
  */
 function encodePrimitive({ location, key, value, style, escape, isAllowedReserved = false }: StylizerConfig) {
   const valueEncoder = (str: string) =>
-    module.exports.encodeDisallowedCharacters(str, {
+    encodeDisallowedCharacters(str, {
       escape,
       returnIfEncoded: location === 'query' || location === 'body',
       isAllowedReserved,
