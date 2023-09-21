@@ -1,4 +1,4 @@
-import type { AuthForHAR } from './lib/configure-security';
+import type { AuthForHAR, DataForHAR, oasToHarOptions } from './lib/types';
 import type { Extensions } from '@readme/oas-extensions';
 import type { PostDataParams, Request } from 'har-format';
 import type Oas from 'oas';
@@ -27,20 +27,6 @@ import formatStyle from './lib/style-formatting';
 import { getSafeRequestBody, getTypedFormatsInSchema, hasSchemaType } from './lib/utils';
 
 const { jsonSchemaTypes, matchesMimeType } = utils;
-
-export type { AuthForHAR } from './lib/configure-security';
-export interface DataForHAR {
-  body?: any;
-  cookie?: Record<string, any>;
-  formData?: Record<string, any>; // `application/x-www-form-urlencoded` requests payloads.
-  header?: Record<string, any>;
-  path?: Record<string, any>;
-  query?: Record<string, any>;
-  server?: {
-    selected: number;
-    variables?: Record<string, unknown>;
-  };
-}
 
 function formatter(
   values: DataForHAR,
@@ -229,12 +215,6 @@ function encodeBodyForHAR(body: any) {
   }
 
   return stringify(body);
-}
-
-export interface oasToHarOptions {
-  // If true, the operation URL will be rewritten and prefixed with https://try.readme.io/ in
-  // order to funnel requests through our CORS-friendly proxy.
-  proxyUrl: boolean;
 }
 
 export default function oasToHar(

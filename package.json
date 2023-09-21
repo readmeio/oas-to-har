@@ -15,6 +15,10 @@
       "require": "./dist/lib/configure-security.cjs",
       "import": "./dist/lib/configure-security.js"
     },
+    "./lib/types": {
+      "require": "./dist/lib/types.cjs",
+      "import": "./dist/lib/types.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.cjs",
