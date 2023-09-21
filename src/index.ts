@@ -17,7 +17,7 @@ import type {
 
 import { parse as parseDataUrl } from '@readme/data-urls';
 import { getExtension, PROXY_ENABLED, HEADERS } from '@readme/oas-extensions';
-import { get as lodashGet, set as lodashSet } from 'lodash-es';
+import { get as lodashGet, set as lodashSet } from 'lodash'; // eslint-disable-line no-restricted-imports
 import { Operation, utils } from 'oas';
 import { isRef } from 'oas/rmoas.types';
 import removeUndefinedObjects from 'remove-undefined-objects';
