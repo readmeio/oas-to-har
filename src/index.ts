@@ -19,8 +19,9 @@ import { parse as parseDataUrl } from '@readme/data-urls';
 import { getExtension, PROXY_ENABLED, HEADERS } from '@readme/oas-extensions';
 import lodashGet from 'lodash/get.js';
 import lodashSet from 'lodash/set.js';
-import { Operation, utils } from 'oas';
+import Operation from 'oas/operation';
 import { isRef } from 'oas/rmoas.types';
+import utils from 'oas/utils';
 import removeUndefinedObjects from 'remove-undefined-objects';
 
 import configureSecurity from './lib/configure-security.js';
