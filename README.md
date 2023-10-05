@@ -1,3 +1,7 @@
+> **Warning**
+>
+> `@readme/oas-to-har` has moved! The source for this library now lives at https://github.com/readmeio/oas.
+ 
 # @readme/oas-to-har
 
 Utility to transform an OAS operation into a [HAR](http://www.softwareishard.com/blog/har-12-spec/) representation
